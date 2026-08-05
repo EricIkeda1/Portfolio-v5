@@ -1,6 +1,7 @@
 import { Reveal, RevealGroup } from '@/components/Reveal'
 
-const photoSrc = 'assets/Perfil.png'
+// 🔥 IMAGEM CORRIGIDA
+const photoSrc = `${import.meta.env.BASE_URL}assets/images/Perfil.png`
 
 const areas = [
   {

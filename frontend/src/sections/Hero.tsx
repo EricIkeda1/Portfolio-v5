@@ -1,6 +1,7 @@
 import { TypewriterText } from '@/components/TypewriterText'
 
-const logoSrc = '/assets/Logo.png'
+// 🔥 IMAGEM CORRIGIDA
+const logoSrc = `${import.meta.env.BASE_URL}assets/images/Logo.png`
 
 // ← coloque aqui o seu número com DDI+DDD, ex: 5543999990000
 const WHATSAPP_NUMBER = '5543996369387'
