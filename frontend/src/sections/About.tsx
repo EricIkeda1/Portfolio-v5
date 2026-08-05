@@ -1,5 +1,6 @@
 import { Reveal, RevealGroup } from '@/components/Reveal'
-import photoSrc from '@/imports/Captura_de_tela_2026-08-01_211715.png'
+
+const photoSrc = '/assets/images/Perfil.png'
 
 const areas = [
   {
@@ -157,7 +158,7 @@ export default function About() {
             </Reveal>
           </div>
 
-          {/* Right — area cards (Machine Learning removido) */}
+          {/* Right — area cards */}
           <div>
             <Reveal from="fade">
               <div className="font-mono" style={{ fontSize: '0.65rem', letterSpacing: '0.15em', color: 'var(--muted)', textTransform: 'uppercase', marginBottom: '1.5rem' }}>
