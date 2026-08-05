@@ -1,6 +1,6 @@
 import { Reveal, RevealGroup } from '@/components/Reveal'
 
-const photoSrc = 'public/assets/images/Perfil.png'
+const photoSrc = 'assets/Perfil.png'
 
 const areas = [
   {
