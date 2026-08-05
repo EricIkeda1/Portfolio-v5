@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 
-const logoSrc = '/assets/images/Logo.png'
+const logoSrc = 'public/assets/images/Logo.png'
 
 const links = [
   { label: 'Início', href: '#' },

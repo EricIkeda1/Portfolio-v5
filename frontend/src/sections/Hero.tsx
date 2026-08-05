@@ -1,6 +1,6 @@
 import { TypewriterText } from '@/components/TypewriterText'
 
-const logoSrc = '/assets/images/Logo.png'
+const logoSrc = 'public/assets/images/Logo.png'
 
 // ← coloque aqui o seu número com DDI+DDD, ex: 5543999990000
 const WHATSAPP_NUMBER = '5543996369387'
