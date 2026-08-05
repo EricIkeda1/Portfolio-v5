@@ -4,7 +4,7 @@ import logoSrc from '@/imports/Logo.png'
 // ← coloque aqui o seu número com DDI+DDD, ex: 5543999990000
 const WHATSAPP_NUMBER = '5543996369387'
 
-const roles = ['Full Stack Developer', 'Mobile Developer', 'Software Engineering Student']
+const roles = ['Full Stack Developer', 'Mobile Developer', 'Software Engineering']
 
 const anim = (delay: number) => ({
   animation: `heroUp 0.65s cubic-bezier(0.22,1,0.36,1) ${delay}ms both`,
