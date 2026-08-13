@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react'
-
-// 🔥 IMAGEM CORRIGIDA
-const logoSrc = `${import.meta.env.BASE_URL}assets/images/Logo.png`
+import logoSrc from '@/imports/Logo.png'
 
 const links = [
   { label: 'Início', href: '#' },

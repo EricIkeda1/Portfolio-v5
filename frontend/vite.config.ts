@@ -2,23 +2,12 @@ import { defineConfig, type HtmlTagDescriptor, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import path from 'node:path'
-import { fileURLToPath } from 'node:url'
-import fs from 'node:fs'
 
-// Corrige __dirname para ESM
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
-
-// Carrega site.json com fallback (evita erro na Vercel se o arquivo não existir)
-let siteConfiguration = {}
-try {
-  const raw = fs.readFileSync('./.figma/make/site.json', 'utf-8')
-  siteConfiguration = JSON.parse(raw)
-} catch {
-  console.warn('⚠️ .figma/make/site.json não encontrado – usando configurações padrão')
-}
+import siteConfiguration from './.figma/make/site.json'
 
 const isFigmaSandbox = process.env.FIGMA === '1' || process.env.FIGMA === 'true'
 
+// Vite config — https://vitejs.dev/config/
 export default defineConfig({
   base: process.env.FIGMA_PUBLIC_URL ? `${process.env.FIGMA_PUBLIC_URL}/` : '/',
   plugins: [
@@ -46,22 +35,34 @@ export default defineConfig({
   },
 })
 
-// ============================================================
-// PLUGINS
-// ============================================================
-
 type FigmaSiteConfiguration = {
   title?: string
   description?: string
   language?: string
-  robots?: { index?: boolean }
-  icons?: { icon?: string }
-  openGraph?: { image?: string }
-  analytics?: { googleAnalyticsId?: string }
-  customScripts?: { headStart?: string; headEnd?: string; bodyStart?: string; bodyEnd?: string }
-  accessibility?: { addBypassLinks?: boolean }
+  robots?: {
+    index?: boolean
+  }
+  icons?: {
+    icon?: string
+  }
+  openGraph?: {
+    image?: string
+  }
+  analytics?: {
+    googleAnalyticsId?: string
+  }
+  customScripts?: {
+    headStart?: string
+    headEnd?: string
+    bodyStart?: string
+    bodyEnd?: string
+  }
+  accessibility?: {
+    addBypassLinks?: boolean
+  }
 }
 
+/** Applies /.figma/make/site.json to the generated document shell. */
 function figmaSiteConfiguration(config: FigmaSiteConfiguration): Plugin {
   function sanitizeHtmlValue(value: string | undefined): string {
     return value?.replace(/[^a-zA-Z0-9_-]/g, '') || ''
@@ -73,8 +74,7 @@ function figmaSiteConfiguration(config: FigmaSiteConfiguration): Plugin {
     return html.replace(`<!-- ${slotName} -->`, content)
   }
 
-  // ⬇️⬇️⬇️ LINHA QUE VOCÊ PEDIU PARA MANTER ⬇️⬇️⬇️
-  const title = config.title ?? 'Portfolio de Eric Yuji Ikeda v5'
+  const title = config.title ?? "Portfolio v5 - Eric Yuji Ikeda"
   const description = config.description ?? ''
   const favicon = config.icons?.icon ?? ''
   const socialImage = config.openGraph?.image ?? ''
@@ -91,12 +91,14 @@ function figmaSiteConfiguration(config: FigmaSiteConfiguration): Plugin {
     configureServer(server) {
       server.middlewares.use((req, res, next) => {
         if (!robotsTxt || req.url?.split('?')[0] !== '/robots.txt') return next()
+
         res.setHeader('Content-Type', 'text/plain; charset=utf-8')
         res.end(robotsTxt)
       })
     },
     generateBundle() {
       if (!robotsTxt) return
+
       this.emitFile({
         type: 'asset',
         fileName: 'robots.txt',
@@ -134,14 +136,18 @@ function figmaSiteConfiguration(config: FigmaSiteConfiguration): Plugin {
           tags.push(
             { tag: 'meta', attrs: { property: 'og:image', content: socialImage }, injectTo: 'head' },
             { tag: 'meta', attrs: { name: 'twitter:card', content: 'summary_large_image' }, injectTo: 'head' },
-            { tag: 'meta', attrs: { name: 'twitter:image', content: socialImage }, injectTo: 'head' }
+            { tag: 'meta', attrs: { name: 'twitter:image', content: socialImage }, injectTo: 'head' },
           )
         }
+
         if (googleAnalyticsId) {
           tags.push(
             {
               tag: 'script',
-              attrs: { async: true, src: `https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsId}` },
+              attrs: {
+                async: true,
+                src: `https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsId}`,
+              },
               injectTo: 'head',
             },
             {
@@ -153,9 +159,10 @@ function figmaSiteConfiguration(config: FigmaSiteConfiguration): Plugin {
   gtag('config', ${JSON.stringify(googleAnalyticsId)});
 `,
               injectTo: 'head',
-            }
+            },
           )
         }
+
         if (config.accessibility?.addBypassLinks) {
           tags.push(
             {
@@ -185,21 +192,39 @@ function figmaSiteConfiguration(config: FigmaSiteConfiguration): Plugin {
               attrs: { class: 'figma-bypass-link', href: '#root' },
               children: 'Skip to content',
               injectTo: 'body-prepend',
-            }
+            },
           )
         }
-        return { html: result, tags }
+
+        return {
+          html: result,
+          tags,
+        }
       },
     },
   }
 }
 
+/**
+ * Replay the most recent build error to clients that connect after
+ * it was first broadcast. Vite buffers an error payload only while
+ * no clients are connected and clears the buffer on the first
+ * reconnect (see `bufferedMessage` in `createWebSocketServer`), so
+ * if the preview iframe reloads after Vite already delivered an
+ * error to a live socket, the new socket misses the payload and
+ * the overlay stays hidden even though the build is still broken.
+ * We intercept `ws.send` to remember the latest error and replay
+ * it on every new connection; the cache clears on a successful
+ * `update` or `full-reload` so a stale overlay can't survive a
+ * fixed build.
+ */
 function figmaErrorOverlayReplay(): Plugin {
   return {
     name: 'figma-error-overlay-replay',
     apply: 'serve',
     configureServer(server) {
       let lastError: object | null = null
+
       const origSend = server.ws.send.bind(server.ws) as (...args: any[]) => void
       server.ws.send = ((...args: any[]) => {
         const payload = args[0]
@@ -213,6 +238,7 @@ function figmaErrorOverlayReplay(): Plugin {
         }
         return origSend(...args)
       }) as typeof server.ws.send
+
       server.ws.on('connection', (socket) => {
         if (lastError !== null) {
           socket.send(JSON.stringify(lastError))
@@ -222,6 +248,17 @@ function figmaErrorOverlayReplay(): Plugin {
   }
 }
 
+/**
+ * Serves a blank render-target page at /.figma/make/kit.html that
+ * the Figma preview script drives directly. The page exposes a
+ * registry of every file matching `storiesGlob` on
+ * window.__FIGMA__.stories so the design surface can dynamically
+ * import + mount each entry into its own grid view.
+ *
+ * Dev-only: `apply: 'serve'` gates the plugin to `vite dev`. Prod
+ * builds (`vite build`) skip it entirely so the route doesn't leak
+ * into shipped bundles.
+ */
 function figmaMakeKitPlugin(options: { storiesGlob: string | string[] }): Plugin {
   const storiesGlob = Array.isArray(options.storiesGlob) ? options.storiesGlob : [options.storiesGlob]
   const ROUTE = '/.figma/make/kit.html'
@@ -243,6 +280,7 @@ function figmaMakeKitPlugin(options: { storiesGlob: string | string[] }): Plugin
 </script>
 </body>
 </html>`
+
   return {
     name: 'figma-make-kit',
     apply: 'serve',
@@ -258,6 +296,7 @@ function figmaMakeKitPlugin(options: { storiesGlob: string | string[] }): Plugin
       server.middlewares.use(async (req, res, next) => {
         const url = req.url || ''
         if (url.split('?')[0] !== ROUTE) return next()
+
         try {
           res.setHeader('Content-Type', 'text/html')
           res.end(await server.transformIndexHtml(url, HTML_BOOTSTRAP))
