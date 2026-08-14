@@ -1,5 +1,7 @@
-import { useState, useEffect } from 'react'
-import logoSrc from '@/imports/Logo.png'
+import { useEffect, useState } from 'react'
+
+const logoSrc =
+  'https://drive.google.com/thumbnail?id=19o0-cXysNK5HsufGJJSZThSlPpuury__&sz=w1000'
 
 const links = [
   { label: 'Início', href: '#' },
@@ -14,12 +16,38 @@ export default function Nav() {
   const [open, setOpen] = useState(false)
 
   useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 40)
-    window.addEventListener('scroll', fn, { passive: true })
-    return () => window.removeEventListener('scroll', fn)
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 40)
+    }
+
+    handleScroll()
+
+    window.addEventListener('scroll', handleScroll, {
+      passive: true,
+    })
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
   }, [])
 
-  const close = () => setOpen(false)
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 768) {
+        setOpen(false)
+      }
+    }
+
+    window.addEventListener('resize', handleResize)
+
+    return () => {
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [])
+
+  const close = () => {
+    setOpen(false)
+  }
 
   return (
     <header
@@ -29,33 +57,75 @@ export default function Nav() {
         left: 0,
         right: 0,
         zIndex: 100,
-        transition: 'background 0.4s, border-color 0.4s, backdrop-filter 0.4s',
-        backgroundColor: scrolled ? 'rgba(7,7,15,0.88)' : 'transparent',
+        transition:
+          'background 0.4s, border-color 0.4s, backdrop-filter 0.4s',
+        backgroundColor: scrolled
+          ? 'rgba(7,7,15,0.88)'
+          : 'transparent',
         backdropFilter: scrolled ? 'blur(18px)' : 'none',
         WebkitBackdropFilter: scrolled ? 'blur(18px)' : 'none',
-        borderBottom: scrolled ? '1px solid var(--border)' : '1px solid transparent',
+        borderBottom: scrolled
+          ? '1px solid var(--border)'
+          : '1px solid transparent',
       }}
     >
       <div
         className="container"
-        style={{ height: 68, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 2rem' }}
+        style={{
+          height: 68,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '0 2rem',
+        }}
       >
-        <a href="#" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
-          <img src={logoSrc} alt="EYI logo" style={{ height: 38, width: 38, objectFit: 'contain' }} />
+        {/* Logo */}
+        <a
+          href="#"
+          onClick={close}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+            textDecoration: 'none',
+          }}
+        >
+          <img
+            src={logoSrc}
+            alt="Logo Eric Y. Ikeda"
+            loading="eager"
+            referrerPolicy="no-referrer"
+            style={{
+              height: 38,
+              width: 38,
+              objectFit: 'contain',
+              display: 'block',
+            }}
+          />
+
           <span
             className="font-display"
-            style={{ color: 'var(--text)', fontSize: '0.95rem', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase' }}
+            style={{
+              color: 'var(--text)',
+              fontSize: '0.95rem',
+              fontWeight: 700,
+              letterSpacing: '0.15em',
+              textTransform: 'uppercase',
+            }}
           >
             Eric Y. Ikeda
           </span>
         </a>
 
         {/* Desktop */}
-        <nav className="nav-links">
-          {links.map((l) => (
+        <nav
+          className="nav-links"
+          aria-label="Navegação principal"
+        >
+          {links.map((link) => (
             <a
-              key={l.href}
-              href={l.href}
+              key={link.href}
+              href={link.href}
               className="font-mono"
               style={{
                 color: 'var(--muted)',
@@ -65,12 +135,19 @@ export default function Nav() {
                 textTransform: 'uppercase',
                 transition: 'color 0.2s',
               }}
-              onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = 'var(--text)')}
-              onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = 'var(--muted)')}
+              onMouseEnter={(e) => {
+                ;(e.currentTarget as HTMLElement).style.color =
+                  'var(--text)'
+              }}
+              onMouseLeave={(e) => {
+                ;(e.currentTarget as HTMLElement).style.color =
+                  'var(--muted)'
+              }}
             >
-              {l.label}
+              {link.label}
             </a>
           ))}
+
           <a
             href="#contato"
             className="font-mono"
@@ -88,11 +165,14 @@ export default function Nav() {
             }}
             onMouseEnter={(e) => {
               const el = e.currentTarget as HTMLElement
+
               el.style.opacity = '0.82'
-              el.style.boxShadow = '0 0 22px var(--blue-glow)'
+              el.style.boxShadow =
+                '0 0 22px var(--blue-glow)'
             }}
             onMouseLeave={(e) => {
               const el = e.currentTarget as HTMLElement
+
               el.style.opacity = '1'
               el.style.boxShadow = 'none'
             }}
@@ -103,24 +183,62 @@ export default function Nav() {
 
         {/* Hamburger */}
         <button
+          type="button"
           className="nav-hamburger"
-          onClick={() => setOpen((v) => !v)}
-          aria-label="Menu"
-          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 6 }}
+          onClick={() => setOpen((value) => !value)}
+          aria-label={open ? 'Fechar menu' : 'Abrir menu'}
+          aria-expanded={open}
+          style={{
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            padding: 6,
+          }}
         >
-          {[0, 1, 2].map((i) => (
-            <span
-              key={i}
-              style={{
-                display: 'block',
-                width: i === 2 ? 14 : 22,
-                height: 2,
-                background: 'var(--text)',
-                borderRadius: 1,
-                transition: 'width 0.2s',
-              }}
-            />
-          ))}
+          <span
+            style={{
+              display: 'block',
+              width: 22,
+              height: 2,
+              background: 'var(--text)',
+              borderRadius: 1,
+              transition:
+                'transform 0.25s, width 0.25s',
+              transform: open
+                ? 'translateY(6px) rotate(45deg)'
+                : 'none',
+            }}
+          />
+
+          <span
+            style={{
+              display: 'block',
+              width: 22,
+              height: 2,
+              background: 'var(--text)',
+              borderRadius: 1,
+              marginTop: 4,
+              transition:
+                'opacity 0.25s, transform 0.25s',
+              opacity: open ? 0 : 1,
+            }}
+          />
+
+          <span
+            style={{
+              display: 'block',
+              width: open ? 22 : 14,
+              height: 2,
+              background: 'var(--text)',
+              borderRadius: 1,
+              marginTop: 4,
+              transition:
+                'transform 0.25s, width 0.25s',
+              transform: open
+                ? 'translateY(-6px) rotate(-45deg)'
+                : 'none',
+            }}
+          />
         </button>
       </div>
 
@@ -129,23 +247,41 @@ export default function Nav() {
         style={{
           overflow: 'hidden',
           maxHeight: open ? '400px' : 0,
-          transition: 'max-height 0.35s cubic-bezier(0.22, 1, 0.36, 1)',
+          transition:
+            'max-height 0.35s cubic-bezier(0.22, 1, 0.36, 1)',
           backgroundColor: 'rgba(7,7,15,0.98)',
-          borderTop: open ? '1px solid var(--border)' : 'none',
+          borderTop: open
+            ? '1px solid var(--border)'
+            : 'none',
         }}
       >
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', padding: '1.5rem 1.5rem 2rem' }}>
-          {links.map((l) => (
+        <nav
+          aria-label="Navegação mobile"
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '1.25rem',
+            padding: '1.5rem 1.5rem 2rem',
+          }}
+        >
+          {links.map((link) => (
             <a
-              key={l.href}
-              href={l.href}
+              key={link.href}
+              href={link.href}
               onClick={close}
               className="font-mono"
-              style={{ color: 'var(--text)', textDecoration: 'none', fontSize: '0.85rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}
+              style={{
+                color: 'var(--text)',
+                textDecoration: 'none',
+                fontSize: '0.85rem',
+                letterSpacing: '0.1em',
+                textTransform: 'uppercase',
+              }}
             >
-              {l.label}
+              {link.label}
             </a>
           ))}
+
           <a
             href="#contato"
             onClick={close}
@@ -165,7 +301,7 @@ export default function Nav() {
           >
             Contratar
           </a>
-        </div>
+        </nav>
       </div>
     </header>
   )
