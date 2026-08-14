@@ -127,12 +127,6 @@ export default function Contact() {
                 Vamos <span className="accent">conversar</span>
               </h2>
             </Reveal>
-            <Reveal delay={150} from="bottom">
-              <p style={{ fontSize: '1rem', lineHeight: 1.8, color: 'var(--muted)', marginBottom: '2rem', maxWidth: 400, fontWeight: 300 }}>
-                Busco oportunidades de estágio, vaga como Desenvolvedor Júnior e projetos freelancer.
-                Estou sempre aberto a novas conexões e desafios.
-              </p>
-            </Reveal>
 
             <RevealGroup stagger={90} from="bottom" baseDelay={200} style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
               {contactItems.map((item) => (
@@ -173,8 +167,8 @@ export default function Contact() {
                 </div>
 
                 <p style={{ fontSize: '1rem', lineHeight: 1.8, color: 'var(--muted)', marginBottom: '1.75rem', fontWeight: 300 }}>
-                  Busco oportunidades de{' '}
-                  <strong style={{ color: 'var(--text)', fontWeight: 600 }}>estágio</strong>, vaga como{' '}
+                  Busco oportunidades de
+                  <strong style={{ color: 'var(--text)', fontWeight: 600 }}></strong> vaga como{' '}
                   <strong style={{ color: 'var(--text)', fontWeight: 600 }}>Desenvolvedor Júnior</strong> e projetos{' '}
                   <strong style={{ color: 'var(--text)', fontWeight: 600 }}>freelancer</strong>, contribuindo com
                   soluções modernas e evoluindo continuamente como desenvolvedor.
@@ -185,7 +179,7 @@ export default function Contact() {
                     Interesse em
                   </div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.45rem' }}>
-                    {['Estágio', 'Dev Júnior', 'Freelancer', 'Full Stack', 'Mobile'].map((tag) => (
+                    {['Dev Júnior', 'Freelancer', 'Full Stack', 'Mobile'].map((tag) => (
                       <span
                         key={tag}
                         style={{
