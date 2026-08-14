@@ -115,7 +115,7 @@ export default function Experience() {
                   <div
                     className="font-mono"
                     style={{
-                      fontSize: '0.56rem',
+                      fontSize: '0.76rem',
                       letterSpacing: '0.14em',
                       color: active === i ? p.color : 'var(--muted)',
                       textTransform: 'uppercase',
@@ -171,7 +171,7 @@ export default function Experience() {
                   <span
                     className="font-mono"
                     style={{
-                      fontSize: '0.58rem',
+                      fontSize: '0.70rem',
                       letterSpacing: '0.1em',
                       color: proj.color,
                       background: `${proj.color}12`,
@@ -185,18 +185,18 @@ export default function Experience() {
                   </span>
                 </div>
 
-                <p style={{ fontSize: '0.95rem', lineHeight: 1.8, color: 'var(--muted)', maxWidth: 520, fontWeight: 300, marginBottom: '1.75rem' }}>
+                <p style={{ fontSize: '0.95rem', lineHeight: 1.8, color: 'var(--muted)', maxWidth: 520, fontWeight: 400, marginBottom: '1.75rem' }}>
                   {proj.description}
                 </p>
               </div>
 
               <div>
-                <div className="font-mono" style={{ fontSize: '0.58rem', letterSpacing: '0.12em', color: 'var(--muted)', textTransform: 'uppercase', marginBottom: '0.7rem' }}>
+                <div className="font-mono" style={{ fontSize: '0.70rem', letterSpacing: '0.12em', color: 'var(--muted)', textTransform: 'uppercase', marginBottom: '0.7rem' }}>
                   Destaques
                 </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '1.5rem' }}>
                   {proj.highlights.map((h) => (
-                    <span key={h} style={{ fontSize: '0.78rem', color: 'var(--text)', background: 'var(--card)', border: '1px solid var(--border)', padding: '0.28rem 0.65rem', borderRadius: 2 }}>
+                    <span key={h} style={{ fontSize: '0.84rem', color: 'var(--text)', background: 'var(--card)', border: '1px solid var(--border)', padding: '0.28rem 0.65rem', borderRadius: 2 }}>
                       {h}
                     </span>
                   ))}
@@ -205,7 +205,7 @@ export default function Experience() {
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
                   <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
                     {proj.tags.map((t) => (
-                      <span key={t} className="font-mono" style={{ fontSize: '0.58rem', letterSpacing: '0.1em', color: proj.color, textTransform: 'uppercase' }}>
+                      <span key={t} className="font-mono" style={{ fontSize: '0.70rem', letterSpacing: '0.1em', color: proj.color, textTransform: 'uppercase' }}>
                         #{t}
                       </span>
                     ))}
@@ -220,7 +220,7 @@ export default function Experience() {
                       display: 'inline-flex',
                       alignItems: 'center',
                       gap: 6,
-                      fontSize: '0.65rem',
+                      fontSize: '0.74rem',
                       letterSpacing: '0.1em',
                       textTransform: 'uppercase',
                       color: 'var(--muted)',

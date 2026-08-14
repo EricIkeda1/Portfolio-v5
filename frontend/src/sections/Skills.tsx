@@ -30,7 +30,7 @@ export default function Skills() {
               <h2 className="display-heading">
                 Stack <span className="accent">técnico</span>
               </h2>
-              <p className="font-mono" style={{ fontSize: '0.7rem', color: 'var(--muted)', letterSpacing: '0.04em', maxWidth: 280, lineHeight: 1.7 }}>
+              <p className="font-mono" style={{ fontSize: '0.76rem', color: 'var(--muted)', letterSpacing: '0.04em', maxWidth: 280, lineHeight: 1.7 }}>
                 Tecnologias para construir soluções completas e escaláveis.
               </p>
             </div>
@@ -44,7 +44,7 @@ export default function Skills() {
               <div className="skills-row">
                 <span
                   className="font-mono"
-                  style={{ fontSize: '0.65rem', letterSpacing: '0.12em', color: 'var(--muted)', textTransform: 'uppercase' }}
+                  style={{ fontSize: '0.74rem', letterSpacing: '0.12em', color: 'var(--muted)', textTransform: 'uppercase' }}
                 >
                   {cat.category}
                 </span>

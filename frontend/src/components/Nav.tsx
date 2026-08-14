@@ -130,7 +130,7 @@ export default function Nav() {
               style={{
                 color: 'var(--muted)',
                 textDecoration: 'none',
-                fontSize: '0.68rem',
+                fontSize: '0.76rem',
                 letterSpacing: '0.1em',
                 textTransform: 'uppercase',
                 transition: 'color 0.2s',
@@ -157,7 +157,7 @@ export default function Nav() {
               textDecoration: 'none',
               padding: '0.48rem 1.15rem',
               borderRadius: 3,
-              fontSize: '0.68rem',
+              fontSize: '0.76rem',
               letterSpacing: '0.1em',
               textTransform: 'uppercase',
               fontWeight: 700,

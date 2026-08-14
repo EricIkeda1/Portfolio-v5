@@ -94,7 +94,7 @@ function StatCard({
     >
       <div
         className="font-mono"
-        style={{ fontSize: '0.6rem', letterSpacing: '0.14em', color: 'var(--muted)', textTransform: 'uppercase' }}
+        style={{ fontSize: '0.72rem', letterSpacing: '0.14em', color: 'var(--muted)', textTransform: 'uppercase' }}
       >
         {label}
       </div>
@@ -111,7 +111,7 @@ function StatCard({
         {count}{suffix}
       </div>
       {sub && (
-        <div style={{ fontSize: '0.75rem', color: 'var(--muted)', fontWeight: 300, marginTop: 2 }}>
+        <div style={{ fontSize: '0.82rem', color: 'var(--muted)', fontWeight: 400, marginTop: 2 }}>
           {sub}
         </div>
       )}
@@ -133,7 +133,7 @@ function LangBar({ languages, active }: { languages: GithubStats['languages']; a
         gap: '1rem',
       }}
     >
-      <div className="font-mono" style={{ fontSize: '0.6rem', letterSpacing: '0.14em', color: 'var(--muted)', textTransform: 'uppercase' }}>
+      <div className="font-mono" style={{ fontSize: '0.72rem', letterSpacing: '0.14em', color: 'var(--muted)', textTransform: 'uppercase' }}>
         Linguagens — Top {languages.length}
       </div>
 
@@ -168,8 +168,8 @@ function LangBar({ languages, active }: { languages: GithubStats['languages']; a
                 flexShrink: 0,
               }}
             />
-            <span style={{ fontSize: '0.75rem', color: 'var(--text)' }}>{l.name}</span>
-            <span className="font-mono" style={{ fontSize: '0.62rem', color: 'var(--muted)' }}>
+            <span style={{ fontSize: '0.82rem', color: 'var(--text)' }}>{l.name}</span>
+            <span className="font-mono" style={{ fontSize: '0.72rem', color: 'var(--muted)' }}>
               {Math.round((l.count / total) * 100)}%
             </span>
           </div>
@@ -278,7 +278,7 @@ export default function Highlights() {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: 8,
-                fontSize: '0.68rem',
+                fontSize: '0.76rem',
                 letterSpacing: '0.1em',
                 textTransform: 'uppercase',
                 color: 'var(--muted)',
@@ -369,7 +369,7 @@ export default function Highlights() {
                   </svg>
                   <span
                     className="font-mono"
-                    style={{ fontSize: '0.62rem', letterSpacing: '0.1em', color: 'var(--muted)', textTransform: 'uppercase', textAlign: 'center' }}
+                    style={{ fontSize: '0.72rem', letterSpacing: '0.1em', color: 'var(--muted)', textTransform: 'uppercase', textAlign: 'center' }}
                   >
                     Ver perfil
                   </span>

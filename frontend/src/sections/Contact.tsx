@@ -85,12 +85,12 @@ function ContactCard({ item }: { item: (typeof contactItems)[0] }) {
     >
       <span style={{ color: 'var(--blue)', flexShrink: 0 }}>{item.icon}</span>
       <div style={{ flex: 1 }}>
-        <div className="font-mono" style={{ fontSize: '0.57rem', letterSpacing: '0.12em', color: 'var(--muted)', textTransform: 'uppercase', marginBottom: 3 }}>
+        <div className="font-mono" style={{ fontSize: '0.76rem', letterSpacing: '0.12em', color: 'var(--muted)', textTransform: 'uppercase', marginBottom: 3 }}>
           {item.label}
         </div>
         <div style={{ fontSize: '0.88rem', color: 'var(--text)', fontWeight: 500 }}>{item.value}</div>
         {'extra' in item && item.extra && (
-          <div className="font-mono" style={{ fontSize: '0.62rem', color: 'var(--muted)', marginTop: 2, letterSpacing: '0.04em' }}>
+          <div className="font-mono" style={{ fontSize: '0.72rem', color: 'var(--muted)', marginTop: 2, letterSpacing: '0.04em' }}>
             {item.extra}
           </div>
         )}
@@ -162,11 +162,11 @@ export default function Contact() {
                   }}
                 />
 
-                <div className="font-mono" style={{ fontSize: '0.62rem', letterSpacing: '0.15em', color: 'var(--blue)', textTransform: 'uppercase', marginBottom: '1.25rem' }}>
+                <div className="font-mono" style={{ fontSize: '0.72rem', letterSpacing: '0.15em', color: 'var(--blue)', textTransform: 'uppercase', marginBottom: '1.25rem' }}>
                   Objetivo
                 </div>
 
-                <p style={{ fontSize: '1rem', lineHeight: 1.8, color: 'var(--muted)', marginBottom: '1.75rem', fontWeight: 300 }}>
+                <p style={{ fontSize: '1rem', lineHeight: 1.8, color: 'var(--muted)', marginBottom: '1.75rem', fontWeight: 400 }}>
                   Busco oportunidades de
                   <strong style={{ color: 'var(--text)', fontWeight: 600 }}></strong> vaga como{' '}
                   <strong style={{ color: 'var(--text)', fontWeight: 600 }}>Desenvolvedor Júnior</strong> e projetos{' '}
@@ -175,7 +175,7 @@ export default function Contact() {
                 </p>
 
                 <div style={{ borderTop: '1px solid var(--border)', paddingTop: '1.25rem' }}>
-                  <div className="font-mono" style={{ fontSize: '0.6rem', letterSpacing: '0.12em', color: 'var(--muted)', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
+                  <div className="font-mono" style={{ fontSize: '0.72rem', letterSpacing: '0.12em', color: 'var(--muted)', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
                     Interesse em
                   </div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.45rem' }}>
@@ -183,7 +183,7 @@ export default function Contact() {
                       <span
                         key={tag}
                         style={{
-                          fontSize: '0.78rem',
+                          fontSize: '0.84rem',
                           color: 'var(--blue)',
                           background: 'var(--blue-dim)',
                           border: '1px solid rgba(66,133,255,0.2)',
@@ -220,7 +220,7 @@ export default function Contact() {
                     animation: 'pulse-glow 2s ease-in-out infinite',
                   }}
                 />
-                <span className="font-mono" style={{ fontSize: '0.67rem', letterSpacing: '0.1em', color: 'var(--muted)', textTransform: 'uppercase' }}>
+                <span className="font-mono" style={{ fontSize: '0.74rem', letterSpacing: '0.1em', color: 'var(--muted)', textTransform: 'uppercase' }}>
                   Disponível para novas oportunidades
                 </span>
               </div>

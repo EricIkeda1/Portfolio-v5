@@ -115,7 +115,7 @@ function VersionCard({ v, index }: { v: (typeof versions)[0]; index: number }) {
         </span>
         <span
           className="font-mono"
-          style={{ fontSize: '0.58rem', letterSpacing: '0.1em', color: 'var(--muted-2)', textTransform: 'uppercase', marginTop: 4 }}
+          style={{ fontSize: '0.70rem', letterSpacing: '0.1em', color: 'var(--muted-2)', textTransform: 'uppercase', marginTop: 4 }}
         >
           {v.year}
         </span>
@@ -129,10 +129,10 @@ function VersionCard({ v, index }: { v: (typeof versions)[0]; index: number }) {
       {/* Description — fixed height so cards align */}
       <p
         style={{
-          fontSize: '0.78rem',
+          fontSize: '0.84rem',
           lineHeight: 1.65,
           color: 'var(--muted)',
-          fontWeight: 300,
+          fontWeight: 400,
           flex: 1,
           minHeight: '3.3em',
         }}
@@ -147,7 +147,7 @@ function VersionCard({ v, index }: { v: (typeof versions)[0]; index: number }) {
             key={t}
             className="font-mono"
             style={{
-              fontSize: '0.56rem',
+              fontSize: '0.76rem',
               letterSpacing: '0.08em',
               color: v.current ? 'var(--blue)' : 'var(--muted)',
               background: v.current ? 'var(--blue-dim)' : 'transparent',
@@ -174,7 +174,7 @@ function VersionCard({ v, index }: { v: (typeof versions)[0]; index: number }) {
               display: 'inline-flex',
               alignItems: 'center',
               gap: 5,
-              fontSize: '0.6rem',
+              fontSize: '0.72rem',
               letterSpacing: '0.1em',
               color: 'var(--muted)',
               textDecoration: 'none',
@@ -187,7 +187,7 @@ function VersionCard({ v, index }: { v: (typeof versions)[0]; index: number }) {
             Visitar <ExternalIcon />
           </a>
         ) : (
-          <div className="font-mono" style={{ fontSize: '0.6rem', letterSpacing: '0.1em', color: 'var(--blue)', textTransform: 'uppercase' }}>
+          <div className="font-mono" style={{ fontSize: '0.72rem', letterSpacing: '0.1em', color: 'var(--blue)', textTransform: 'uppercase' }}>
             ● Você está aqui
           </div>
         )}
@@ -208,7 +208,7 @@ export default function Versions() {
             <h2 className="display-heading">
               Evolução do <span className="accent">portfólio</span>
             </h2>
-            <p className="font-mono" style={{ fontSize: '0.68rem', color: 'var(--muted)', letterSpacing: '0.05em', maxWidth: 260, lineHeight: 1.7 }}>
+            <p className="font-mono" style={{ fontSize: '0.76rem', color: 'var(--muted)', letterSpacing: '0.05em', maxWidth: 260, lineHeight: 1.7 }}>
               Cada versão representa um passo na jornada como desenvolvedor.
             </p>
           </div>

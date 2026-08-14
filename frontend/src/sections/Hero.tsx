@@ -223,7 +223,7 @@ export default function Hero() {
                     key={r}
                     className="font-mono"
                     style={{
-                      fontSize: '0.65rem',
+                      fontSize: '0.74rem',
                       letterSpacing: '0.1em',
                       color: 'var(--muted)',
                       background: 'var(--surface)',
@@ -247,7 +247,7 @@ export default function Hero() {
                   color: 'var(--muted)',
                   maxWidth: 520,
                   marginBottom: '2.25rem',
-                  fontWeight: 300,
+                  fontWeight: 400,
                 }}
               >
                 Desenvolvedor apaixonado por tecnologia, focado na criação de
@@ -273,7 +273,7 @@ export default function Hero() {
                     textDecoration: 'none',
                     padding: '0.8rem 1.75rem',
                     borderRadius: 3,
-                    fontSize: '0.7rem',
+                    fontSize: '0.76rem',
                     letterSpacing: '0.12em',
                     textTransform: 'uppercase',
                     fontWeight: 700,
@@ -319,7 +319,7 @@ export default function Hero() {
                     textDecoration: 'none',
                     padding: '0.8rem 1.75rem',
                     borderRadius: 3,
-                    fontSize: '0.7rem',
+                    fontSize: '0.76rem',
                     letterSpacing: '0.12em',
                     textTransform: 'uppercase',
                     fontWeight: 700,
@@ -353,7 +353,7 @@ export default function Hero() {
                     textDecoration: 'none',
                     padding: '0.8rem 1.75rem',
                     borderRadius: 3,
-                    fontSize: '0.7rem',
+                    fontSize: '0.76rem',
                     letterSpacing: '0.12em',
                     textTransform: 'uppercase',
                     fontWeight: 700,
@@ -397,7 +397,7 @@ export default function Hero() {
                   style={{
                     color: 'var(--muted)',
                     textDecoration: 'none',
-                    fontSize: '0.62rem',
+                    fontSize: '0.72rem',
                     letterSpacing: '0.08em',
                     textTransform: 'uppercase',
                     display: 'flex',
@@ -481,7 +481,7 @@ export default function Hero() {
           <span
             className="font-mono"
             style={{
-              fontSize: '0.56rem',
+              fontSize: '0.76rem',
               letterSpacing: '0.22em',
               color: 'var(--muted-2)',
               textTransform: 'uppercase',

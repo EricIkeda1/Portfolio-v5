@@ -142,7 +142,7 @@ export default function About() {
                   lineHeight: 1.8,
                   color: 'var(--muted)',
                   marginBottom: '1rem',
-                  fontWeight: 300,
+                  fontWeight: 400,
                 }}
               >
                 Meu nome é Eric, sou desenvolvedor de software e gosto de
@@ -176,7 +176,7 @@ export default function About() {
                   lineHeight: 1.8,
                   color: 'var(--muted)',
                   marginBottom: '1rem',
-                  fontWeight: 300,
+                  fontWeight: 400,
                 }}
               >
                 Gosto de participar de todas as etapas do desenvolvimento,
@@ -210,7 +210,7 @@ export default function About() {
                   lineHeight: 1.8,
                   color: 'var(--muted)',
                   marginBottom: '1.75rem',
-                  fontWeight: 300,
+                  fontWeight: 400,
                 }}
               >
                 Além de desenvolver para clientes, também crio{' '}
@@ -242,7 +242,7 @@ export default function About() {
                 <div
                   className="font-mono"
                   style={{
-                    fontSize: '0.6rem',
+                    fontSize: '0.72rem',
                     letterSpacing: '0.12em',
                     color: 'var(--blue)',
                     textTransform: 'uppercase',
@@ -281,7 +281,7 @@ export default function About() {
               <div
                 className="font-mono"
                 style={{
-                  fontSize: '0.65rem',
+                  fontSize: '0.74rem',
                   letterSpacing: '0.15em',
                   color: 'var(--muted)',
                   textTransform: 'uppercase',
