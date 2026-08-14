@@ -1,6 +1,7 @@
 import { Reveal, RevealGroup } from '@/components/Reveal'
 
-const photoSrc = `${import.meta.env.BASE_URL}assets/Perfil.png`
+const photoSrc =
+  'https://drive.google.com/thumbnail?id=18I4wMhuprbKT0OLBLvAvz12yAoPNQSNc&sz=w1000'
 
 const areas = [
   {
@@ -62,7 +63,6 @@ export default function About() {
     <section id="sobre" className="section-pad">
       <div className="container">
         <div className="grid-2">
-
           {/* Left — photo + bio */}
           <div>
             <Reveal from="bottom">
@@ -102,6 +102,8 @@ export default function About() {
                 <img
                   src={photoSrc}
                   alt="Eric Y. Ikeda"
+                  loading="lazy"
+                  referrerPolicy="no-referrer"
                   style={{
                     width: 120,
                     height: 120,
