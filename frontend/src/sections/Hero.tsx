@@ -1,10 +1,10 @@
 import { TypewriterText } from '@/components/TypewriterText'
+import { usePortfolioContent } from '@/context/PortfolioContentContext'
 
 const logoSrc =
   'https://drive.google.com/thumbnail?id=19o0-cXysNK5HsufGJJSZThSlPpuury__&sz=w1000'
 
-// ← coloque aqui o seu número com DDI+DDD, ex: 5543999990000
-const WHATSAPP_NUMBER = '5543996369387'
+const DEFAULT_WHATSAPP_NUMBER = '5543996369387'
 
 const roles = [
   'Full Stack Developer',
@@ -27,7 +27,7 @@ const WhatsAppIcon = ({ size = 16 }: { size?: number }) => (
   </svg>
 )
 
-const socialLinks = [
+const getSocialLinks = (whatsappNumber: string) => [
   {
     label: 'github.com/EricIkeda1',
     href: 'https://github.com/EricIkeda1',
@@ -61,13 +61,17 @@ const socialLinks = [
   },
   {
     label: 'WhatsApp',
-    href: `https://wa.me/${WHATSAPP_NUMBER}`,
+    href: `https://wa.me/${whatsappNumber}`,
     icon: <WhatsAppIcon size={14} />,
     color: '#25D366',
   },
 ]
 
 export default function Hero() {
+  const { content } = usePortfolioContent()
+  const whatsappNumber = (content.whatsapp || DEFAULT_WHATSAPP_NUMBER).replace(/\D/g, '')
+  const socialLinks = getSocialLinks(whatsappNumber)
+
   return (
     <section
       style={{
@@ -309,7 +313,7 @@ export default function Hero() {
 
                 {/* WhatsApp CTA button */}
                 <a
-                  href={`https://wa.me/${WHATSAPP_NUMBER}`}
+                  href={`https://wa.me/${whatsappNumber}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="font-mono"
@@ -521,7 +525,7 @@ export default function Hero() {
 
       {/* Floating WhatsApp button */}
       <a
-        href={`https://wa.me/${WHATSAPP_NUMBER}`}
+        href={`https://wa.me/${whatsappNumber}`}
         target="_blank"
         rel="noopener noreferrer"
         title="Falar no WhatsApp"
