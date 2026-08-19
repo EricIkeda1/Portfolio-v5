@@ -1,6 +1,5 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useState } from 'react'
 import { Reveal } from '@/components/Reveal'
-import { usePortfolioContent } from '@/context/PortfolioContentContext'
 
 const GithubIcon = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
@@ -8,18 +7,51 @@ const GithubIcon = () => (
   </svg>
 )
 
+const projects = [
+  {
+    name: 'Ademiconnect',
+    type: 'CRM Mobile',
+    tags: ['Flutter', 'Supabase', 'Mobile'],
+    description:
+      'CRM Mobile desenvolvido com Flutter e Supabase, com sincronização em tempo real e funcionamento offline. Solução completa para gestão de relacionamento com clientes.',
+    highlights: ['Sync em tempo real', 'Modo offline', 'Flutter + Supabase'],
+    github: 'https://github.com/EricIkeda1/Ademiconnect',
+    color: '#4285FF',
+  },
+  {
+    name: 'Temperlights',
+    type: 'App Industrial',
+    tags: ['Mobile', 'Rastreabilidade', 'Produção'],
+    description:
+      'Aplicativo para rastreabilidade da produção industrial, com acompanhamento em tempo real de cada etapa do processo de fabricação.',
+    highlights: ['Rastreabilidade', 'Produção industrial', 'Tempo real'],
+    github: 'https://github.com/EricIkeda1/Temperlights-Mobile',
+    color: '#5B9BFF',
+  },
+  {
+    name: 'X4Glass',
+    type: 'Sistema Web',
+    tags: ['Full Stack', 'Rastreabilidade', 'Equipe'],
+    description:
+      'Sistema de rastreabilidade para produção de vidros desenvolvido em equipe. Projeto colaborativo com foco em qualidade e organização de processos industriais.',
+    highlights: ['Desenvolvimento em equipe', 'Rastreabilidade', 'Full Stack'],
+    github: 'https://github.com/EricIkeda1/X4Glass',
+    color: '#7AB3FF',
+  },
+  {
+    name: 'AES',
+    type: 'Criptografia',
+    tags: ['Python', 'Cibersegurança', 'Algoritmos'],
+    description:
+      'Implementação completa do algoritmo AES (Advanced Encryption Standard) em Python do zero, sem bibliotecas externas. Desenvolvido na disciplina de Segurança da Informação, cobre todas as etapas: Key Expansion, SubBytes, ShiftRows, MixColumns e AddRoundKey — 10 rounds de criptografia com chave de 128 bits.',
+    highlights: ['AES 128-bit', 'Python puro', 'Cibersegurança'],
+    github: 'https://github.com/EricIkeda1/AES',
+    color: '#A78BFF',
+  },
+]
+
 export default function Experience() {
-  const { content } = usePortfolioContent()
-  const projects = useMemo(
-    () => [...content.projects].sort((a, b) => a.sort_order - b.sort_order),
-    [content.projects],
-  )
   const [active, setActive] = useState(0)
-
-  useEffect(() => {
-    if (active >= projects.length) setActive(0)
-  }, [active, projects.length])
-
   const proj = projects[active]
 
   return (
@@ -44,185 +76,185 @@ export default function Experience() {
           </Reveal>
         </div>
 
-        {!proj ? (
-          <div className="portfolio-empty-state">Nenhum projeto cadastrado.</div>
-        ) : (
-          <Reveal from="bottom" delay={120} threshold={0.06}>
-            <div
-              className="exp-layout"
-              style={{
-                background: 'var(--border)',
-                gap: '1px',
-                border: '1px solid var(--border)',
-                borderRadius: 4,
-                overflow: 'hidden',
-              }}
-            >
-              <div style={{ background: 'var(--card)', display: 'flex', flexDirection: 'column' }}>
-                {projects.map((project, index) => (
-                  <button
-                    key={project.id}
-                    onClick={() => setActive(index)}
+        <Reveal from="bottom" delay={120} threshold={0.06}>
+          <div
+            className="exp-layout"
+            style={{
+              background: 'var(--border)',
+              gap: '1px',
+              border: '1px solid var(--border)',
+              borderRadius: 4,
+              overflow: 'hidden',
+            }}
+          >
+            {/* Sidebar */}
+            <div style={{ background: 'var(--card)', display: 'flex', flexDirection: 'column' }}>
+              {projects.map((p, i) => (
+                <button
+                  key={p.name}
+                  onClick={() => setActive(i)}
+                  style={{
+                    display: 'block',
+                    width: '100%',
+                    textAlign: 'left',
+                    padding: '1.2rem 1.25rem',
+                    background: active === i ? 'var(--bg)' : 'transparent',
+                    border: 'none',
+                    borderLeft: active === i ? `3px solid ${p.color}` : '3px solid transparent',
+                    borderBottom: '1px solid var(--border)',
+                    cursor: 'pointer',
+                    transition: 'background 0.2s',
+                  }}
+                  onMouseEnter={(e) => {
+                    if (active !== i) (e.currentTarget as HTMLElement).style.background = 'var(--surface)'
+                  }}
+                  onMouseLeave={(e) => {
+                    if (active !== i) (e.currentTarget as HTMLElement).style.background = 'transparent'
+                  }}
+                >
+                  <div
+                    className="font-mono"
                     style={{
-                      display: 'block',
-                      width: '100%',
-                      textAlign: 'left',
-                      padding: '1.2rem 1.25rem',
-                      background: active === index ? 'var(--bg)' : 'transparent',
-                      border: 'none',
-                      borderLeft: active === index ? `3px solid ${project.color}` : '3px solid transparent',
-                      borderBottom: '1px solid var(--border)',
-                      cursor: 'pointer',
-                      transition: 'background 0.2s',
-                    }}
-                    onMouseEnter={(event) => {
-                      if (active !== index) event.currentTarget.style.background = 'var(--surface)'
-                    }}
-                    onMouseLeave={(event) => {
-                      if (active !== index) event.currentTarget.style.background = 'transparent'
+                      fontSize: '0.76rem',
+                      letterSpacing: '0.14em',
+                      color: active === i ? p.color : 'var(--muted)',
+                      textTransform: 'uppercase',
+                      marginBottom: 3,
+                      transition: 'color 0.2s',
                     }}
                   >
-                    <div
-                      className="font-mono"
-                      style={{
-                        fontSize: '0.76rem',
-                        letterSpacing: '0.14em',
-                        color: active === index ? project.color : 'var(--muted)',
-                        textTransform: 'uppercase',
-                        marginBottom: 3,
-                      }}
-                    >
-                      {project.type}
-                    </div>
-                    <div
-                      className="font-display"
-                      style={{
-                        fontSize: '1.2rem',
-                        fontWeight: 700,
-                        color: active === index ? 'var(--text)' : 'var(--muted)',
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.03em',
-                      }}
-                    >
-                      {project.name}
-                    </div>
-                  </button>
-                ))}
-              </div>
-
-              <div
-                key={proj.id}
-                style={{
-                  background: 'var(--bg)',
-                  padding: '2.25rem',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                  animation: 'detailIn 0.35s cubic-bezier(0.22,1,0.36,1)',
-                }}
-              >
-                <div>
-                  {proj.image_url && (
-                    <div className="project-featured-image-wrap">
-                      <img className="project-featured-image" src={proj.image_url} alt={`Imagem do projeto ${proj.name}`} />
-                    </div>
-                  )}
-
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
-                    <h3
-                      className="font-display"
-                      style={{
-                        fontSize: 'clamp(1.6rem, 3vw, 2.4rem)',
-                        fontWeight: 800,
-                        textTransform: 'uppercase',
-                        color: 'var(--text)',
-                        letterSpacing: '-0.01em',
-                      }}
-                    >
-                      {proj.name}
-                    </h3>
-                    <span
-                      className="font-mono"
-                      style={{
-                        fontSize: '0.70rem',
-                        letterSpacing: '0.1em',
-                        color: proj.color,
-                        background: `${proj.color}12`,
-                        border: `1px solid ${proj.color}38`,
-                        padding: '0.26rem 0.6rem',
-                        borderRadius: 2,
-                        textTransform: 'uppercase',
-                      }}
-                    >
-                      {proj.type}
-                    </span>
+                    {p.type}
                   </div>
+                  <div
+                    className="font-display"
+                    style={{
+                      fontSize: '1.2rem',
+                      fontWeight: 700,
+                      color: active === i ? 'var(--text)' : 'var(--muted)',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.03em',
+                      transition: 'color 0.2s',
+                    }}
+                  >
+                    {p.name}
+                  </div>
+                </button>
+              ))}
+            </div>
 
-                  <p style={{ fontSize: '0.95rem', lineHeight: 1.8, color: 'var(--muted)', maxWidth: 620, fontWeight: 400, marginBottom: '1.75rem' }}>
-                    {proj.description}
-                  </p>
+            {/* Detail */}
+            <div
+              key={active}
+              style={{
+                background: 'var(--bg)',
+                padding: '2.25rem',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                animation: 'detailIn 0.35s cubic-bezier(0.22,1,0.36,1)',
+              }}
+            >
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
+                  <h3
+                    className="font-display"
+                    style={{
+                      fontSize: 'clamp(1.6rem, 3vw, 2.4rem)',
+                      fontWeight: 800,
+                      textTransform: 'uppercase',
+                      color: 'var(--text)',
+                      letterSpacing: '-0.01em',
+                    }}
+                  >
+                    {proj.name}
+                  </h3>
+                  <span
+                    className="font-mono"
+                    style={{
+                      fontSize: '0.70rem',
+                      letterSpacing: '0.1em',
+                      color: proj.color,
+                      background: `${proj.color}12`,
+                      border: `1px solid ${proj.color}38`,
+                      padding: '0.26rem 0.6rem',
+                      borderRadius: 2,
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    {proj.type}
+                  </span>
                 </div>
 
-                <div>
-                  {proj.highlights.length > 0 && (
-                    <>
-                      <div className="font-mono" style={{ fontSize: '0.70rem', letterSpacing: '0.12em', color: 'var(--muted)', textTransform: 'uppercase', marginBottom: '0.7rem' }}>
-                        Destaques
-                      </div>
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '1.5rem' }}>
-                        {proj.highlights.map((highlight) => (
-                          <span key={highlight} style={{ fontSize: '0.84rem', color: 'var(--text)', background: 'var(--card)', border: '1px solid var(--border)', padding: '0.28rem 0.65rem', borderRadius: 2 }}>
-                            {highlight}
-                          </span>
-                        ))}
-                      </div>
-                    </>
-                  )}
+                <p style={{ fontSize: '0.95rem', lineHeight: 1.8, color: 'var(--muted)', maxWidth: 520, fontWeight: 400, marginBottom: '1.75rem' }}>
+                  {proj.description}
+                </p>
+              </div>
 
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
-                    <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-                      {proj.tags.map((tag) => (
-                        <span key={tag} className="font-mono" style={{ fontSize: '0.70rem', letterSpacing: '0.1em', color: proj.color, textTransform: 'uppercase' }}>
-                          #{tag}
-                        </span>
-                      ))}
-                    </div>
+              <div>
+                <div className="font-mono" style={{ fontSize: '0.70rem', letterSpacing: '0.12em', color: 'var(--muted)', textTransform: 'uppercase', marginBottom: '0.7rem' }}>
+                  Destaques
+                </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '1.5rem' }}>
+                  {proj.highlights.map((h) => (
+                    <span key={h} style={{ fontSize: '0.84rem', color: 'var(--text)', background: 'var(--card)', border: '1px solid var(--border)', padding: '0.28rem 0.65rem', borderRadius: 2 }}>
+                      {h}
+                    </span>
+                  ))}
+                </div>
 
-                    <a
-                      href={proj.github}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-mono"
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: 6,
-                        fontSize: '0.74rem',
-                        letterSpacing: '0.1em',
-                        textTransform: 'uppercase',
-                        color: 'var(--muted)',
-                        textDecoration: 'none',
-                        padding: '0.4rem 0.85rem',
-                        border: '1px solid var(--border)',
-                        borderRadius: 2,
-                        transition: 'color 0.2s, border-color 0.2s',
-                      }}
-                    >
-                      <GithubIcon />
-                      Ver projeto
-                    </a>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
+                  <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                    {proj.tags.map((t) => (
+                      <span key={t} className="font-mono" style={{ fontSize: '0.70rem', letterSpacing: '0.1em', color: proj.color, textTransform: 'uppercase' }}>
+                        #{t}
+                      </span>
+                    ))}
                   </div>
+
+                  <a
+                    href={proj.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-mono"
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 6,
+                      fontSize: '0.74rem',
+                      letterSpacing: '0.1em',
+                      textTransform: 'uppercase',
+                      color: 'var(--muted)',
+                      textDecoration: 'none',
+                      padding: '0.4rem 0.85rem',
+                      border: '1px solid var(--border)',
+                      borderRadius: 2,
+                      transition: 'color 0.2s, border-color 0.2s',
+                    }}
+                    onMouseEnter={(e) => {
+                      const el = e.currentTarget as HTMLElement
+                      el.style.color = proj.color
+                      el.style.borderColor = `${proj.color}60`
+                    }}
+                    onMouseLeave={(e) => {
+                      const el = e.currentTarget as HTMLElement
+                      el.style.color = 'var(--muted)'
+                      el.style.borderColor = 'var(--border)'
+                    }}
+                  >
+                    <GithubIcon />
+                    Ver no GitHub
+                  </a>
                 </div>
               </div>
             </div>
-          </Reveal>
-        )}
+          </div>
+        </Reveal>
       </div>
 
       <style>{`
         @keyframes detailIn {
-          from { opacity: 0; transform: translateY(8px); }
-          to { opacity: 1; transform: translateY(0); }
+          from { opacity: 0; transform: translateX(10px); }
+          to   { opacity: 1; transform: translateX(0); }
         }
       `}</style>
     </section>

@@ -7,11 +7,8 @@ import Highlights from '@/sections/Highlights'
 import Experience from '@/sections/Experience'
 import Versions from '@/sections/Versions'
 import Contact from '@/sections/Contact'
-import LoginPage from '@/pages/LoginPage'
-import AdminPage from '@/pages/AdminPage'
-import { PortfolioContentProvider } from '@/context/PortfolioContentContext'
 
-function PortfolioPage() {
+export default function App() {
   const [hovering, setHovering] = useState(false)
   const [cursor, setCursor] = useState({ x: 0, y: 0 })
 
@@ -47,50 +44,40 @@ function PortfolioPage() {
   }
 
   return (
-    <PortfolioContentProvider>
-      <div
-        style={{ backgroundColor: 'var(--bg)', minHeight: '100vh', position: 'relative' }}
-        onPointerEnter={() => setHovering(true)}
-        onPointerMove={handlePointerMove}
-        onPointerLeave={() => setHovering(false)}
-      >
-        <div style={dotsBase} />
-        <div style={dotsHover} />
+    <div
+      style={{ backgroundColor: 'var(--bg)', minHeight: '100vh', position: 'relative' }}
+      onPointerEnter={() => setHovering(true)}
+      onPointerMove={handlePointerMove}
+      onPointerLeave={() => setHovering(false)}
+    >
+      <div style={dotsBase} />
+      <div style={dotsHover} />
 
-        <div style={{ position: 'relative', zIndex: 1 }}>
-          <Nav />
-          <main>
-            <Hero />
-            <About />
-            <Highlights />
-            <Skills />
-            <Experience />
-            <Versions />
-            <Contact />
-          </main>
-          <footer
-            style={{
-              borderTop: '1px solid var(--border)',
-              padding: '2rem',
-              textAlign: 'center',
-              color: 'var(--muted)',
-              fontFamily: 'Space Mono, monospace',
-              fontSize: '0.72rem',
-              letterSpacing: '0.08em',
-            }}
-          >
-            © {new Date().getFullYear()} ERIC Y. IKEDA — PORTFOLIO V5
-          </footer>
-        </div>
+      <div style={{ position: 'relative', zIndex: 1 }}>
+        <Nav />
+        <main>
+          <Hero />
+          <About />
+          <Highlights />
+          <Skills />
+          <Experience />
+          <Versions />
+          <Contact />
+        </main>
+        <footer
+          style={{
+            borderTop: '1px solid var(--border)',
+            padding: '2rem',
+            textAlign: 'center',
+            color: 'var(--muted)',
+            fontFamily: 'Space Mono, monospace',
+            fontSize: '0.72rem',
+            letterSpacing: '0.08em',
+          }}
+        >
+          © {new Date().getFullYear()} ERIC Y. IKEDA — PORTFOLIO V5
+        </footer>
       </div>
-    </PortfolioContentProvider>
+    </div>
   )
-}
-
-export default function App() {
-  const path = window.location.pathname.replace(/\/+$/, '') || '/'
-
-  if (path === '/login') return <LoginPage />
-  if (path === '/admin') return <AdminPage />
-  return <PortfolioPage />
 }

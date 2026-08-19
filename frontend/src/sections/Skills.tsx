@@ -1,4 +1,4 @@
-import { Reveal } from '@/components/Reveal'
+import { Reveal, RevealGroup } from '@/components/Reveal'
 
 const categories = [
   { category: 'Frontend & Mobile', items: ['Flutter', 'React', 'TypeScript', 'JavaScript', 'HTML / CSS'] },

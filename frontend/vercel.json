@@ -6,11 +6,7 @@
   "installCommand": "npm install",
   "rewrites": [
     {
-      "source": "/login",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/admin",
+      "source": "/(.*)",
       "destination": "/index.html"
     }
   ],
