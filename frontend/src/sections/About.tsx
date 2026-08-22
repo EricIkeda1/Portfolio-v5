@@ -60,8 +60,11 @@ export default function About({ profile }: { profile: PortfolioProfile }) {
             <Reveal delay={380} from="bottom">
               <div style={{ padding: '1.25rem 1.5rem', background: 'var(--surface)', border: '1px solid var(--border)', borderLeft: '3px solid var(--blue)', borderRadius: 4 }}>
                 <div className="font-mono" style={{ fontSize: '0.72rem', letterSpacing: '0.12em', color: 'var(--blue)', textTransform: 'uppercase', marginBottom: 4 }}>Formação</div>
-                <div style={{ fontSize: '0.95rem', color: 'var(--text)', fontWeight: 500 }}>Engenharia de Software</div>
-                <div style={{ fontSize: '0.85rem', color: 'var(--muted)', marginTop: 2 }}>UniSenaiPR – Londrina · Conclusão: 2026</div>
+                <div style={{ fontSize: '0.95rem', color: 'var(--text)', fontWeight: 500 }}>{profile.education_course}</div>
+                <div style={{ fontSize: '0.85rem', color: 'var(--muted)', marginTop: 2 }}>
+                  {profile.education_institution}
+                  {profile.education_completion ? ` · Conclusão: ${profile.education_completion}` : ''}
+                </div>
               </div>
             </Reveal>
           </div>

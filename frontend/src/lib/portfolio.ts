@@ -1,6 +1,9 @@
 export type PortfolioProfile = {
   photo_drive_url: string
   about_text: string
+  education_course: string
+  education_institution: string
+  education_completion: string
   whatsapp: string
   email: string
   github_url: string
@@ -29,6 +32,9 @@ export const fallbackProfile: PortfolioProfile = {
   photo_drive_url: 'https://drive.google.com/file/d/18I4wMhuprbKT0OLBLvAvz12yAoPNQSNc/view?usp=sharing',
   about_text:
     'Meu nome é Eric, sou desenvolvedor de software e gosto de transformar ideias em projetos reais. Desenvolvo sites, sistemas e aplicações, sempre buscando criar soluções modernas, rápidas e que realmente façam a diferença para quem as utiliza.\n\nGosto de participar de todas as etapas do desenvolvimento, desde o planejamento até a entrega, cuidando tanto da experiência visual quanto da qualidade do código. Meu objetivo é criar projetos organizados, funcionais e que ofereçam a melhor experiência possível.\n\nAlém de desenvolver para clientes, também crio projetos próprios para estudar novas tecnologias, testar ideias e evoluir como desenvolvedor. Acredito que sempre existe algo novo para aprender, e cada projeto é uma oportunidade de construir soluções das quais eu possa me orgulhar.',
+  education_course: 'Engenharia de Software',
+  education_institution: 'UniSenaiPR – Londrina',
+  education_completion: '2026',
   whatsapp: '',
   email: 'ericikeda2002@mail.com',
   github_url: 'https://github.com/EricIkeda1',

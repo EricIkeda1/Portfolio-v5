@@ -194,7 +194,29 @@ export default function AdminPage() {
                   <textarea rows={12} value={profile.about_text} onChange={(event) => setProfile({ ...profile, about_text: event.target.value })} required />
                   <small>Para criar novos parágrafos, deixe uma linha em branco entre os textos.</small>
                 </label>
-                <button className="admin-primary" disabled={saving}>{saving ? 'Salvando...' : 'Salvar alterações'}</button>
+
+                <div className="admin-subsection">
+                  <div className="admin-subsection-title">
+                    <span className="font-mono">FORMAÇÃO</span>
+                    <p>Esses dados também são carregados do Neon e exibidos na seção “Sobre”.</p>
+                  </div>
+                  <div className="admin-form-grid">
+                    <label>
+                      <span>Curso</span>
+                      <input value={profile.education_course} onChange={(event) => setProfile({ ...profile, education_course: event.target.value })} placeholder="Engenharia de Software" />
+                    </label>
+                    <label>
+                      <span>Conclusão</span>
+                      <input value={profile.education_completion} onChange={(event) => setProfile({ ...profile, education_completion: event.target.value })} placeholder="2026" />
+                    </label>
+                  </div>
+                  <label>
+                    <span>Instituição</span>
+                    <input value={profile.education_institution} onChange={(event) => setProfile({ ...profile, education_institution: event.target.value })} placeholder="UniSenaiPR – Londrina" />
+                  </label>
+                </div>
+
+                <button className="admin-primary" disabled={saving}>{saving ? 'Salvando...' : 'Salvar alterações no Neon'}</button>
               </form>
             </section>
           )}

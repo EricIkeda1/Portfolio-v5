@@ -14,11 +14,19 @@ CREATE TABLE IF NOT EXISTS portfolio_profile (
   id SMALLINT PRIMARY KEY DEFAULT 1 CHECK (id = 1),
   photo_drive_url TEXT NOT NULL DEFAULT '',
   about_text TEXT NOT NULL DEFAULT '',
+  education_course TEXT NOT NULL DEFAULT 'Engenharia de Software',
+  education_institution TEXT NOT NULL DEFAULT 'UniSenaiPR – Londrina',
+  education_completion TEXT NOT NULL DEFAULT '2026',
   whatsapp TEXT NOT NULL DEFAULT '',
   email TEXT NOT NULL DEFAULT '',
   github_url TEXT NOT NULL DEFAULT '',
   updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
 );
+
+-- Migração segura para bancos que já tinham a tabela portfolio_profile antes desta versão.
+ALTER TABLE portfolio_profile ADD COLUMN IF NOT EXISTS education_course TEXT NOT NULL DEFAULT 'Engenharia de Software';
+ALTER TABLE portfolio_profile ADD COLUMN IF NOT EXISTS education_institution TEXT NOT NULL DEFAULT 'UniSenaiPR – Londrina';
+ALTER TABLE portfolio_profile ADD COLUMN IF NOT EXISTS education_completion TEXT NOT NULL DEFAULT '2026';
 
 CREATE TABLE IF NOT EXISTS portfolio_projects (
   id SERIAL PRIMARY KEY,
@@ -42,6 +50,9 @@ INSERT INTO portfolio_profile (
   id,
   photo_drive_url,
   about_text,
+  education_course,
+  education_institution,
+  education_completion,
   whatsapp,
   email,
   github_url
@@ -50,6 +61,9 @@ VALUES (
   1,
   'https://drive.google.com/file/d/18I4wMhuprbKT0OLBLvAvz12yAoPNQSNc/view?usp=sharing',
   'Meu nome é Eric, sou desenvolvedor de software e gosto de transformar ideias em projetos reais. Desenvolvo sites, sistemas e aplicações, sempre buscando criar soluções modernas, rápidas e que realmente façam a diferença para quem as utiliza.\n\nGosto de participar de todas as etapas do desenvolvimento, desde o planejamento até a entrega, cuidando tanto da experiência visual quanto da qualidade do código. Meu objetivo é criar projetos organizados, funcionais e que ofereçam a melhor experiência possível.\n\nAlém de desenvolver para clientes, também crio projetos próprios para estudar novas tecnologias, testar ideias e evoluir como desenvolvedor. Acredito que sempre existe algo novo para aprender, e cada projeto é uma oportunidade de construir soluções das quais eu possa me orgulhar.',
+  'Engenharia de Software',
+  'UniSenaiPR – Londrina',
+  '2026',
   '',
   'ericikeda2002@mail.com',
   'https://github.com/EricIkeda1'

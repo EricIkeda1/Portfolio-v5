@@ -10,10 +10,10 @@
 O script cria:
 
 - `admins`: contas que podem entrar no painel.
-- `portfolio_profile`: foto, descrição, WhatsApp, e-mail e GitHub.
+- `portfolio_profile`: foto, descrição, formação, WhatsApp, e-mail e GitHub.
 - `portfolio_projects`: projetos exibidos em “Projetos em destaque”.
 
-O script **não apaga tabelas existentes**.
+O script **não apaga tabelas existentes**. Se o banco já estiver criado, você também pode executar apenas `database/migration-admin-profile.sql` para adicionar os novos campos de formação.
 
 ## 2. Criar seu primeiro administrador
 
@@ -69,6 +69,7 @@ Após entrar, você poderá:
 
 - trocar a foto de “Quem sou eu” usando um link compartilhado do Google Drive;
 - editar toda a descrição;
+- alterar curso, instituição e ano de conclusão da formação;
 - alterar WhatsApp, e-mail e GitHub;
 - adicionar novos projetos;
 - editar, ordenar, ocultar e excluir projetos existentes.

@@ -12,7 +12,7 @@ export default async function handler(req: any, res: any) {
   try {
     const sql = getSql()
     const [profiles, projects] = await Promise.all([
-      sql`SELECT photo_drive_url, about_text, whatsapp, email, github_url, updated_at
+      sql`SELECT photo_drive_url, about_text, education_course, education_institution, education_completion, whatsapp, email, github_url, updated_at
           FROM portfolio_profile WHERE id = 1 LIMIT 1`,
       sql`SELECT id, name, type, description, tags, highlights, github_url, color, sort_order, is_active
           FROM portfolio_projects ORDER BY sort_order ASC, id ASC`,

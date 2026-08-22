@@ -106,6 +106,10 @@
 .admin-form small { color: var(--muted-2); font-weight: 500; font-size: .72rem; }
 .admin-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 .admin-form-grid.small-cols { grid-template-columns: minmax(220px, 1fr) minmax(110px, .35fr); }
+.admin-subsection { border-top: 1px solid var(--border); padding-top: 1.25rem; display: flex; flex-direction: column; gap: 1rem; }
+.admin-subsection-title { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; }
+.admin-subsection-title > span { color: var(--blue); font-size: .68rem; letter-spacing: .13em; }
+.admin-subsection-title p { color: var(--muted-2); font-size: .72rem; text-align: right; }
 .admin-primary, .admin-secondary {
   appearance: none;
   border-radius: 4px;
@@ -166,7 +170,8 @@
   .auth-brand { top: 1rem; left: 1.25rem; }
   .auth-brand div { display: none; }
   .admin-topbar { align-items: flex-end; }
-  .admin-panel-heading { flex-direction: column; }
+  .admin-panel-heading, .admin-subsection-title { flex-direction: column; align-items: flex-start; }
+  .admin-subsection-title p { text-align: left; }
   .admin-form-grid, .admin-form-grid.small-cols, .admin-photo-grid { grid-template-columns: 1fr; }
   .admin-photo-preview { width: 120px; height: 120px; }
   .admin-main { padding-inline: 1rem; }
