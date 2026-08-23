@@ -201,7 +201,7 @@ export default function Versions() {
     <section style={{ maxWidth: 1200, margin: '0 auto', padding: '7rem 2rem' }}>
       <div style={{ marginBottom: '3.5rem' }}>
         <Reveal from="bottom">
-          <div className="section-label">05 — Versões anteriores</div>
+          <div className="section-label">04 — Versões anteriores</div>
         </Reveal>
         <Reveal delay={80} from="bottom">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '1rem' }}>

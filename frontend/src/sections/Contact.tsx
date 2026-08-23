@@ -120,7 +120,7 @@ export default function Contact() {
           {/* Left */}
           <div>
             <Reveal from="bottom">
-              <div className="section-label">04 — Contato</div>
+              <div className="section-label">05 — Contato</div>
             </Reveal>
             <Reveal delay={80} from="bottom">
               <h2 className="display-heading" style={{ marginBottom: '1.25rem' }}>
