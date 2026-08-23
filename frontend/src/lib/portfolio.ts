@@ -115,7 +115,17 @@ export function googleDriveImageUrl(url: string) {
 async function parseResponse<T>(response: Response): Promise<T> {
   const contentType = response.headers.get('content-type') ?? ''
   if (!contentType.includes('application/json')) {
-    throw new Error('A API não retornou JSON. Use "npx vercel dev" no desenvolvimento local.')
+    const path = (() => {
+      try {
+        return new URL(response.url).pathname
+      } catch {
+        return response.url
+      }
+    })()
+    throw new Error(
+      `A rota ${path} retornou HTTP ${response.status} em vez de JSON. ` +
+        'Inicie o projeto com "npm run dev" para executar o Vite e as Vercel Functions juntos.',
+    )
   }
 
   const body = (await response.json()) as T & { error?: string }
