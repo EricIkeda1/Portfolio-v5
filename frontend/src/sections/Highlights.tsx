@@ -3,26 +3,25 @@ import { Reveal } from '@/components/Reveal'
 
 const GITHUB_USER = 'EricIkeda1'
 
+interface GithubUser {
+  public_repos: number
+  followers: number
+  following: number
+  created_at: string
+}
+
+interface GithubRepo {
+  stargazers_count: number
+  language: string | null
+  fork: boolean
+}
+
 interface GithubStats {
   repos: number
   followers: number
   stars: number
   languages: { name: string; count: number }[]
   yearsActive: number
-}
-
-const STATIC_GITHUB_STATS: GithubStats = {
-  repos: 50,
-  followers: 0,
-  stars: 0,
-  languages: [
-    { name: 'TypeScript', count: 18 },
-    { name: 'Dart', count: 10 },
-    { name: 'Python', count: 8 },
-    { name: 'JavaScript', count: 5 },
-    { name: 'HTML', count: 4 },
-  ],
-  yearsActive: 2,
 }
 
 const LANG_COLORS: Record<string, string> = {
@@ -181,7 +180,8 @@ function LangBar({ languages, active }: { languages: GithubStats['languages']; a
 }
 
 export default function Highlights() {
-  const stats = STATIC_GITHUB_STATS
+  const [stats, setStats] = useState<GithubStats | null>(null)
+  const [loading, setLoading] = useState(true)
   const ref = useRef<HTMLDivElement>(null)
   const [active, setActive] = useState(false)
 
@@ -191,6 +191,54 @@ export default function Highlights() {
     const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setActive(true); obs.unobserve(el) } }, { threshold: 0.1 })
     obs.observe(el)
     return () => obs.disconnect()
+  }, [])
+
+  useEffect(() => {
+    async function fetchGitHub() {
+      try {
+        const [userRes, reposRes] = await Promise.all([
+          fetch(`https://api.github.com/users/${GITHUB_USER}`),
+          fetch(`https://api.github.com/users/${GITHUB_USER}/repos?per_page=100`),
+        ])
+        const user: GithubUser = await userRes.json()
+        const repos: GithubRepo[] = await reposRes.json()
+
+        const nonForks = repos.filter((r) => !r.fork)
+        const stars = nonForks.reduce((s, r) => s + r.stargazers_count, 0)
+
+        const langCount: Record<string, number> = {}
+        for (const r of nonForks) {
+          if (r.language) langCount[r.language] = (langCount[r.language] ?? 0) + 1
+        }
+        const languages = Object.entries(langCount)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 5)
+          .map(([name, count]) => ({ name, count }))
+
+        const createdYear = new Date(user.created_at).getFullYear()
+        const yearsActive = new Date().getFullYear() - createdYear
+
+        setStats({ repos: user.public_repos, followers: user.followers, stars, languages, yearsActive })
+      } catch {
+        // fallback to static values if API fails
+        setStats({
+          repos: 50,
+          followers: 0,
+          stars: 0,
+          languages: [
+            { name: 'TypeScript', count: 18 },
+            { name: 'Dart', count: 10 },
+            { name: 'Python', count: 8 },
+            { name: 'JavaScript', count: 5 },
+            { name: 'HTML', count: 4 },
+          ],
+          yearsActive: 2,
+        })
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchGitHub()
   }, [])
 
   return (
@@ -260,7 +308,14 @@ export default function Highlights() {
         </Reveal>
 
         <div ref={ref}>
-          {stats ? (
+          {loading ? (
+            /* Skeleton */
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem' }} className="highlights-grid">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} style={{ height: 110, background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 6, animation: 'skeletonPulse 1.4s ease-in-out infinite' }} />
+              ))}
+            </div>
+          ) : stats ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               {/* Row 1 — 4 stat cards */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem' }} className="highlights-grid">
