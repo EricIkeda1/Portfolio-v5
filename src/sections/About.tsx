@@ -1,3 +1,4 @@
+import { useEffect, useState, type DragEvent, type MouseEvent } from 'react'
 import { Reveal, RevealGroup } from '@/components/Reveal'
 import { usePortfolioContent } from '@/context/PortfolioContentContext'
 
@@ -37,10 +38,72 @@ const areas = [
 
 export default function About() {
   const { content } = usePortfolioContent()
+  const [profileImage, setProfileImage] = useState<string | null>(null)
+  const [imageLoaded, setImageLoaded] = useState(false)
+  const [imageError, setImageError] = useState(false)
+
+  useEffect(() => {
+    let objectUrl: string | null = null
+    let cancelled = false
+    const controller = new AbortController()
+
+    const loadProfileImage = async () => {
+      try {
+        setImageLoaded(false)
+        setImageError(false)
+
+        const response = await fetch('/api/profile-image', {
+          method: 'GET',
+          cache: 'no-store',
+          headers: { Accept: 'image/*' },
+          signal: controller.signal,
+        })
+
+        if (!response.ok) throw new Error(`Erro ao carregar imagem: ${response.status}`)
+
+        const contentType = response.headers.get('content-type') || ''
+        if (!contentType.toLowerCase().startsWith('image/')) {
+          throw new Error(`Resposta inválida: ${contentType || 'sem Content-Type'}.`)
+        }
+
+        const blob = await response.blob()
+        objectUrl = URL.createObjectURL(blob)
+
+        if (!cancelled) {
+          setProfileImage(objectUrl)
+          setImageLoaded(true)
+        }
+      } catch (error) {
+        if (cancelled || controller.signal.aborted) return
+
+        console.error('Erro ao carregar foto do perfil:', error)
+        setProfileImage(null)
+        setImageError(true)
+        setImageLoaded(false)
+      }
+    }
+
+    void loadProfileImage()
+
+    return () => {
+      cancelled = true
+      controller.abort()
+      if (objectUrl) URL.revokeObjectURL(objectUrl)
+    }
+  }, [content.updated_at])
+
   const paragraphs = content.about_text
     .split(/\n\s*\n/)
     .map((paragraph) => paragraph.trim())
     .filter(Boolean)
+
+  const blockContextMenu = (event: MouseEvent<HTMLElement>) => {
+    event.preventDefault()
+  }
+
+  const blockDrag = (event: DragEvent<HTMLElement>) => {
+    event.preventDefault()
+  }
 
   return (
     <section id="sobre" className="section-pad">
@@ -58,33 +121,109 @@ export default function About() {
             </Reveal>
 
             <Reveal delay={120} from="scale">
-              <div style={{ position: 'relative', display: 'inline-block', marginBottom: '2rem' }}>
+              <div
+                onContextMenu={blockContextMenu}
+                onDragStart={blockDrag}
+                onMouseDown={(event) => {
+                  if (event.button === 2) event.preventDefault()
+                }}
+                style={{
+                  position: 'relative',
+                  display: 'inline-block',
+                  width: 120,
+                  height: 120,
+                  marginBottom: '2rem',
+                  userSelect: 'none',
+                  WebkitUserSelect: 'none',
+                  WebkitTouchCallout: 'none',
+                }}
+              >
                 <div
+                  aria-hidden="true"
                   style={{
                     position: 'absolute',
                     inset: -3,
                     borderRadius: 12,
                     background: 'linear-gradient(135deg, var(--blue) 0%, rgba(66,133,255,0.2) 100%)',
                     zIndex: 0,
+                    pointerEvents: 'none',
                   }}
                 />
-                <img
-                  src={content.profile_image_url}
-                  alt="Eric Y. Ikeda"
-                  loading="lazy"
-                  referrerPolicy="no-referrer"
+
+                <div
+                  role="img"
+                  aria-label="Eric Y. Ikeda"
                   style={{
                     width: 120,
                     height: 120,
-                    objectFit: 'cover',
-                    objectPosition: 'center top',
-                    borderRadius: 10,
-                    display: 'block',
                     position: 'relative',
                     zIndex: 1,
+                    borderRadius: 10,
+                    overflow: 'hidden',
+                    backgroundColor: 'var(--surface)',
+                    backgroundImage: profileImage ? `url("${profileImage}")` : 'none',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center top',
+                    backgroundRepeat: 'no-repeat',
+                    userSelect: 'none',
+                    WebkitUserSelect: 'none',
+                    WebkitTouchCallout: 'none',
+                    pointerEvents: 'none',
+                  }}
+                >
+                  {!imageLoaded && !imageError && (
+                    <div
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: 'var(--muted)',
+                        fontSize: '0.7rem',
+                      }}
+                    >
+                      Carregando...
+                    </div>
+                  )}
+
+                  {imageError && (
+                    <div
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: 'var(--muted)',
+                        fontSize: '0.7rem',
+                        textAlign: 'center',
+                        padding: '0.5rem',
+                      }}
+                    >
+                      Foto indisponível
+                    </div>
+                  )}
+                </div>
+
+                <div
+                  aria-hidden="true"
+                  onContextMenu={blockContextMenu}
+                  onDragStart={blockDrag}
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    borderRadius: 10,
+                    zIndex: 2,
+                    cursor: 'default',
+                    userSelect: 'none',
+                    WebkitUserSelect: 'none',
+                    WebkitTouchCallout: 'none',
                   }}
                 />
+
                 <span
+                  aria-hidden="true"
                   style={{
                     position: 'absolute',
                     bottom: 6,
@@ -95,8 +234,9 @@ export default function About() {
                     background: '#4ADE80',
                     border: '2px solid var(--card)',
                     boxShadow: '0 0 8px rgba(74,222,128,0.6)',
-                    zIndex: 2,
+                    zIndex: 3,
                     animation: 'pulse-glow 2s ease-in-out infinite',
+                    pointerEvents: 'none',
                   }}
                 />
               </div>

@@ -18,6 +18,7 @@ export interface PortfolioContent {
   whatsapp: string
   email: string
   github: string
+  updated_at: string
   projects: PortfolioProject[]
 }
 
@@ -26,9 +27,6 @@ export const DEFAULT_ABOUT_TEXT = `Meu nome é Eric, sou desenvolvedor de softwa
 Gosto de participar de todas as etapas do desenvolvimento, desde o planejamento até a entrega, cuidando tanto da experiência visual quanto da qualidade do código. Meu objetivo é criar projetos organizados, funcionais e que ofereçam a melhor experiência possível.
 
 Além de desenvolver para clientes, também crio projetos próprios para estudar novas tecnologias, testar ideias e evoluir como desenvolvedor. Acredito que sempre existe algo novo para aprender, e cada projeto é uma oportunidade de construir soluções das quais eu possa me orgulhar.`
-
-export const DEFAULT_PROFILE_IMAGE =
-  'https://drive.google.com/thumbnail?id=18I4wMhuprbKT0OLBLvAvz12yAoPNQSNc&sz=w1000'
 
 export const DEFAULT_WHATSAPP = '5543996369387'
 export const DEFAULT_EMAIL = 'ikedayuji.2002@gmail.com'
@@ -95,10 +93,11 @@ export const DEFAULT_PROJECTS: PortfolioProject[] = [
 
 export const DEFAULT_CONTENT: PortfolioContent = {
   about_text: DEFAULT_ABOUT_TEXT,
-  profile_image_url: DEFAULT_PROFILE_IMAGE,
+  profile_image_url: '',
   whatsapp: DEFAULT_WHATSAPP,
   email: DEFAULT_EMAIL,
   github: DEFAULT_GITHUB,
+  updated_at: '',
   projects: DEFAULT_PROJECTS,
 }
 
@@ -116,7 +115,7 @@ export function normalizePortfolioContent(value: unknown): PortfolioContent {
     profile_image_url:
       typeof raw.profile_image_url === 'string' && raw.profile_image_url.trim()
         ? raw.profile_image_url
-        : DEFAULT_CONTENT.profile_image_url,
+        : '',
     whatsapp:
       typeof raw.whatsapp === 'string' && raw.whatsapp.trim()
         ? raw.whatsapp
@@ -129,6 +128,10 @@ export function normalizePortfolioContent(value: unknown): PortfolioContent {
       typeof raw.github === 'string' && raw.github.trim()
         ? raw.github
         : DEFAULT_CONTENT.github,
+    updated_at:
+      typeof raw.updated_at === 'string'
+        ? raw.updated_at
+        : '',
     projects: Array.isArray(raw.projects) ? raw.projects : DEFAULT_CONTENT.projects,
   }
 }

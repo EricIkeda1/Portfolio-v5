@@ -131,7 +131,7 @@ export async function readPortfolioContent(includeUnpublished = false) {
   await ensureSchema()
   const sql = getSql()
   const settingsRows = await sql`
-    SELECT about_text, profile_image_url, whatsapp, email, github
+    SELECT about_text, profile_image_url, whatsapp, email, github, updated_at
     FROM portfolio_settings
     WHERE id = 1
     LIMIT 1
@@ -148,6 +148,7 @@ export async function readPortfolioContent(includeUnpublished = false) {
     whatsapp: String(settings.whatsapp ?? ''),
     email: String(settings.email ?? ''),
     github: String(settings.github ?? ''),
+    updated_at: settings.updated_at ? String(settings.updated_at) : '',
     projects: projects.map((row) => normalizeProject(row as Record<string, unknown>)),
   }
 }

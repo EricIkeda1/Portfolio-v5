@@ -1,8 +1,6 @@
 import { TypewriterText } from '@/components/TypewriterText'
+import ProtectedLogo from '@/components/ProtectedLogo'
 import { usePortfolioContent } from '@/context/PortfolioContentContext'
-
-const logoSrc =
-  'https://drive.google.com/thumbnail?id=19o0-cXysNK5HsufGJJSZThSlPpuury__&sz=w1000'
 
 const DEFAULT_WHATSAPP_NUMBER = '5543996369387'
 
@@ -449,11 +447,7 @@ export default function Hero() {
               }}
             />
 
-            <img
-              src={logoSrc}
-              alt="Logo Eric Y. Ikeda"
-              loading="eager"
-              referrerPolicy="no-referrer"
+            <ProtectedLogo
               style={{
                 width: 230,
                 height: 230,

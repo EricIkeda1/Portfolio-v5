@@ -11,9 +11,7 @@ import {
   updateAdminProject,
 } from '@/lib/api'
 import { DEFAULT_CONTENT, type PortfolioContent, type PortfolioProject } from '@/lib/portfolio'
-
-const logoSrc =
-  'https://drive.google.com/thumbnail?id=19o0-cXysNK5HsufGJJSZThSlPpuury__&sz=w1000'
+import ProtectedLogo from '@/components/ProtectedLogo'
 
 type IconName =
   | 'dashboard'
@@ -93,7 +91,7 @@ function LoginScreen({ onLogin }: { onLogin: () => void }) {
       <a className="admin-login-back" href="/">← Voltar ao portfólio</a>
       <main className="admin-login-card" aria-labelledby="admin-login-title">
         <div className="admin-brand-mark">
-          <img src={logoSrc} alt="Eric Y. Ikeda" referrerPolicy="no-referrer" />
+          <ProtectedLogo alt="Eric Y. Ikeda" />
           <span>ERIC Y. IKEDA</span>
         </div>
         <div className="admin-login-copy">
@@ -367,7 +365,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
   return (
     <div className="admin-app-shell">
       <aside className={`admin-sidebar ${mobileMenu ? 'open' : ''}`}>
-        <div className="admin-sidebar-brand"><img src={logoSrc} alt="Eric Y. Ikeda" referrerPolicy="no-referrer" /><div><strong>ERIC Y. IKEDA</strong><span>ADMIN PANEL</span></div><button className="admin-sidebar-close" onClick={() => setMobileMenu(false)}><Icon name="close"/></button></div>
+        <div className="admin-sidebar-brand"><ProtectedLogo alt="Eric Y. Ikeda" /><div><strong>ERIC Y. IKEDA</strong><span>ADMIN PANEL</span></div><button className="admin-sidebar-close" onClick={() => setMobileMenu(false)}><Icon name="close"/></button></div>
         <nav className="admin-sidebar-nav" aria-label="Menu administrativo"><span className="admin-nav-caption">MENU PRINCIPAL</span>{navigation.map((item) => <button key={item.id} className={active === item.id ? 'active' : ''} onClick={() => navigate(item.id)}><Icon name={item.icon} size={18}/><span>{item.label}</span>{active === item.id && <i/>}</button>)}</nav>
         <div className="admin-sidebar-footer"><a href="/" target="_blank" rel="noreferrer"><Icon name="external" size={17}/><span>Ver portfólio</span></a><button onClick={() => void logout()}><Icon name="logout" size={17}/><span>Sair</span></button><div className="admin-user-chip"><span>EI</span><div><strong>Eric Ikeda</strong><small>Administrador</small></div></div></div>
       </aside>

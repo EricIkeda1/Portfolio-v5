@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react'
-
-const logoSrc =
-  'https://drive.google.com/thumbnail?id=19o0-cXysNK5HsufGJJSZThSlPpuury__&sz=w1000'
+import ProtectedLogo from '@/components/ProtectedLogo'
 
 const links = [
   { label: 'Início', href: '#' },
@@ -90,11 +88,7 @@ export default function Nav() {
             textDecoration: 'none',
           }}
         >
-          <img
-            src={logoSrc}
-            alt="Logo Eric Y. Ikeda"
-            loading="eager"
-            referrerPolicy="no-referrer"
+          <ProtectedLogo
             style={{
               height: 38,
               width: 38,
