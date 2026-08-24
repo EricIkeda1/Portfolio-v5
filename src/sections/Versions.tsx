@@ -13,7 +13,7 @@ const versions = [
   {
     version: 'v2',
     title: 'Portfólio TypeScript',
-    description: 'Segunda versão em React + TypeScript com sistema de gamificação bem elaborado — pontuação, conquistas e progressão interativa.',
+    description: 'Segunda versão em React + TypeScript com sistema de gamificação bem elaborado, pontuação, conquistas e progressão interativa.',
     tech: ['React', 'TypeScript'],
     url: 'https://ericyikedaportfolio.vercel.app/',
     year: '2023',
