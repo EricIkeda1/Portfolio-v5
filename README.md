@@ -1,4 +1,3 @@
-````markdown
 # Meu Portfólio
 
 Este é o meu portfólio pessoal, criado para reunir um pouco sobre mim, minhas experiências, habilidades e os projetos que venho desenvolvendo ao longo da minha trajetória como **desenvolvedor de software**.
@@ -73,4 +72,3 @@ https://ericyikedaportfolio5.vercel.app/
 ## Autor
 
 **EricIkeda1**
-````
