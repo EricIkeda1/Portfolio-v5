@@ -1,4 +1,4 @@
-import { allowMethods, messageFromError, noStore } from './_lib/http.js'
+import { allowMethods, messageFromError } from './_lib/http.js'
 
 const LOGO_URL =
   'https://drive.google.com/thumbnail?id=19o0-cXysNK5HsufGJJSZThSlPpuury__&sz=w1000'
@@ -46,7 +46,7 @@ function getImageCandidates(value: string) {
 }
 
 export default async function handler(req: any, res: any) {
-  noStore(res)
+  res.setHeader('Cache-Control', 'public, max-age=86400, s-maxage=604800, stale-while-revalidate=2592000')
   if (!allowMethods(req, res, ['GET'])) return
 
   try {
