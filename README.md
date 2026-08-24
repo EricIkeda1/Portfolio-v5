@@ -1,59 +1,76 @@
-# Portfólio V5 — Frontend estático
+````markdown
+# Meu Portfólio
 
-Portfólio desenvolvido com React, TypeScript e Vite.
+Este é o meu portfólio pessoal, criado para reunir um pouco sobre mim, minhas experiências, habilidades e os projetos que venho desenvolvendo ao longo da minha trajetória como **desenvolvedor de software**.
 
-Esta versão não depende de Figma Make, APIs, banco de dados, login ou painel administrativo.
-O conteúdo exibido no site fica diretamente no código-fonte, principalmente em `src/lib/portfolio.ts`.
+A ideia foi criar algo **simples, moderno e com a minha identidade**, onde eu pudesse apresentar meu trabalho de forma direta e continuar evoluindo o projeto conforme aprendo coisas novas.
 
-## Instalar dependências
+**Acesse o portfólio:**  
+https://ericyikedaportfolio5.vercel.app/
+
+## Sobre o projeto
+
+No portfólio você encontra:
+
+- **Sobre mim** e minha trajetória
+- Minhas principais **habilidades e tecnologias**
+- **Experiências** e formação
+- **Projetos em destaque**
+- Formas de entrar em **contato comigo**
+- **Sistema de login** para acesso administrativo
+- **Página de administração** para gerenciar e atualizar conteúdos do portfólio
+- **Banco de dados na Neon** para armazenar e gerenciar as informações do site
+
+A área administrativa foi criada para facilitar a manutenção do site, permitindo alterar informações e adicionar novos conteúdos sem precisar modificar diretamente o código da página.
+
+Os dados do portfólio são armazenados em um banco **PostgreSQL hospedado na Neon**, utilizado tanto no sistema de login quanto no gerenciamento dos conteúdos da área administrativa.
+
+O projeto foi pensado para funcionar bem tanto no **desktop quanto no mobile**, mantendo uma navegação simples, responsiva e organizada.
+
+## Tecnologias
+
+O projeto foi desenvolvido utilizando:
+
+- **React**
+- **TypeScript**
+- **Vite**
+- **PostgreSQL**
+- **Neon**
+- **Vercel**
+
+## Rodando o projeto
+
+Clone o repositório:
+
+```bash
+git clone URL_DO_REPOSITORIO
+```
+
+Entre na pasta do projeto:
+
+```bash
+cd Portfolio-v5
+```
+
+Instale as dependências:
 
 ```bash
 npm install
 ```
 
-## Rodar localmente
+Inicie o projeto:
 
 ```bash
 npm run dev
 ```
 
-Depois, abra o endereço informado pelo Vite no terminal.
+## Deploy
 
-## Gerar build de produção
+O projeto está publicado na **Vercel**:
 
-```bash
-npm run build
-```
+https://ericyikedaportfolio5.vercel.app/
 
-Os arquivos de produção serão gerados em `dist/`.
+## Autor
 
-## Deploy na Vercel
-
-O projeto está configurado como Vite no `vercel.json` e não precisa de variáveis de ambiente.
-
-## Estrutura principal
-
-```text
-src/
-  components/
-  context/
-    PortfolioContentContext.tsx
-  lib/
-    portfolio.ts
-  sections/
-  App.tsx
-  main.tsx
-
-public/
-index.html
-vite.config.ts
-vercel.json
-```
-
-## Editar conteúdo
-
-Para alterar o texto "Quem sou eu", WhatsApp ou os projetos em destaque, edite:
-
-```text
-src/lib/portfolio.ts
-```
+**EricIkeda1**
+````
