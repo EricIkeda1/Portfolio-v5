@@ -9,11 +9,15 @@ export interface PortfolioProject {
   color: string
   image_url?: string | null
   sort_order: number
+  published?: boolean
 }
 
 export interface PortfolioContent {
   about_text: string
+  profile_image_url: string
   whatsapp: string
+  email: string
+  github: string
   projects: PortfolioProject[]
 }
 
@@ -23,7 +27,12 @@ Gosto de participar de todas as etapas do desenvolvimento, desde o planejamento 
 
 Além de desenvolver para clientes, também crio projetos próprios para estudar novas tecnologias, testar ideias e evoluir como desenvolvedor. Acredito que sempre existe algo novo para aprender, e cada projeto é uma oportunidade de construir soluções das quais eu possa me orgulhar.`
 
+export const DEFAULT_PROFILE_IMAGE =
+  'https://drive.google.com/thumbnail?id=18I4wMhuprbKT0OLBLvAvz12yAoPNQSNc&sz=w1000'
+
 export const DEFAULT_WHATSAPP = '5543996369387'
+export const DEFAULT_EMAIL = 'ikedayuji.2002@gmail.com'
+export const DEFAULT_GITHUB = 'https://github.com/EricIkeda1'
 
 export const DEFAULT_PROJECTS: PortfolioProject[] = [
   {
@@ -38,6 +47,7 @@ export const DEFAULT_PROJECTS: PortfolioProject[] = [
     color: '#4285FF',
     image_url: null,
     sort_order: 1,
+    published: true,
   },
   {
     id: 2,
@@ -51,6 +61,7 @@ export const DEFAULT_PROJECTS: PortfolioProject[] = [
     color: '#5B9BFF',
     image_url: null,
     sort_order: 2,
+    published: true,
   },
   {
     id: 3,
@@ -64,6 +75,7 @@ export const DEFAULT_PROJECTS: PortfolioProject[] = [
     color: '#7AB3FF',
     image_url: null,
     sort_order: 3,
+    published: true,
   },
   {
     id: 4,
@@ -77,11 +89,46 @@ export const DEFAULT_PROJECTS: PortfolioProject[] = [
     color: '#A78BFF',
     image_url: null,
     sort_order: 4,
+    published: true,
   },
 ]
 
 export const DEFAULT_CONTENT: PortfolioContent = {
   about_text: DEFAULT_ABOUT_TEXT,
+  profile_image_url: DEFAULT_PROFILE_IMAGE,
   whatsapp: DEFAULT_WHATSAPP,
+  email: DEFAULT_EMAIL,
+  github: DEFAULT_GITHUB,
   projects: DEFAULT_PROJECTS,
+}
+
+
+export function normalizePortfolioContent(value: unknown): PortfolioContent {
+  if (!value || typeof value !== 'object') return DEFAULT_CONTENT
+
+  const raw = value as Partial<PortfolioContent>
+
+  return {
+    about_text:
+      typeof raw.about_text === 'string' && raw.about_text.trim()
+        ? raw.about_text
+        : DEFAULT_CONTENT.about_text,
+    profile_image_url:
+      typeof raw.profile_image_url === 'string' && raw.profile_image_url.trim()
+        ? raw.profile_image_url
+        : DEFAULT_CONTENT.profile_image_url,
+    whatsapp:
+      typeof raw.whatsapp === 'string' && raw.whatsapp.trim()
+        ? raw.whatsapp
+        : DEFAULT_CONTENT.whatsapp,
+    email:
+      typeof raw.email === 'string' && raw.email.trim()
+        ? raw.email
+        : DEFAULT_CONTENT.email,
+    github:
+      typeof raw.github === 'string' && raw.github.trim()
+        ? raw.github
+        : DEFAULT_CONTENT.github,
+    projects: Array.isArray(raw.projects) ? raw.projects : DEFAULT_CONTENT.projects,
+  }
 }

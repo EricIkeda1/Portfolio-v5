@@ -27,10 +27,10 @@ const WhatsAppIcon = ({ size = 16 }: { size?: number }) => (
   </svg>
 )
 
-const getSocialLinks = (whatsappNumber: string) => [
+const getSocialLinks = (whatsappNumber: string, email: string, github: string) => [
   {
-    label: 'github.com/EricIkeda1',
-    href: 'https://github.com/EricIkeda1',
+    label: github.replace(/^https?:\/\//, ''),
+    href: github,
     icon: (
       <svg
         width="14"
@@ -43,8 +43,8 @@ const getSocialLinks = (whatsappNumber: string) => [
     ),
   },
   {
-    label: 'ericikeda2002@mail.com',
-    href: 'mailto:ericikeda2002@mail.com',
+    label: email,
+    href: `mailto:${email}`,
     icon: (
       <svg
         width="14"
@@ -70,7 +70,7 @@ const getSocialLinks = (whatsappNumber: string) => [
 export default function Hero() {
   const { content } = usePortfolioContent()
   const whatsappNumber = (content.whatsapp || DEFAULT_WHATSAPP_NUMBER).replace(/\D/g, '')
-  const socialLinks = getSocialLinks(whatsappNumber)
+  const socialLinks = getSocialLinks(whatsappNumber, content.email, content.github)
 
   return (
     <section

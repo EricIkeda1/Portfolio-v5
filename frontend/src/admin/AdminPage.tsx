@@ -1,9 +1,17 @@
-import { useMemo, useState } from 'react'
-import type { Dispatch, FormEvent, ReactNode, SetStateAction } from 'react'
-import { DEFAULT_CONTENT, type PortfolioProject } from '@/lib/portfolio'
+import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from 'react'
+import {
+  adminLogin,
+  adminLogout,
+  adminSession,
+  announcePortfolioUpdate,
+  createAdminProject,
+  deleteAdminProject,
+  getAdminContent,
+  updateAdminContent,
+  updateAdminProject,
+} from '@/lib/api'
+import { DEFAULT_CONTENT, type PortfolioContent, type PortfolioProject } from '@/lib/portfolio'
 
-const DEMO_EMAIL = 'admin@portfolio.dev'
-const DEMO_PASSWORD = 'admin123'
 const logoSrc =
   'https://drive.google.com/thumbnail?id=19o0-cXysNK5HsufGJJSZThSlPpuury__&sz=w1000'
 
@@ -22,6 +30,8 @@ type IconName =
   | 'external'
   | 'menu'
   | 'close'
+
+type Notice = { type: 'success' | 'error'; text: string } | null
 
 function Icon({ name, size = 18 }: { name: IconName; size?: number }) {
   const props = {
@@ -57,84 +67,56 @@ function Icon({ name, size = 18 }: { name: IconName; size?: number }) {
 }
 
 function LoginScreen({ onLogin }: { onLogin: () => void }) {
-  const [email, setEmail] = useState(DEMO_EMAIL)
-  const [password, setPassword] = useState(DEMO_PASSWORD)
+  const [email, setEmail] = useState('admin@portfolio.dev')
+  const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
+  const [submitting, setSubmitting] = useState(false)
 
-  const submit = (event: FormEvent) => {
+  const submit = async (event: FormEvent) => {
     event.preventDefault()
-    if (email.trim() === DEMO_EMAIL && password === DEMO_PASSWORD) {
-      sessionStorage.setItem('portfolio-admin-demo', 'true')
-      setError('')
+    setSubmitting(true)
+    setError('')
+    try {
+      await adminLogin(email, password)
       onLogin()
-      return
+    } catch (requestError) {
+      setError(requestError instanceof Error ? requestError.message : 'Não foi possível entrar no painel.')
+    } finally {
+      setSubmitting(false)
     }
-    setError('Use as credenciais fictícias exibidas abaixo.')
   }
 
   return (
     <div className="admin-login-page">
       <div className="admin-login-glow" />
       <a className="admin-login-back" href="/">← Voltar ao portfólio</a>
-
       <main className="admin-login-card" aria-labelledby="admin-login-title">
         <div className="admin-brand-mark">
           <img src={logoSrc} alt="Eric Y. Ikeda" referrerPolicy="no-referrer" />
           <span>ERIC Y. IKEDA</span>
         </div>
-
         <div className="admin-login-copy">
           <div className="section-label">Área restrita</div>
           <h1 id="admin-login-title">Painel <span>Admin</span></h1>
-          <p>Interface demonstrativa para gerenciamento visual do conteúdo do portfólio.</p>
+          <p>Gerencie o conteúdo publicado diretamente no seu portfólio.</p>
         </div>
-
         <form className="admin-login-form" onSubmit={submit}>
           <label>
             <span>E-mail</span>
-            <input
-              type="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              autoComplete="username"
-              placeholder="admin@portfolio.dev"
-            />
+            <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="username" />
           </label>
-
           <label>
             <span>Senha</span>
             <div className="admin-password-field">
-              <input
-                type={showPassword ? 'text' : 'password'}
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                autoComplete="current-password"
-                placeholder="••••••••"
-              />
-              <button type="button" onClick={() => setShowPassword((value) => !value)} aria-label="Mostrar ou ocultar senha">
-                <Icon name="eye" size={17} />
-              </button>
+              <input type={showPassword ? 'text' : 'password'} value={password} onChange={(event) => setPassword(event.target.value)} autoComplete="current-password" placeholder="••••••••" />
+              <button type="button" onClick={() => setShowPassword((value) => !value)} aria-label="Mostrar ou ocultar senha"><Icon name="eye" size={17} /></button>
             </div>
           </label>
-
           {error && <div className="admin-login-error">{error}</div>}
-
-          <button className="admin-login-submit" type="submit">Entrar no painel <span>→</span></button>
+          <button className="admin-login-submit" type="submit" disabled={submitting}>{submitting ? 'Entrando...' : 'Entrar no painel'} <span>→</span></button>
         </form>
-
-        <div className="admin-demo-credentials">
-          <div>
-            <span>LOGIN FICTÍCIO</span>
-            <strong>{DEMO_EMAIL}</strong>
-          </div>
-          <div>
-            <span>SENHA FICTÍCIA</span>
-            <strong>{DEMO_PASSWORD}</strong>
-          </div>
-        </div>
-
-        <p className="admin-demo-note">Demonstração visual — nenhuma informação é enviada para servidor ou banco de dados.</p>
+        <p className="admin-demo-note">Autenticação protegida no backend. A conexão com o Neon nunca é enviada ao navegador.</p>
       </main>
     </div>
   )
@@ -148,54 +130,45 @@ const navigation = [
   { id: 'settings', label: 'Configurações', icon: 'settings' as IconName },
 ]
 
-function Overview({ projects, onNavigate }: { projects: PortfolioProject[]; onNavigate: (tab: string) => void }) {
+function PageHeading({ title, description, action }: { title: string; description: string; action?: ReactNode }) {
+  return <div className="admin-dashboard-heading"><div><span className="admin-eyebrow">Administrador</span><h1>{title}</h1><p>{description}</p></div>{action}</div>
+}
+
+function NoticeBox({ notice }: { notice: Notice }) {
+  if (!notice) return null
+  return <div className={notice.type === 'error' ? 'admin-toast-demo admin-toast-error' : 'admin-toast-demo'}>{notice.text}</div>
+}
+
+function Overview({ content, onNavigate }: { content: PortfolioContent; onNavigate: (tab: string) => void }) {
+  const published = content.projects.filter((project) => project.published !== false)
   const cards = [
-    { label: 'Projetos publicados', value: projects.length.toString().padStart(2, '0'), helper: 'No portfólio', icon: 'projects' as IconName },
-    { label: 'Seções editáveis', value: '04', helper: 'Conteúdo principal', icon: 'edit' as IconName },
-    { label: 'Status do site', value: 'ON', helper: 'Portfólio online', icon: 'external' as IconName },
+    { label: 'Projetos publicados', value: published.length.toString().padStart(2, '0'), helper: 'Vindos do Neon', icon: 'projects' as IconName },
+    { label: 'Seções conectadas', value: '03', helper: 'Perfil, projetos e contato', icon: 'edit' as IconName },
+    { label: 'Status do banco', value: 'ON', helper: 'Conteúdo dinâmico', icon: 'external' as IconName },
   ]
 
   return (
     <>
       <div className="admin-dashboard-heading">
-        <div>
-          <span className="admin-eyebrow">Dashboard</span>
-          <h1>Visão geral</h1>
-          <p>Gerencie os principais conteúdos do seu portfólio em um só lugar.</p>
-        </div>
+        <div><span className="admin-eyebrow">Dashboard</span><h1>Visão geral</h1><p>O que você salvar aqui passa a ser lido pelo portfólio público.</p></div>
         <a href="/" className="admin-outline-action" target="_blank" rel="noreferrer"><Icon name="eye" size={16}/> Ver portfólio</a>
       </div>
-
       <div className="admin-stat-grid">
-        {cards.map((card) => (
-          <article className="admin-stat-card" key={card.label}>
-            <div className="admin-stat-top"><span>{card.label}</span><Icon name={card.icon} size={18}/></div>
-            <strong>{card.value}</strong>
-            <small>{card.helper}</small>
-          </article>
-        ))}
+        {cards.map((card) => <article className="admin-stat-card" key={card.label}><div className="admin-stat-top"><span>{card.label}</span><Icon name={card.icon} size={18}/></div><strong>{card.value}</strong><small>{card.helper}</small></article>)}
       </div>
-
       <div className="admin-overview-grid">
         <section className="admin-panel-card admin-quick-card">
           <div className="admin-panel-title"><div><span>ATALHOS</span><h2>Edição rápida</h2></div></div>
           <div className="admin-quick-list">
-            <button onClick={() => onNavigate('profile')}><span className="admin-quick-icon"><Icon name="profile"/></span><span><strong>Quem sou eu</strong><small>Edite sua apresentação e imagem</small></span><b>→</b></button>
-            <button onClick={() => onNavigate('projects')}><span className="admin-quick-icon"><Icon name="projects"/></span><span><strong>Projetos em destaque</strong><small>Adicione, edite ou organize projetos</small></span><b>→</b></button>
+            <button onClick={() => onNavigate('profile')}><span className="admin-quick-icon"><Icon name="profile"/></span><span><strong>Quem sou eu</strong><small>Texto e imagem do perfil</small></span><b>→</b></button>
+            <button onClick={() => onNavigate('projects')}><span className="admin-quick-icon"><Icon name="projects"/></span><span><strong>Projetos em destaque</strong><small>Adicionar, editar e excluir</small></span><b>→</b></button>
             <button onClick={() => onNavigate('contact')}><span className="admin-quick-icon"><Icon name="contact"/></span><span><strong>Informações de contato</strong><small>WhatsApp, e-mail e GitHub</small></span><b>→</b></button>
           </div>
         </section>
-
         <section className="admin-panel-card">
           <div className="admin-panel-title"><div><span>ÚLTIMOS PROJETOS</span><h2>Conteúdo atual</h2></div><button onClick={() => onNavigate('projects')}>Ver todos</button></div>
           <div className="admin-mini-projects">
-            {projects.slice(0, 3).map((project) => (
-              <div key={project.id}>
-                <span className="admin-mini-project-index">{String(project.sort_order).padStart(2, '0')}</span>
-                <div><strong>{project.name}</strong><small>{project.type}</small></div>
-                <span className="admin-status-dot">Publicado</span>
-              </div>
-            ))}
+            {content.projects.slice(0, 3).map((project) => <div key={project.id}><span className="admin-mini-project-index">{String(project.sort_order).padStart(2, '0')}</span><div><strong>{project.name}</strong><small>{project.type}</small></div><span className="admin-status-dot">{project.published === false ? 'Oculto' : 'Publicado'}</span></div>)}
           </div>
         </section>
       </div>
@@ -203,169 +176,212 @@ function Overview({ projects, onNavigate }: { projects: PortfolioProject[]; onNa
   )
 }
 
-function ProfileEditor() {
-  const [about, setAbout] = useState(DEFAULT_CONTENT.about_text)
-  const [imageUrl, setImageUrl] = useState('https://drive.google.com/thumbnail?id=18I4wMhuprbKT0OLBLvAvz12yAoPNQSNc&sz=w1000')
-  const [saved, setSaved] = useState(false)
+function ProfileEditor({ content, onUpdated }: { content: PortfolioContent; onUpdated: (next: PortfolioContent) => void }) {
+  const [about, setAbout] = useState(content.about_text)
+  const [imageUrl, setImageUrl] = useState(content.profile_image_url)
+  const [notice, setNotice] = useState<Notice>(null)
+  const [saving, setSaving] = useState(false)
 
-  return (
-    <>
-      <PageHeading title="Quem sou eu" description="Edite as informações exibidas na seção de apresentação do portfólio." />
-      {saved && <div className="admin-toast-demo">Alterações simuladas com sucesso.</div>}
-      <section className="admin-panel-card admin-editor-card">
-        <div className="admin-panel-title"><div><span>APRESENTAÇÃO</span><h2>Conteúdo da seção</h2></div></div>
-        <div className="admin-editor-layout">
-          <div className="admin-form-stack">
-            <label><span>Imagem de perfil</span><input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} /><small>Cole aqui uma URL de imagem pública.</small></label>
-            <label><span>Texto “Quem sou eu”</span><textarea rows={13} value={about} onChange={(e) => setAbout(e.target.value)} /></label>
-            <div className="admin-form-row">
-              <button className="admin-primary-action" onClick={() => { setSaved(true); setTimeout(() => setSaved(false), 2200) }}><Icon name="save" size={16}/> Salvar alterações</button>
-              <button className="admin-ghost-action" onClick={() => setAbout(DEFAULT_CONTENT.about_text)}>Restaurar texto</button>
-            </div>
-          </div>
-          <div className="admin-profile-preview">
-            <span>PRÉ-VISUALIZAÇÃO</span>
-            <div className="admin-profile-photo-wrap"><img src={imageUrl} alt="Pré-visualização do perfil" referrerPolicy="no-referrer" /></div>
-            <h3>Quem sou <b>eu</b></h3>
-            <p>{about.split(/\n\s*\n/)[0]}</p>
-          </div>
-        </div>
-      </section>
-    </>
-  )
-}
+  useEffect(() => { setAbout(content.about_text); setImageUrl(content.profile_image_url) }, [content.about_text, content.profile_image_url])
 
-function ProjectsEditor({ projects, setProjects }: { projects: PortfolioProject[]; setProjects: Dispatch<SetStateAction<PortfolioProject[]>> }) {
-  const removeProject = (id: number) => setProjects((items) => items.filter((item) => item.id !== id))
-  const addProject = () => {
-    const next = Math.max(0, ...projects.map((project) => project.id)) + 1
-    setProjects((items) => [...items, { id: next, name: 'Novo projeto', type: 'Projeto', description: 'Descrição do novo projeto.', tags: ['React'], highlights: ['Novo projeto'], github: '#', color: '#4285FF', image_url: null, sort_order: items.length + 1 }])
+  const save = async () => {
+    setSaving(true); setNotice(null)
+    try {
+      const next = await updateAdminContent({ about_text: about, profile_image_url: imageUrl, whatsapp: content.whatsapp, email: content.email, github: content.github })
+      onUpdated(next); announcePortfolioUpdate(); setNotice({ type: 'success', text: 'Perfil salvo no Neon e publicado no portfólio.' })
+    } catch (error) {
+      setNotice({ type: 'error', text: error instanceof Error ? error.message : 'Erro ao salvar perfil.' })
+    } finally { setSaving(false) }
   }
 
   return (
     <>
-      <PageHeading title="Projetos" description="Organize os projetos que aparecem em destaque no seu portfólio." action={<button className="admin-primary-action" onClick={addProject}><Icon name="plus" size={16}/> Novo projeto</button>} />
-      <section className="admin-panel-card">
-        <div className="admin-panel-title"><div><span>PORTFÓLIO</span><h2>Projetos em destaque</h2></div><span className="admin-pill-count">{projects.length} itens</span></div>
-        <div className="admin-project-table">
-          {projects.map((project) => (
-            <article key={project.id} className="admin-project-row">
-              <div className="admin-project-number">{String(project.sort_order).padStart(2, '0')}</div>
-              <div className="admin-project-color" style={{ background: project.color }} />
-              <div className="admin-project-row-copy"><strong>{project.name}</strong><span>{project.type}</span><p>{project.description}</p></div>
-              <div className="admin-project-tags">{project.tags.slice(0, 2).map((tag) => <span key={tag}>{tag}</span>)}</div>
-              <div className="admin-row-actions">
-                <button aria-label={`Editar ${project.name}`}><Icon name="edit" size={16}/></button>
-                <button className="danger" aria-label={`Excluir ${project.name}`} onClick={() => removeProject(project.id)}><Icon name="trash" size={16}/></button>
-              </div>
-            </article>
-          ))}
+      <PageHeading title="Quem sou eu" description="Edite o texto e a foto exibidos na seção de apresentação." />
+      <NoticeBox notice={notice} />
+      <section className="admin-panel-card admin-editor-card">
+        <div className="admin-panel-title"><div><span>APRESENTAÇÃO</span><h2>Conteúdo da seção</h2></div></div>
+        <div className="admin-editor-layout">
+          <div className="admin-form-stack">
+            <label><span>Imagem de perfil</span><input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} /><small>Use uma URL pública, inclusive link direto do Google Drive.</small></label>
+            <label><span>Texto “Quem sou eu”</span><textarea rows={13} value={about} onChange={(e) => setAbout(e.target.value)} /></label>
+            <div className="admin-form-row">
+              <button className="admin-primary-action" onClick={() => void save()} disabled={saving}><Icon name="save" size={16}/> {saving ? 'Salvando...' : 'Salvar e publicar'}</button>
+              <button className="admin-ghost-action" onClick={() => setAbout(DEFAULT_CONTENT.about_text)}>Restaurar texto padrão</button>
+            </div>
+          </div>
+          <div className="admin-profile-preview"><span>PRÉ-VISUALIZAÇÃO</span><div className="admin-profile-photo-wrap"><img src={imageUrl} alt="Pré-visualização do perfil" referrerPolicy="no-referrer" /></div><h3>Quem sou <b>eu</b></h3><p>{about.split(/\n\s*\n/)[0]}</p></div>
         </div>
       </section>
     </>
   )
 }
 
-function ContactEditor() {
-  const [form, setForm] = useState({ whatsapp: '+55 (43) 99636-9387', email: 'ikedayuji.2002@gmail.com', github: 'https://github.com/EricIkeda1' })
-  const [saved, setSaved] = useState(false)
+const EMPTY_PROJECT: Omit<PortfolioProject, 'id'> = {
+  name: '', type: '', description: '', tags: [], highlights: [], github: '', color: '#4285FF', image_url: null, sort_order: 1, published: true,
+}
+
+function ProjectsEditor({ projects, onProjectsChange }: { projects: PortfolioProject[]; onProjectsChange: (projects: PortfolioProject[]) => void }) {
+  const [editing, setEditing] = useState<PortfolioProject | null>(null)
+  const [creating, setCreating] = useState(false)
+  const [draft, setDraft] = useState<Omit<PortfolioProject, 'id'>>(EMPTY_PROJECT)
+  const [notice, setNotice] = useState<Notice>(null)
+  const [saving, setSaving] = useState(false)
+
+  const openNew = () => {
+    setEditing(null); setCreating(true); setNotice(null)
+    setDraft({ ...EMPTY_PROJECT, sort_order: Math.max(0, ...projects.map((p) => p.sort_order)) + 1 })
+  }
+
+  const openEdit = (project: PortfolioProject) => {
+    setCreating(false); setEditing(project); setNotice(null)
+    setDraft({ name: project.name, type: project.type, description: project.description, tags: [...project.tags], highlights: [...project.highlights], github: project.github, color: project.color, image_url: project.image_url ?? null, sort_order: project.sort_order, published: project.published !== false })
+  }
+
+  const closeForm = () => { setCreating(false); setEditing(null) }
+
+  const saveProject = async () => {
+    setSaving(true); setNotice(null)
+    try {
+      const saved = editing ? await updateAdminProject({ id: editing.id, ...draft }) : await createAdminProject(draft)
+      const next = editing ? projects.map((item) => item.id === saved.id ? saved : item) : [...projects, saved]
+      next.sort((a, b) => a.sort_order - b.sort_order || a.id - b.id)
+      onProjectsChange(next); announcePortfolioUpdate(); closeForm()
+      setNotice({ type: 'success', text: editing ? 'Projeto atualizado e publicado.' : 'Projeto adicionado ao portfólio.' })
+    } catch (error) {
+      setNotice({ type: 'error', text: error instanceof Error ? error.message : 'Erro ao salvar projeto.' })
+    } finally { setSaving(false) }
+  }
+
+  const removeProject = async (project: PortfolioProject) => {
+    if (!window.confirm(`Excluir “${project.name}” do portfólio?`)) return
+    setNotice(null)
+    try {
+      await deleteAdminProject(project.id)
+      onProjectsChange(projects.filter((item) => item.id !== project.id)); announcePortfolioUpdate()
+      setNotice({ type: 'success', text: 'Projeto excluído do banco e removido do portfólio.' })
+    } catch (error) {
+      setNotice({ type: 'error', text: error instanceof Error ? error.message : 'Erro ao excluir projeto.' })
+    }
+  }
+
+  const showForm = creating || editing !== null
+
   return (
     <>
-      <PageHeading title="Contato" description="Atualize os canais de contato apresentados aos visitantes do portfólio." />
-      {saved && <div className="admin-toast-demo">Contato atualizado apenas nesta demonstração.</div>}
-      <section className="admin-panel-card admin-editor-card">
-        <div className="admin-panel-title"><div><span>CANAIS</span><h2>Informações públicas</h2></div></div>
-        <div className="admin-form-stack narrow">
-          <label><span>WhatsApp</span><input value={form.whatsapp} onChange={(e) => setForm({ ...form, whatsapp: e.target.value })}/></label>
-          <label><span>E-mail</span><input value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })}/></label>
-          <label><span>GitHub</span><input value={form.github} onChange={(e) => setForm({ ...form, github: e.target.value })}/></label>
-          <div className="admin-form-row"><button className="admin-primary-action" onClick={() => { setSaved(true); setTimeout(() => setSaved(false), 2200) }}><Icon name="save" size={16}/> Salvar alterações</button></div>
+      <PageHeading title="Projetos" description="Adicione e edite projetos. Ao salvar, o site público passa a ler o novo conteúdo." action={<button className="admin-primary-action" onClick={openNew}><Icon name="plus" size={16}/> Novo projeto</button>} />
+      <NoticeBox notice={notice} />
+
+      {showForm && <section className="admin-panel-card admin-editor-card admin-project-editor">
+        <div className="admin-panel-title"><div><span>{editing ? 'EDITAR' : 'NOVO'}</span><h2>{editing ? editing.name : 'Adicionar projeto'}</h2></div><button onClick={closeForm}>Cancelar</button></div>
+        <div className="admin-project-form-grid">
+          <div className="admin-form-stack">
+            <label><span>Nome</span><input value={draft.name} onChange={(e) => setDraft({ ...draft, name: e.target.value })} /></label>
+            <label><span>Tipo</span><input value={draft.type} onChange={(e) => setDraft({ ...draft, type: e.target.value })} placeholder="Ex.: Sistema Web" /></label>
+            <label><span>Descrição</span><textarea rows={6} value={draft.description} onChange={(e) => setDraft({ ...draft, description: e.target.value })} /></label>
+            <label><span>Tecnologias / tags</span><input value={draft.tags.join(', ')} onChange={(e) => setDraft({ ...draft, tags: e.target.value.split(',').map((tag) => tag.trim()).filter(Boolean) })} placeholder="React, TypeScript, Neon" /></label>
+            <label><span>Destaques</span><input value={draft.highlights.join(', ')} onChange={(e) => setDraft({ ...draft, highlights: e.target.value.split(',').map((item) => item.trim()).filter(Boolean) })} placeholder="Responsivo, API REST, Login" /></label>
+          </div>
+          <div className="admin-form-stack">
+            <label><span>GitHub / link do projeto</span><input value={draft.github} onChange={(e) => setDraft({ ...draft, github: e.target.value })} /></label>
+            <label><span>URL da imagem (opcional)</span><input value={draft.image_url ?? ''} onChange={(e) => setDraft({ ...draft, image_url: e.target.value || null })} /></label>
+            <label><span>Cor</span><input type="color" value={draft.color} onChange={(e) => setDraft({ ...draft, color: e.target.value })} /></label>
+            <label><span>Ordem</span><input type="number" min="0" value={draft.sort_order} onChange={(e) => setDraft({ ...draft, sort_order: Number(e.target.value) })} /></label>
+            <label className="admin-checkbox-label"><input type="checkbox" checked={draft.published !== false} onChange={(e) => setDraft({ ...draft, published: e.target.checked })} /><span>Publicar no portfólio</span></label>
+            <div className="admin-form-row"><button className="admin-primary-action" onClick={() => void saveProject()} disabled={saving}><Icon name="save" size={16}/> {saving ? 'Salvando...' : 'Salvar projeto'}</button></div>
+          </div>
+        </div>
+      </section>}
+
+      <section className="admin-panel-card">
+        <div className="admin-panel-title"><div><span>PORTFÓLIO</span><h2>Projetos cadastrados</h2></div><span className="admin-pill-count">{projects.length} itens</span></div>
+        <div className="admin-project-table">
+          {projects.map((project) => <article key={project.id} className="admin-project-row">
+            <div className="admin-project-number">{String(project.sort_order).padStart(2, '0')}</div>
+            <div className="admin-project-color" style={{ background: project.color }} />
+            <div className="admin-project-row-copy"><strong>{project.name}</strong><span>{project.published === false ? 'Oculto' : project.type}</span><p>{project.description}</p></div>
+            <div className="admin-project-tags">{project.tags.slice(0, 2).map((tag) => <span key={tag}>{tag}</span>)}</div>
+            <div className="admin-row-actions"><button aria-label={`Editar ${project.name}`} onClick={() => openEdit(project)}><Icon name="edit" size={16}/></button><button className="danger" aria-label={`Excluir ${project.name}`} onClick={() => void removeProject(project)}><Icon name="trash" size={16}/></button></div>
+          </article>)}
         </div>
       </section>
+    </>
+  )
+}
+
+function ContactEditor({ content, onUpdated }: { content: PortfolioContent; onUpdated: (next: PortfolioContent) => void }) {
+  const [form, setForm] = useState({ whatsapp: content.whatsapp, email: content.email, github: content.github })
+  const [notice, setNotice] = useState<Notice>(null)
+  const [saving, setSaving] = useState(false)
+
+  useEffect(() => setForm({ whatsapp: content.whatsapp, email: content.email, github: content.github }), [content.whatsapp, content.email, content.github])
+
+  const save = async () => {
+    setSaving(true); setNotice(null)
+    try {
+      const next = await updateAdminContent({ about_text: content.about_text, profile_image_url: content.profile_image_url, whatsapp: form.whatsapp, email: form.email, github: form.github })
+      onUpdated(next); announcePortfolioUpdate(); setNotice({ type: 'success', text: 'Contatos salvos no Neon e atualizados no portfólio.' })
+    } catch (error) {
+      setNotice({ type: 'error', text: error instanceof Error ? error.message : 'Erro ao salvar contatos.' })
+    } finally { setSaving(false) }
+  }
+
+  return (
+    <>
+      <PageHeading title="Contato" description="Atualize os canais de contato apresentados aos visitantes." />
+      <NoticeBox notice={notice} />
+      <section className="admin-panel-card admin-editor-card"><div className="admin-panel-title"><div><span>CANAIS</span><h2>Informações públicas</h2></div></div><div className="admin-form-stack narrow">
+        <label><span>WhatsApp</span><input value={form.whatsapp} onChange={(e) => setForm({ ...form, whatsapp: e.target.value })}/></label>
+        <label><span>E-mail</span><input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })}/></label>
+        <label><span>GitHub</span><input value={form.github} onChange={(e) => setForm({ ...form, github: e.target.value })}/></label>
+        <div className="admin-form-row"><button className="admin-primary-action" onClick={() => void save()} disabled={saving}><Icon name="save" size={16}/> {saving ? 'Salvando...' : 'Salvar e publicar'}</button></div>
+      </div></section>
     </>
   )
 }
 
 function SettingsPanel() {
   return (
-    <>
-      <PageHeading title="Configurações" description="Preferências visuais da interface administrativa fictícia." />
-      <div className="admin-settings-grid">
-        <section className="admin-panel-card">
-          <div className="admin-panel-title"><div><span>APARÊNCIA</span><h2>Identidade visual</h2></div></div>
-          <div className="admin-setting-item"><div><strong>Cor principal</strong><small>Usada em botões e destaques.</small></div><div className="admin-color-demo"><span/><code>#4285FF</code></div></div>
-          <div className="admin-setting-item"><div><strong>Tema</strong><small>Segue o mesmo visual do portfólio.</small></div><span className="admin-setting-badge">Escuro</span></div>
-        </section>
-        <section className="admin-panel-card">
-          <div className="admin-panel-title"><div><span>DEMONSTRAÇÃO</span><h2>Sobre este painel</h2></div></div>
-          <p className="admin-setting-description">Este painel foi criado apenas como interface. Os botões e formulários simulam a experiência de administração, sem conexão com banco de dados ou autenticação real.</p>
-        </section>
-      </div>
-    </>
+    <><PageHeading title="Configurações" description="Informações técnicas da integração administrativa." /><div className="admin-settings-grid">
+      <section className="admin-panel-card"><div className="admin-panel-title"><div><span>BACKEND</span><h2>Integração ativa</h2></div></div><div className="admin-setting-item"><div><strong>Banco</strong><small>PostgreSQL serverless.</small></div><span className="admin-setting-badge">Neon</span></div><div className="admin-setting-item"><div><strong>Atualização</strong><small>O portfólio consulta a API e recebe alterações do painel.</small></div><span className="admin-setting-badge">Ao vivo</span></div></section>
+      <section className="admin-panel-card"><div className="admin-panel-title"><div><span>SEGURANÇA</span><h2>Sessão administrativa</h2></div></div><p className="admin-setting-description">O login é validado no backend. A sessão usa cookie HttpOnly e a DATABASE_URL fica apenas nas variáveis de ambiente da Vercel.</p></section>
+    </div></>
   )
-}
-
-function PageHeading({ title, description, action }: { title: string; description: string; action?: ReactNode }) {
-  return <div className="admin-dashboard-heading"><div><span className="admin-eyebrow">Administrador</span><h1>{title}</h1><p>{description}</p></div>{action}</div>
 }
 
 function Dashboard({ onLogout }: { onLogout: () => void }) {
   const [active, setActive] = useState('overview')
   const [mobileMenu, setMobileMenu] = useState(false)
-  const [projects, setProjects] = useState(DEFAULT_CONTENT.projects)
+  const [content, setContent] = useState<PortfolioContent>(DEFAULT_CONTENT)
+  const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState('')
   const currentLabel = useMemo(() => navigation.find((item) => item.id === active)?.label ?? 'Visão geral', [active])
 
-  const navigate = (tab: string) => {
-    setActive(tab)
-    setMobileMenu(false)
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
+  useEffect(() => {
+    void getAdminContent().then(setContent).catch((error) => setLoadError(error instanceof Error ? error.message : 'Erro ao carregar dados.')).finally(() => setLoading(false))
+  }, [])
 
-  const logout = () => {
-    sessionStorage.removeItem('portfolio-admin-demo')
-    onLogout()
-  }
+  const navigate = (tab: string) => { setActive(tab); setMobileMenu(false); window.scrollTo({ top: 0, behavior: 'smooth' }) }
+  const logout = async () => { try { await adminLogout() } finally { onLogout() } }
+  const updateProjects = (projects: PortfolioProject[]) => setContent((current) => ({ ...current, projects }))
 
   return (
     <div className="admin-app-shell">
       <aside className={`admin-sidebar ${mobileMenu ? 'open' : ''}`}>
-        <div className="admin-sidebar-brand">
-          <img src={logoSrc} alt="Eric Y. Ikeda" referrerPolicy="no-referrer" />
-          <div><strong>ERIC Y. IKEDA</strong><span>ADMIN PANEL</span></div>
-          <button className="admin-sidebar-close" onClick={() => setMobileMenu(false)}><Icon name="close"/></button>
-        </div>
-
-        <nav className="admin-sidebar-nav" aria-label="Menu administrativo">
-          <span className="admin-nav-caption">MENU PRINCIPAL</span>
-          {navigation.map((item) => (
-            <button key={item.id} className={active === item.id ? 'active' : ''} onClick={() => navigate(item.id)}>
-              <Icon name={item.icon} size={18}/><span>{item.label}</span>{active === item.id && <i/>}
-            </button>
-          ))}
-        </nav>
-
-        <div className="admin-sidebar-footer">
-          <a href="/" target="_blank" rel="noreferrer"><Icon name="external" size={17}/><span>Ver portfólio</span></a>
-          <button onClick={logout}><Icon name="logout" size={17}/><span>Sair</span></button>
-          <div className="admin-user-chip"><span>EI</span><div><strong>Eric Ikeda</strong><small>Administrador</small></div></div>
-        </div>
+        <div className="admin-sidebar-brand"><img src={logoSrc} alt="Eric Y. Ikeda" referrerPolicy="no-referrer" /><div><strong>ERIC Y. IKEDA</strong><span>ADMIN PANEL</span></div><button className="admin-sidebar-close" onClick={() => setMobileMenu(false)}><Icon name="close"/></button></div>
+        <nav className="admin-sidebar-nav" aria-label="Menu administrativo"><span className="admin-nav-caption">MENU PRINCIPAL</span>{navigation.map((item) => <button key={item.id} className={active === item.id ? 'active' : ''} onClick={() => navigate(item.id)}><Icon name={item.icon} size={18}/><span>{item.label}</span>{active === item.id && <i/>}</button>)}</nav>
+        <div className="admin-sidebar-footer"><a href="/" target="_blank" rel="noreferrer"><Icon name="external" size={17}/><span>Ver portfólio</span></a><button onClick={() => void logout()}><Icon name="logout" size={17}/><span>Sair</span></button><div className="admin-user-chip"><span>EI</span><div><strong>Eric Ikeda</strong><small>Administrador</small></div></div></div>
       </aside>
-
       {mobileMenu && <button className="admin-sidebar-overlay" aria-label="Fechar menu" onClick={() => setMobileMenu(false)} />}
-
       <div className="admin-main-area">
-        <header className="admin-topbar">
-          <button className="admin-mobile-menu" onClick={() => setMobileMenu(true)}><Icon name="menu"/></button>
-          <div><span>Painel administrativo</span><strong>{currentLabel}</strong></div>
-          <div className="admin-topbar-status"><span/><em>Sistema fictício</em></div>
-        </header>
-
+        <header className="admin-topbar"><button className="admin-mobile-menu" onClick={() => setMobileMenu(true)}><Icon name="menu"/></button><div><span>Painel administrativo</span><strong>{currentLabel}</strong></div><div className="admin-topbar-status"><span/><em>Neon conectado</em></div></header>
         <main className="admin-dashboard-content">
-          {active === 'overview' && <Overview projects={projects} onNavigate={navigate} />}
-          {active === 'profile' && <ProfileEditor />}
-          {active === 'projects' && <ProjectsEditor projects={projects} setProjects={setProjects} />}
-          {active === 'contact' && <ContactEditor />}
-          {active === 'settings' && <SettingsPanel />}
+          {loading && <div className="admin-panel-card"><p className="admin-setting-description">Carregando conteúdo do Neon...</p></div>}
+          {!loading && loadError && <div className="admin-toast-demo admin-toast-error">{loadError}</div>}
+          {!loading && !loadError && active === 'overview' && <Overview content={content} onNavigate={navigate} />}
+          {!loading && !loadError && active === 'profile' && <ProfileEditor content={content} onUpdated={setContent} />}
+          {!loading && !loadError && active === 'projects' && <ProjectsEditor projects={content.projects} onProjectsChange={updateProjects} />}
+          {!loading && !loadError && active === 'contact' && <ContactEditor content={content} onUpdated={setContent} />}
+          {!loading && !loadError && active === 'settings' && <SettingsPanel />}
         </main>
       </div>
     </div>
@@ -373,6 +389,13 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
 }
 
 export default function AdminPage() {
-  const [authenticated, setAuthenticated] = useState(() => sessionStorage.getItem('portfolio-admin-demo') === 'true')
+  const [checking, setChecking] = useState(true)
+  const [authenticated, setAuthenticated] = useState(false)
+
+  useEffect(() => {
+    void adminSession().then((session) => setAuthenticated(session.authenticated)).finally(() => setChecking(false))
+  }, [])
+
+  if (checking) return <div className="admin-login-page"><main className="admin-login-card"><div className="admin-login-copy"><div className="section-label">Área restrita</div><h1>Verificando <span>sessão</span></h1><p>Conectando ao painel administrativo...</p></div></main></div>
   return authenticated ? <Dashboard onLogout={() => setAuthenticated(false)} /> : <LoginScreen onLogin={() => setAuthenticated(true)} />
 }

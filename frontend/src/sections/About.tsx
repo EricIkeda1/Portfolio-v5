@@ -1,9 +1,6 @@
 import { Reveal, RevealGroup } from '@/components/Reveal'
 import { usePortfolioContent } from '@/context/PortfolioContentContext'
 
-const photoSrc =
-  'https://drive.google.com/thumbnail?id=18I4wMhuprbKT0OLBLvAvz12yAoPNQSNc&sz=w1000'
-
 const areas = [
   {
     title: 'Full Stack',
@@ -72,7 +69,7 @@ export default function About() {
                   }}
                 />
                 <img
-                  src={photoSrc}
+                  src={content.profile_image_url}
                   alt="Eric Y. Ikeda"
                   loading="lazy"
                   referrerPolicy="no-referrer"

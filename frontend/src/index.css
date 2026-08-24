@@ -805,3 +805,13 @@ a {
   .admin-project-row-copy > span { display: block; margin: .25rem 0 0; }
   .admin-project-row-copy p { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
 }
+
+/* Neon admin integration */
+.admin-toast-error { border-color: rgba(248,113,113,.26); background: rgba(248,113,113,.06); color: #fca5a5; }
+.admin-project-editor { margin-bottom: 1rem; }
+.admin-project-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.4rem; }
+.admin-checkbox-label { display: flex !important; grid-template-columns: none !important; align-items: center; gap: .65rem !important; min-height: 42px; padding: .7rem .85rem; border: 1px solid var(--border); border-radius: 4px; }
+.admin-checkbox-label input { width: 16px !important; height: 16px; accent-color: var(--blue); }
+.admin-checkbox-label span { font-size: .72rem; }
+.admin-primary-action:disabled, .admin-login-submit:disabled { opacity: .6; cursor: wait; }
+@media (max-width: 800px) { .admin-project-form-grid { grid-template-columns: 1fr; } }
