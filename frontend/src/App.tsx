@@ -8,6 +8,7 @@ import Experience from '@/sections/Experience'
 import Versions from '@/sections/Versions'
 import Contact from '@/sections/Contact'
 import { PortfolioContentProvider } from '@/context/PortfolioContentContext'
+import AdminPage from '@/admin/AdminPage'
 
 function PortfolioPage() {
   const [hovering, setHovering] = useState(false)
@@ -86,5 +87,6 @@ function PortfolioPage() {
 }
 
 export default function App() {
-  return <PortfolioPage />
+  const isAdminRoute = window.location.pathname.replace(/\/+$/, '') === '/admin'
+  return isAdminRoute ? <AdminPage /> : <PortfolioPage />
 }
