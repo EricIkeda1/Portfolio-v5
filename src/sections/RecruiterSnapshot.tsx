@@ -10,7 +10,7 @@ const items = [
   {
     kicker: 'Formação',
     title: 'Engenharia de Software',
-    description: 'UniSenai PR Dr. Celso Charuri — Londrina · concluído em 26/06/2026.',
+    description: 'UniSenai PR Dr. Celso Charuri, Londrina · concluído em 26/06/2026.',
   },
   {
     kicker: 'Foco',

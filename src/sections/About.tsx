@@ -28,7 +28,7 @@ const areas = [
   },
   {
     title: 'Mobile',
-    desc: 'Apps multiplataforma com Flutter — foco em UX e desempenho nativo.',
+    desc: 'Apps multiplataforma com Flutter, foco em UX e desempenho nativo.',
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
         <rect x="5" y="2" width="14" height="20" rx="2" />
@@ -297,7 +297,7 @@ export default function About() {
                   Engenharia de Software
                 </div>
                 <div style={{ fontSize: '0.85rem', color: 'var(--muted)', marginTop: 2 }}>
-                  UniSenaiPR – Londrina · Concluído em 26/06/2026
+                  UniSenaiPR, Londrina · Concluído em 26/06/2026
                 </div>
               </div>
             </Reveal>
