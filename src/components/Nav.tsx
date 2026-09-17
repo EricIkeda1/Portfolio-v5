@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import ProtectedLogo from '@/components/ProtectedLogo'
+import { usePortfolioContent } from '@/context/PortfolioContentContext'
 
 const links = [
   { label: 'Início', href: '#' },
@@ -10,6 +11,7 @@ const links = [
 ]
 
 export default function Nav() {
+  const { content } = usePortfolioContent()
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
 
@@ -143,7 +145,7 @@ export default function Nav() {
           ))}
 
           <a
-            href="/curriculo-eric-yuji-ikeda.pdf"
+            href={content.resume_url}
             target="_blank"
             rel="noopener noreferrer"
             className="font-mono"
@@ -279,7 +281,7 @@ export default function Nav() {
           ))}
 
           <a
-            href="/curriculo-eric-yuji-ikeda.pdf"
+            href={content.resume_url}
             target="_blank"
             rel="noopener noreferrer"
             onClick={close}

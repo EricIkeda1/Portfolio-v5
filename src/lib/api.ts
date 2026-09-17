@@ -62,7 +62,7 @@ export async function getAdminContent() {
   return normalizePortfolioContent(body)
 }
 
-export async function updateAdminContent(content: Pick<PortfolioContent, 'about_text' | 'profile_image_url' | 'whatsapp' | 'email' | 'github' | 'linkedin'>) {
+export async function updateAdminContent(content: Pick<PortfolioContent, 'about_text' | 'profile_image_url' | 'whatsapp' | 'email' | 'github' | 'linkedin' | 'resume_url'>) {
   const body = await request<unknown>('/api/admin-content', {
     method: 'PUT',
     body: JSON.stringify(content),

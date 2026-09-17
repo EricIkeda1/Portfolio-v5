@@ -20,9 +20,10 @@ export default async function handler(req: any, res: any) {
     const email = String(req.body?.email ?? '').trim()
     const github = String(req.body?.github ?? '').trim()
     const linkedin = String(req.body?.linkedin ?? '').trim()
+    const resumeUrl = String(req.body?.resume_url ?? '').trim()
 
-    if (!aboutText || !whatsapp || !email || !github || !linkedin) {
-      return res.status(400).json({ error: 'Preencha texto, WhatsApp, e-mail, GitHub e LinkedIn.' })
+    if (!aboutText || !whatsapp || !email || !github || !linkedin || !resumeUrl) {
+      return res.status(400).json({ error: 'Preencha texto, WhatsApp, e-mail, GitHub, LinkedIn e o link do currículo.' })
     }
 
     const sql = getSql()
@@ -34,6 +35,7 @@ export default async function handler(req: any, res: any) {
           email = ${email},
           github = ${github},
           linkedin = ${linkedin},
+          resume_url = ${resumeUrl},
           updated_at = now()
       WHERE id = 1
     `

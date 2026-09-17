@@ -16,11 +16,15 @@ CREATE TABLE IF NOT EXISTS portfolio_settings (
   email TEXT NOT NULL,
   github TEXT NOT NULL,
   linkedin TEXT NOT NULL DEFAULT 'https://www.linkedin.com/in/ericikeda1',
+  resume_url TEXT NOT NULL DEFAULT 'https://drive.google.com/file/d/1VTpI8VouOdHnPuDKxZmskY_02dhK2wIC/view?usp=sharing',
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 ALTER TABLE portfolio_settings
   ADD COLUMN IF NOT EXISTS linkedin TEXT NOT NULL DEFAULT 'https://www.linkedin.com/in/ericikeda1';
+
+ALTER TABLE portfolio_settings
+  ADD COLUMN IF NOT EXISTS resume_url TEXT NOT NULL DEFAULT 'https://drive.google.com/file/d/1VTpI8VouOdHnPuDKxZmskY_02dhK2wIC/view?usp=sharing';
 
 CREATE TABLE IF NOT EXISTS portfolio_projects (
   id SERIAL PRIMARY KEY,

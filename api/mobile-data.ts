@@ -27,6 +27,7 @@ export default async function handler(req: any, res: any) {
         email,
         github,
         linkedin,
+        resume_url,
         updated_at
       FROM portfolio_settings
       WHERE id = 1

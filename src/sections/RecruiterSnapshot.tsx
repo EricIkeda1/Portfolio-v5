@@ -1,4 +1,5 @@
 import { Reveal, RevealGroup } from '@/components/Reveal'
+import { usePortfolioContent } from '@/context/PortfolioContentContext'
 
 const items = [
   {
@@ -25,6 +26,8 @@ const items = [
 ]
 
 export default function RecruiterSnapshot() {
+  const { content } = usePortfolioContent()
+
   return (
     <section className="recruiter-snapshot" aria-labelledby="recruiter-snapshot-title">
       <div className="container">
@@ -36,7 +39,7 @@ export default function RecruiterSnapshot() {
                 Meu perfil em <span>30 segundos</span>
               </h2>
             </div>
-            <a className="recruiter-cv-link font-mono" href="/curriculo-eric-yuji-ikeda.pdf" target="_blank" rel="noopener noreferrer">
+            <a className="recruiter-cv-link font-mono" href={content.resume_url} target="_blank" rel="noopener noreferrer">
               Abrir currículo
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden="true">
                 <path d="M14 3h7v7" />

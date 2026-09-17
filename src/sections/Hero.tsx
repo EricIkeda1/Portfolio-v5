@@ -317,7 +317,7 @@ export default function Hero() {
                 </a>
 
                 <a
-                  href="/curriculo-eric-yuji-ikeda.pdf"
+                  href={content.resume_url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="font-mono"

@@ -19,6 +19,7 @@ export interface PortfolioContent {
   email: string
   github: string
   linkedin: string
+  resume_url: string
   updated_at: string
   projects: PortfolioProject[]
 }
@@ -33,6 +34,7 @@ export const DEFAULT_WHATSAPP = '5543996369387'
 export const DEFAULT_EMAIL = 'ericikeda2002@gmail.com'
 export const DEFAULT_GITHUB = 'https://github.com/EricIkeda1'
 export const DEFAULT_LINKEDIN = 'https://www.linkedin.com/in/ericikeda1'
+export const DEFAULT_RESUME_URL = 'https://drive.google.com/file/d/1VTpI8VouOdHnPuDKxZmskY_02dhK2wIC/view?usp=sharing'
 
 export const DEFAULT_PROJECTS: PortfolioProject[] = [
   {
@@ -100,6 +102,7 @@ export const DEFAULT_CONTENT: PortfolioContent = {
   email: DEFAULT_EMAIL,
   github: DEFAULT_GITHUB,
   linkedin: DEFAULT_LINKEDIN,
+  resume_url: DEFAULT_RESUME_URL,
   updated_at: '',
   projects: DEFAULT_PROJECTS,
 }
@@ -135,6 +138,10 @@ export function normalizePortfolioContent(value: unknown): PortfolioContent {
       typeof raw.linkedin === 'string' && raw.linkedin.trim()
         ? raw.linkedin
         : DEFAULT_CONTENT.linkedin,
+    resume_url:
+      typeof raw.resume_url === 'string' && raw.resume_url.trim()
+        ? raw.resume_url
+        : DEFAULT_CONTENT.resume_url,
     updated_at:
       typeof raw.updated_at === 'string'
         ? raw.updated_at

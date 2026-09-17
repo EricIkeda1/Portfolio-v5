@@ -1,6 +1,7 @@
 import { neon } from '@neondatabase/serverless'
 
 const DEFAULT_LINKEDIN = 'https://www.linkedin.com/in/ericikeda1'
+const DEFAULT_RESUME_URL = 'https://drive.google.com/file/d/1VTpI8VouOdHnPuDKxZmskY_02dhK2wIC/view?usp=sharing'
 const DEFAULT_PROFILE_IMAGE = 'https://drive.google.com/thumbnail?id=18I4wMhuprbKT0OLBLvAvz12yAoPNQSNc&sz=w1000'
 const DEFAULT_ADMIN_HASH = 'scrypt$f5d58b986bae5912a90f66a08158d67b$63d88d2b36c9474dc564149c83ea73e9cdf4e95ae5183b0480f7c510ba120715f952c061a33eff4a2489fae8eb99b11ffb662fd75b123ea07edcdbc3c36c845a'
 
@@ -33,11 +34,13 @@ async function createSchema() {
       email TEXT NOT NULL,
       github TEXT NOT NULL,
       linkedin TEXT NOT NULL DEFAULT 'https://www.linkedin.com/in/ericikeda1',
+      resume_url TEXT NOT NULL DEFAULT 'https://drive.google.com/file/d/1VTpI8VouOdHnPuDKxZmskY_02dhK2wIC/view?usp=sharing',
       updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
     )
   `
 
   await sql`ALTER TABLE portfolio_settings ADD COLUMN IF NOT EXISTS linkedin TEXT NOT NULL DEFAULT 'https://www.linkedin.com/in/ericikeda1'`
+  await sql`ALTER TABLE portfolio_settings ADD COLUMN IF NOT EXISTS resume_url TEXT NOT NULL DEFAULT 'https://drive.google.com/file/d/1VTpI8VouOdHnPuDKxZmskY_02dhK2wIC/view?usp=sharing'`
 
   await sql`
     CREATE TABLE IF NOT EXISTS portfolio_projects (
@@ -66,7 +69,7 @@ async function createSchema() {
   `
 
   const insertedSettings = await sql`
-    INSERT INTO portfolio_settings (id, about_text, profile_image_url, whatsapp, email, github, linkedin)
+    INSERT INTO portfolio_settings (id, about_text, profile_image_url, whatsapp, email, github, linkedin, resume_url)
     VALUES (
       1,
       ${`Meu nome é Eric, sou desenvolvedor de software e gosto de transformar ideias em projetos reais. Desenvolvo sites, sistemas e aplicações, sempre buscando criar soluções modernas, rápidas e que realmente façam a diferença para quem as utiliza.\n\nGosto de participar de todas as etapas do desenvolvimento, desde o planejamento até a entrega, cuidando tanto da experiência visual quanto da qualidade do código. Meu objetivo é criar projetos organizados, funcionais e que ofereçam a melhor experiência possível.\n\nAlém de desenvolver para clientes, também crio projetos próprios para estudar novas tecnologias, testar ideias e evoluir como desenvolvedor. Acredito que sempre existe algo novo para aprender, e cada projeto é uma oportunidade de construir soluções das quais eu possa me orgulhar.`},
@@ -74,7 +77,8 @@ async function createSchema() {
       '5543996369387',
       'ikedayuji.2002@gmail.com',
       'https://github.com/EricIkeda1',
-      ${DEFAULT_LINKEDIN}
+      ${DEFAULT_LINKEDIN},
+      ${DEFAULT_RESUME_URL}
     )
     ON CONFLICT (id) DO NOTHING
     RETURNING id
@@ -136,7 +140,7 @@ export async function readPortfolioContent(includeUnpublished = false) {
   await ensureSchema()
   const sql = getSql()
   const settingsRows = await sql`
-    SELECT about_text, profile_image_url, whatsapp, email, github, linkedin, updated_at
+    SELECT about_text, profile_image_url, whatsapp, email, github, linkedin, resume_url, updated_at
     FROM portfolio_settings
     WHERE id = 1
     LIMIT 1
@@ -154,6 +158,7 @@ export async function readPortfolioContent(includeUnpublished = false) {
     email: String(settings.email ?? ''),
     github: String(settings.github ?? ''),
     linkedin: String(settings.linkedin ?? DEFAULT_LINKEDIN),
+    resume_url: String(settings.resume_url ?? DEFAULT_RESUME_URL),
     updated_at: settings.updated_at ? String(settings.updated_at) : '',
     projects: projects.map((row) => normalizeProject(row as Record<string, unknown>)),
   }
