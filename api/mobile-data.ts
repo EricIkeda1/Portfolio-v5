@@ -1,4 +1,4 @@
-import { neon } from '@neondatabase/serverless'
+import { ensureSchema, getSql } from './_lib/db.js'
 
 export default async function handler(req: any, res: any) {
   res.setHeader('Access-Control-Allow-Origin', '*')
@@ -15,14 +15,9 @@ export default async function handler(req: any, res: any) {
     })
   }
 
-  if (!process.env.DATABASE_URL) {
-    return res.status(500).json({
-      error: 'DATABASE_URL não configurada',
-    })
-  }
-
   try {
-    const sql = neon(process.env.DATABASE_URL)
+    await ensureSchema()
+    const sql = getSql()
 
     const settings = await sql`
       SELECT
@@ -31,6 +26,7 @@ export default async function handler(req: any, res: any) {
         whatsapp,
         email,
         github,
+        linkedin,
         updated_at
       FROM portfolio_settings
       WHERE id = 1

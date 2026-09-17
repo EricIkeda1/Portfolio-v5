@@ -18,6 +18,7 @@ export interface PortfolioContent {
   whatsapp: string
   email: string
   github: string
+  linkedin: string
   updated_at: string
   projects: PortfolioProject[]
 }
@@ -31,6 +32,7 @@ Além de desenvolver para clientes, também crio projetos próprios para estudar
 export const DEFAULT_WHATSAPP = '5543996369387'
 export const DEFAULT_EMAIL = 'ikedayuji.2002@gmail.com'
 export const DEFAULT_GITHUB = 'https://github.com/EricIkeda1'
+export const DEFAULT_LINKEDIN = 'https://www.linkedin.com/in/ericikeda1'
 
 export const DEFAULT_PROJECTS: PortfolioProject[] = [
   {
@@ -97,6 +99,7 @@ export const DEFAULT_CONTENT: PortfolioContent = {
   whatsapp: DEFAULT_WHATSAPP,
   email: DEFAULT_EMAIL,
   github: DEFAULT_GITHUB,
+  linkedin: DEFAULT_LINKEDIN,
   updated_at: '',
   projects: DEFAULT_PROJECTS,
 }
@@ -128,6 +131,10 @@ export function normalizePortfolioContent(value: unknown): PortfolioContent {
       typeof raw.github === 'string' && raw.github.trim()
         ? raw.github
         : DEFAULT_CONTENT.github,
+    linkedin:
+      typeof raw.linkedin === 'string' && raw.linkedin.trim()
+        ? raw.linkedin
+        : DEFAULT_CONTENT.linkedin,
     updated_at:
       typeof raw.updated_at === 'string'
         ? raw.updated_at

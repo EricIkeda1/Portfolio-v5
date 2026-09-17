@@ -19,9 +19,10 @@ export default async function handler(req: any, res: any) {
     const whatsapp = String(req.body?.whatsapp ?? '').trim()
     const email = String(req.body?.email ?? '').trim()
     const github = String(req.body?.github ?? '').trim()
+    const linkedin = String(req.body?.linkedin ?? '').trim()
 
-    if (!aboutText || !whatsapp || !email || !github) {
-      return res.status(400).json({ error: 'Preencha texto, WhatsApp, e-mail e GitHub.' })
+    if (!aboutText || !whatsapp || !email || !github || !linkedin) {
+      return res.status(400).json({ error: 'Preencha texto, WhatsApp, e-mail, GitHub e LinkedIn.' })
     }
 
     const sql = getSql()
@@ -32,6 +33,7 @@ export default async function handler(req: any, res: any) {
           whatsapp = ${whatsapp},
           email = ${email},
           github = ${github},
+          linkedin = ${linkedin},
           updated_at = now()
       WHERE id = 1
     `

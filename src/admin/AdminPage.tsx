@@ -160,7 +160,7 @@ function Overview({ content, onNavigate }: { content: PortfolioContent; onNaviga
           <div className="admin-quick-list">
             <button onClick={() => onNavigate('profile')}><span className="admin-quick-icon"><Icon name="profile"/></span><span><strong>Quem sou eu</strong><small>Texto e imagem do perfil</small></span><b>→</b></button>
             <button onClick={() => onNavigate('projects')}><span className="admin-quick-icon"><Icon name="projects"/></span><span><strong>Projetos em destaque</strong><small>Adicionar, editar e excluir</small></span><b>→</b></button>
-            <button onClick={() => onNavigate('contact')}><span className="admin-quick-icon"><Icon name="contact"/></span><span><strong>Informações de contato</strong><small>WhatsApp, e-mail e GitHub</small></span><b>→</b></button>
+            <button onClick={() => onNavigate('contact')}><span className="admin-quick-icon"><Icon name="contact"/></span><span><strong>Informações de contato</strong><small>WhatsApp, e-mail, GitHub e LinkedIn</small></span><b>→</b></button>
           </div>
         </section>
         <section className="admin-panel-card">
@@ -185,7 +185,7 @@ function ProfileEditor({ content, onUpdated }: { content: PortfolioContent; onUp
   const save = async () => {
     setSaving(true); setNotice(null)
     try {
-      const next = await updateAdminContent({ about_text: about, profile_image_url: imageUrl, whatsapp: content.whatsapp, email: content.email, github: content.github })
+      const next = await updateAdminContent({ about_text: about, profile_image_url: imageUrl, whatsapp: content.whatsapp, email: content.email, github: content.github, linkedin: content.linkedin })
       onUpdated(next); announcePortfolioUpdate(); setNotice({ type: 'success', text: 'Perfil salvo no Neon e publicado no portfólio.' })
     } catch (error) {
       setNotice({ type: 'error', text: error instanceof Error ? error.message : 'Erro ao salvar perfil.' })
@@ -307,16 +307,16 @@ function ProjectsEditor({ projects, onProjectsChange }: { projects: PortfolioPro
 }
 
 function ContactEditor({ content, onUpdated }: { content: PortfolioContent; onUpdated: (next: PortfolioContent) => void }) {
-  const [form, setForm] = useState({ whatsapp: content.whatsapp, email: content.email, github: content.github })
+  const [form, setForm] = useState({ whatsapp: content.whatsapp, email: content.email, github: content.github, linkedin: content.linkedin })
   const [notice, setNotice] = useState<Notice>(null)
   const [saving, setSaving] = useState(false)
 
-  useEffect(() => setForm({ whatsapp: content.whatsapp, email: content.email, github: content.github }), [content.whatsapp, content.email, content.github])
+  useEffect(() => setForm({ whatsapp: content.whatsapp, email: content.email, github: content.github, linkedin: content.linkedin }), [content.whatsapp, content.email, content.github, content.linkedin])
 
   const save = async () => {
     setSaving(true); setNotice(null)
     try {
-      const next = await updateAdminContent({ about_text: content.about_text, profile_image_url: content.profile_image_url, whatsapp: form.whatsapp, email: form.email, github: form.github })
+      const next = await updateAdminContent({ about_text: content.about_text, profile_image_url: content.profile_image_url, whatsapp: form.whatsapp, email: form.email, github: form.github, linkedin: form.linkedin })
       onUpdated(next); announcePortfolioUpdate(); setNotice({ type: 'success', text: 'Contatos salvos no Neon e atualizados no portfólio.' })
     } catch (error) {
       setNotice({ type: 'error', text: error instanceof Error ? error.message : 'Erro ao salvar contatos.' })
@@ -331,6 +331,7 @@ function ContactEditor({ content, onUpdated }: { content: PortfolioContent; onUp
         <label><span>WhatsApp</span><input value={form.whatsapp} onChange={(e) => setForm({ ...form, whatsapp: e.target.value })}/></label>
         <label><span>E-mail</span><input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })}/></label>
         <label><span>GitHub</span><input value={form.github} onChange={(e) => setForm({ ...form, github: e.target.value })}/></label>
+        <label><span>LinkedIn</span><input value={form.linkedin} onChange={(e) => setForm({ ...form, linkedin: e.target.value })}/></label>
         <div className="admin-form-row"><button className="admin-primary-action" onClick={() => void save()} disabled={saving}><Icon name="save" size={16}/> {saving ? 'Salvando...' : 'Salvar e publicar'}</button></div>
       </div></section>
     </>
