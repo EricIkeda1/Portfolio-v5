@@ -4,12 +4,12 @@ const items = [
   {
     kicker: 'Objetivo',
     title: 'Desenvolvedor de Software Júnior',
-    description: 'Busco uma oportunidade para contribuir em produtos reais e evoluir junto ao time.',
+    description: 'Busco uma oportunidade como Desenvolvedor de Software Júnior, com foco em desenvolvimento web e mobile, para aplicar meus conhecimentos em projetos reais, evoluir tecnicamente e contribuir com soluções bem estruturadas e funcionais.',
   },
   {
     kicker: 'Formação',
     title: 'Engenharia de Software',
-    description: 'UniSenai PR Dr. Celso Charuri — Londrina · conclusão em 2026.',
+    description: 'UniSenai PR Dr. Celso Charuri — Londrina · concluído em 26/06/2026.',
   },
   {
     kicker: 'Foco',

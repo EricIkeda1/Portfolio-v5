@@ -194,8 +194,7 @@ export default function Contact() {
                 <p style={{ fontSize: '1rem', lineHeight: 1.8, color: 'var(--muted)', marginBottom: '1.75rem', fontWeight: 400 }}>
                   Busco uma oportunidade como{' '}
                   <strong style={{ color: 'var(--text)', fontWeight: 600 }}>Desenvolvedor de Software Júnior</strong>, com foco em{' '}
-                  <strong style={{ color: 'var(--text)', fontWeight: 600 }}>Web e Mobile</strong>, para contribuir em projetos reais,
-                  colaborar com o time e continuar evoluindo tecnicamente.
+                  <strong style={{ color: 'var(--text)', fontWeight: 600 }}>desenvolvimento web e mobile</strong>, para aplicar meus conhecimentos em projetos reais, evoluir tecnicamente e contribuir com soluções bem estruturadas e funcionais.
                 </p>
 
                 <div style={{ borderTop: '1px solid var(--border)', paddingTop: '1.25rem' }}>

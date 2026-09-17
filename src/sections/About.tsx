@@ -297,7 +297,7 @@ export default function About() {
                   Engenharia de Software
                 </div>
                 <div style={{ fontSize: '0.85rem', color: 'var(--muted)', marginTop: 2 }}>
-                  UniSenaiPR – Londrina · Conclusão: 2026
+                  UniSenaiPR – Londrina · Concluído em 26/06/2026
                 </div>
               </div>
             </Reveal>
