@@ -68,18 +68,34 @@ function PortfolioPage() {
             <Versions />
             <Contact />
           </main>
-          <footer
-            style={{
-              borderTop: '1px solid var(--border)',
-              padding: '2rem',
-              textAlign: 'center',
-              color: 'var(--muted)',
-              fontFamily: 'Space Mono, monospace',
-              fontSize: '0.72rem',
-              letterSpacing: '0.08em',
-            }}
-          >
-            © {new Date().getFullYear()} ERIC Y. IKEDA — PORTFOLIO V5
+          <footer className="site-footer">
+            <div className="site-footer-inner">
+              <div className="site-footer-signature">
+                <span className="site-footer-monogram" aria-hidden="true">EI</span>
+                <div>
+                  <span className="site-footer-copy">
+                    © {new Date().getFullYear()} ERIC Y. IKEDA
+                  </span>
+                  <span className="site-footer-version">PORTFOLIO V5</span>
+                </div>
+              </div>
+
+              <a
+                className="site-footer-domain"
+                href="https://www.ericyikeda.com.br/"
+                aria-label="Acessar ericyikeda.com.br, domínio oficial do portfólio"
+              >
+                <span className="site-footer-domain-meta">
+                  <span className="site-footer-domain-dot" aria-hidden="true" />
+                  DOMÍNIO OFICIAL
+                </span>
+                <span className="site-footer-domain-address">
+                  <span className="site-footer-protocol">https://</span>
+                  <span>ericyikeda</span><strong>.com.br</strong>
+                </span>
+                <span className="site-footer-domain-arrow" aria-hidden="true">↗</span>
+              </a>
+            </div>
           </footer>
         </div>
       </div>
