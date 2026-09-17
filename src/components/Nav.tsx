@@ -5,7 +5,7 @@ const links = [
   { label: 'Início', href: '#' },
   { label: 'Sobre', href: '#sobre' },
   { label: 'Habilidades', href: '#habilidades' },
-  { label: 'Experiência', href: '#experiencia' },
+  { label: 'Projetos', href: '#experiencia' },
   { label: 'Contato', href: '#contato' },
 ]
 
@@ -143,7 +143,9 @@ export default function Nav() {
           ))}
 
           <a
-            href="#contato"
+            href="/curriculo-eric-yuji-ikeda.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
             className="font-mono"
             style={{
               background: 'var(--blue)',
@@ -171,7 +173,7 @@ export default function Nav() {
               el.style.boxShadow = 'none'
             }}
           >
-            Contratar
+            Currículo
           </a>
         </nav>
 
@@ -277,7 +279,9 @@ export default function Nav() {
           ))}
 
           <a
-            href="#contato"
+            href="/curriculo-eric-yuji-ikeda.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
             onClick={close}
             className="font-mono"
             style={{
@@ -293,7 +297,7 @@ export default function Nav() {
               textAlign: 'center',
             }}
           >
-            Contratar
+            Currículo
           </a>
         </nav>
       </div>

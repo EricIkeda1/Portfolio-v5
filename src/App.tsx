@@ -2,6 +2,7 @@ import { useState, type CSSProperties, type PointerEvent } from 'react'
 import Nav from '@/components/Nav'
 import Hero from '@/sections/Hero'
 import About from '@/sections/About'
+import RecruiterSnapshot from '@/sections/RecruiterSnapshot'
 import Skills from '@/sections/Skills'
 import Highlights from '@/sections/Highlights'
 import Experience from '@/sections/Experience'
@@ -61,6 +62,7 @@ function PortfolioPage() {
           <Nav />
           <main>
             <Hero />
+            <RecruiterSnapshot />
             <About />
             <Highlights />
             <Skills />

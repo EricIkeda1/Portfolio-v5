@@ -5,7 +5,7 @@ Este é o meu portfólio pessoal, criado para reunir um pouco sobre mim, minhas 
 A ideia foi criar algo **simples, moderno e com a minha identidade**, onde eu pudesse apresentar meu trabalho de forma direta e continuar evoluindo o projeto conforme aprendo coisas novas.
 
 **Acesse o portfólio:**  
-https://ericyikedaportfolio5.vercel.app/
+https://www.ericyikeda.com.br/
 
 ## Sobre o projeto
 
@@ -67,7 +67,7 @@ npm run dev
 
 O projeto está publicado na **Vercel**:
 
-https://ericyikedaportfolio5.vercel.app/
+https://www.ericyikeda.com.br/
 
 ## Autor
 

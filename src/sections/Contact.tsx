@@ -192,11 +192,10 @@ export default function Contact() {
                 </div>
 
                 <p style={{ fontSize: '1rem', lineHeight: 1.8, color: 'var(--muted)', marginBottom: '1.75rem', fontWeight: 400 }}>
-                  Busco oportunidades de
-                  <strong style={{ color: 'var(--text)', fontWeight: 600 }}></strong> vaga como{' '}
-                  <strong style={{ color: 'var(--text)', fontWeight: 600 }}>Desenvolvedor Júnior</strong> e projetos{' '}
-                  <strong style={{ color: 'var(--text)', fontWeight: 600 }}>freelancer</strong>, contribuindo com
-                  soluções modernas e evoluindo continuamente como desenvolvedor.
+                  Busco uma oportunidade como{' '}
+                  <strong style={{ color: 'var(--text)', fontWeight: 600 }}>Desenvolvedor de Software Júnior</strong>, com foco em{' '}
+                  <strong style={{ color: 'var(--text)', fontWeight: 600 }}>Web e Mobile</strong>, para contribuir em projetos reais,
+                  colaborar com o time e continuar evoluindo tecnicamente.
                 </p>
 
                 <div style={{ borderTop: '1px solid var(--border)', paddingTop: '1.25rem' }}>
@@ -204,7 +203,7 @@ export default function Contact() {
                     Interesse em
                   </div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.45rem' }}>
-                    {['Dev Júnior', 'Freelancer', 'Full Stack', 'Mobile'].map((tag) => (
+                    {['Dev Júnior', 'Frontend', 'Full Stack', 'Mobile'].map((tag) => (
                       <span
                         key={tag}
                         style={{

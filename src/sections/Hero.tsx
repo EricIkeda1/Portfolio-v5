@@ -5,9 +5,9 @@ import { usePortfolioContent } from '@/context/PortfolioContentContext'
 const DEFAULT_WHATSAPP_NUMBER = '5543996369387'
 
 const roles = [
-  'Full Stack Developer',
-  'Mobile Developer',
-  'Software Engineering Student',
+  'Desenvolvedor de Software Júnior',
+  'Web & Mobile',
+  'React • Flutter • TypeScript',
 ]
 
 const anim = (delay: number) => ({
@@ -178,7 +178,7 @@ export default function Hero() {
                   marginBottom: '1.25rem',
                 }}
               >
-                Portfólio v5
+                Disponível para oportunidades Júnior
               </div>
             </div>
 
@@ -261,9 +261,7 @@ export default function Hero() {
                   fontWeight: 400,
                 }}
               >
-                Desenvolvedor apaixonado por tecnologia, focado na criação de
-                aplicações web e mobile com código limpo, arquitetura
-                organizada e boa experiência do usuário.
+                Desenvolvedor de Software Júnior com formação em Engenharia de Software e experiência prática em aplicações web e mobile. Trabalho com React, Flutter, TypeScript, Dart, APIs REST e PostgreSQL para transformar requisitos em soluções funcionais, responsivas e bem estruturadas.
               </p>
             </div>
 
@@ -318,45 +316,10 @@ export default function Hero() {
                   </svg>
                 </a>
 
-                {/* WhatsApp CTA button */}
                 <a
-                  href={`https://wa.me/${whatsappNumber}`}
+                  href="/curriculo-eric-yuji-ikeda.pdf"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-mono"
-                  style={{
-                    background: '#25D366',
-                    color: '#fff',
-                    textDecoration: 'none',
-                    padding: '0.8rem 1.75rem',
-                    borderRadius: 3,
-                    fontSize: '0.76rem',
-                    letterSpacing: '0.12em',
-                    textTransform: 'uppercase',
-                    fontWeight: 700,
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: 7,
-                    transition: 'opacity 0.2s, box-shadow 0.2s',
-                  }}
-                  onMouseEnter={(e) => {
-                    const el = e.currentTarget as HTMLElement
-                    el.style.opacity = '0.85'
-                    el.style.boxShadow =
-                      '0 0 28px rgba(37,211,102,0.35)'
-                  }}
-                  onMouseLeave={(e) => {
-                    const el = e.currentTarget as HTMLElement
-                    el.style.opacity = '1'
-                    el.style.boxShadow = 'none'
-                  }}
-                >
-                  <WhatsAppIcon size={14} />
-                  WhatsApp
-                </a>
-
-                <a
-                  href="#contato"
                   className="font-mono"
                   style={{
                     background: 'transparent',
@@ -369,6 +332,51 @@ export default function Hero() {
                     textTransform: 'uppercase',
                     fontWeight: 700,
                     border: '1px solid var(--border-bright)',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 7,
+                    transition: 'border-color 0.2s, color 0.2s, background 0.2s',
+                  }}
+                  onMouseEnter={(e) => {
+                    const el = e.currentTarget as HTMLElement
+                    el.style.borderColor = 'var(--blue)'
+                    el.style.color = 'var(--blue)'
+                    el.style.background = 'var(--blue-dim)'
+                  }}
+                  onMouseLeave={(e) => {
+                    const el = e.currentTarget as HTMLElement
+                    el.style.borderColor = 'var(--border-bright)'
+                    el.style.color = 'var(--text)'
+                    el.style.background = 'transparent'
+                  }}
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                    <path d="M12 3v12" />
+                    <path d="m7 10 5 5 5-5" />
+                    <path d="M5 21h14" />
+                  </svg>
+                  Currículo
+                </a>
+
+                <a
+                  href={content.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-mono"
+                  style={{
+                    background: 'transparent',
+                    color: 'var(--text)',
+                    textDecoration: 'none',
+                    padding: '0.8rem 1.75rem',
+                    borderRadius: 3,
+                    fontSize: '0.76rem',
+                    letterSpacing: '0.12em',
+                    textTransform: 'uppercase',
+                    fontWeight: 700,
+                    border: '1px solid var(--border-bright)',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 7,
                     transition: 'border-color 0.2s, color 0.2s',
                   }}
                   onMouseEnter={(e) => {
@@ -382,7 +390,12 @@ export default function Hero() {
                     el.style.color = 'var(--text)'
                   }}
                 >
-                  Contato
+                  LinkedIn
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden="true">
+                    <path d="M14 3h7v7" />
+                    <path d="M10 14 21 3" />
+                    <path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5" />
+                  </svg>
                 </a>
               </div>
             </div>

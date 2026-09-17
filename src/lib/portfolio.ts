@@ -30,7 +30,7 @@ Gosto de participar de todas as etapas do desenvolvimento, desde o planejamento 
 Além de desenvolver para clientes, também crio projetos próprios para estudar novas tecnologias, testar ideias e evoluir como desenvolvedor. Acredito que sempre existe algo novo para aprender, e cada projeto é uma oportunidade de construir soluções das quais eu possa me orgulhar.`
 
 export const DEFAULT_WHATSAPP = '5543996369387'
-export const DEFAULT_EMAIL = 'ikedayuji.2002@gmail.com'
+export const DEFAULT_EMAIL = 'ericikeda2002@gmail.com'
 export const DEFAULT_GITHUB = 'https://github.com/EricIkeda1'
 export const DEFAULT_LINKEDIN = 'https://www.linkedin.com/in/ericikeda1'
 

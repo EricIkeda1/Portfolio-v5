@@ -4,6 +4,18 @@ import { usePortfolioContent } from '@/context/PortfolioContentContext'
 
 const areas = [
   {
+    title: 'Front-end',
+    desc: 'Interfaces responsivas com React e TypeScript, com foco em clareza, acessibilidade e experiência do usuário.',
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <rect x="3" y="4" width="18" height="16" rx="2" />
+        <path d="M3 9h18" />
+        <path d="m8 14 2 2-2 2" />
+        <path d="M13 18h3" />
+      </svg>
+    ),
+  },
+  {
     title: 'Full Stack',
     desc: 'Desenvolvimento de aplicações web completas, do banco de dados à interface.',
     icon: (

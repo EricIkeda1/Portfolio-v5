@@ -18,8 +18,7 @@ interface GithubRepo {
 
 interface GithubStats {
   repos: number
-  followers: number
-  stars: number
+  ownRepos: number
   languages: { name: string; count: number }[]
   yearsActive: number
 }
@@ -204,8 +203,6 @@ export default function Highlights() {
         const repos: GithubRepo[] = await reposRes.json()
 
         const nonForks = repos.filter((r) => !r.fork)
-        const stars = nonForks.reduce((s, r) => s + r.stargazers_count, 0)
-
         const langCount: Record<string, number> = {}
         for (const r of nonForks) {
           if (r.language) langCount[r.language] = (langCount[r.language] ?? 0) + 1
@@ -218,13 +215,12 @@ export default function Highlights() {
         const createdYear = new Date(user.created_at).getFullYear()
         const yearsActive = new Date().getFullYear() - createdYear
 
-        setStats({ repos: user.public_repos, followers: user.followers, stars, languages, yearsActive })
+        setStats({ repos: user.public_repos, ownRepos: nonForks.length, languages, yearsActive })
       } catch {
         // fallback to static values if API fails
         setStats({
           repos: 50,
-          followers: 0,
-          stars: 0,
+          ownRepos: 45,
           languages: [
             { name: 'TypeScript', count: 18 },
             { name: 'Dart', count: 10 },
@@ -319,9 +315,9 @@ export default function Highlights() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               {/* Row 1 — 4 stat cards */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem' }} className="highlights-grid">
-                <StatCard label="Repositórios públicos" value={stats.repos} suffix="+" active={active} accent large />
-                <StatCard label="Seguidores GitHub" value={stats.followers} active={active} />
-                <StatCard label="Stars recebidas" value={stats.stars} active={active} />
+                <StatCard label="Repositórios públicos" value={stats.repos} active={active} accent large />
+                <StatCard label="Projetos autorais" value={stats.ownRepos} sub="repositórios não-fork" active={active} />
+                <StatCard label="Linguagens principais" value={stats.languages.length} sub="stack presente no GitHub" active={active} />
                 <StatCard
                   label="Anos no GitHub"
                   value={stats.yearsActive}

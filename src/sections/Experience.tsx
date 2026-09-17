@@ -35,7 +35,7 @@ export default function Experience() {
       <div className="container">
         <div style={{ marginBottom: '3.5rem' }}>
           <Reveal from="bottom">
-            <div className="section-label">03 — Experiência</div>
+            <div className="section-label">03 — Projetos</div>
           </Reveal>
           <Reveal delay={80} from="bottom">
             <h2 className="display-heading">
