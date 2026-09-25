@@ -1,5 +1,5 @@
 import { ensureSchema, getSql } from './_lib/db.js'
-import { allowMethods, messageFromError, noStore } from './_lib/http.js'
+import { allowMethods, noStore } from './_lib/http.js'
 
 function getDriveFileId(url: string) {
   try {
@@ -97,6 +97,6 @@ export default async function handler(req: any, res: any) {
     return res.status(502).json({ error: 'Não foi possível carregar a imagem.' })
   } catch (error) {
     console.error('GET /api/profile-image', error)
-    return res.status(500).json({ error: messageFromError(error) })
+    return res.status(500).json({ error: 'Não foi possível carregar a imagem de perfil.' })
   }
 }

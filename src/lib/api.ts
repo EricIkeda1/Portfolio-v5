@@ -2,6 +2,8 @@ import { normalizePortfolioContent, type PortfolioContent, type PortfolioProject
 
 type ApiErrorBody = { error?: string }
 
+export type AdminUser = { id: number; email: string }
+
 async function request<T>(url: string, options: RequestInit = {}): Promise<T> {
   const response = await fetch(url, {
     credentials: 'same-origin',
@@ -36,7 +38,7 @@ export async function getPublicContent() {
 }
 
 export function adminLogin(email: string, password: string) {
-  return request<{ ok: true; user: { id: number; email: string } }>('/api/admin-login', {
+  return request<{ ok: true; user: AdminUser }>('/api/admin-login', {
     method: 'POST',
     body: JSON.stringify({ email, password }),
   })
@@ -44,7 +46,7 @@ export function adminLogin(email: string, password: string) {
 
 export async function adminSession() {
   try {
-    return await request<{ authenticated: true; user: { id: number; email: string } }>('/api/admin-session', {
+    return await request<{ authenticated: true; user: AdminUser }>('/api/admin-session', {
       method: 'GET',
       cache: 'no-store',
     })
@@ -55,6 +57,13 @@ export async function adminSession() {
 
 export function adminLogout() {
   return request<{ ok: true }>('/api/admin-logout', { method: 'POST' })
+}
+
+export function updateAdminCredentials(input: { email: string; current_password: string; new_password?: string }) {
+  return request<{ ok: true; user: AdminUser }>('/api/admin-credentials', {
+    method: 'PUT',
+    body: JSON.stringify(input),
+  })
 }
 
 export async function getAdminContent() {

@@ -3,7 +3,6 @@ import { neon } from '@neondatabase/serverless'
 const DEFAULT_LINKEDIN = 'https://www.linkedin.com/in/ericikeda1'
 const DEFAULT_RESUME_URL = 'https://drive.google.com/file/d/1VTpI8VouOdHnPuDKxZmskY_02dhK2wIC/view?usp=sharing'
 const DEFAULT_PROFILE_IMAGE = 'https://drive.google.com/thumbnail?id=18I4wMhuprbKT0OLBLvAvz12yAoPNQSNc&sz=w1000'
-const DEFAULT_ADMIN_HASH = 'scrypt$f5d58b986bae5912a90f66a08158d67b$63d88d2b36c9474dc564149c83ea73e9cdf4e95ae5183b0480f7c510ba120715f952c061a33eff4a2489fae8eb99b11ffb662fd75b123ea07edcdbc3c36c845a'
 
 let schemaPromise: Promise<void> | null = null
 
@@ -24,6 +23,45 @@ async function createSchema() {
       created_at TIMESTAMPTZ NOT NULL DEFAULT now()
     )
   `
+
+  await sql`CREATE UNIQUE INDEX IF NOT EXISTS idx_admins_email_lower ON admins (lower(email))`
+
+  await sql`
+    CREATE TABLE IF NOT EXISTS admin_login_attempts (
+      key TEXT PRIMARY KEY,
+      attempt_count INTEGER NOT NULL DEFAULT 0,
+      window_started_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+      blocked_until TIMESTAMPTZ,
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    )
+  `
+
+  await sql`CREATE INDEX IF NOT EXISTS idx_admin_login_attempts_updated ON admin_login_attempts (updated_at)`
+
+  const bootstrapEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase()
+  const bootstrapHash = process.env.ADMIN_PASSWORD_HASH?.trim()
+  if (bootstrapEmail && bootstrapHash && /^scrypt\$[a-f0-9]+\$[a-f0-9]{128}$/i.test(bootstrapHash)) {
+    const updatedAdmin = await sql`
+      UPDATE admins
+      SET email = ${bootstrapEmail}, password_hash = ${bootstrapHash}
+      WHERE lower(email) = ${bootstrapEmail}
+      RETURNING id
+    `
+
+    if (updatedAdmin.length === 0) {
+      await sql`
+        INSERT INTO admins (email, password_hash)
+        VALUES (${bootstrapEmail}, ${bootstrapHash})
+        ON CONFLICT DO NOTHING
+      `
+    }
+
+    // Migração da conta de demonstração das versões antigas. O e-mail não é segredo,
+    // mas a credencial antiga não deve continuar habilitada depois que um novo admin for configurado.
+    if (bootstrapEmail !== 'admin@portfolio.dev') {
+      await sql`DELETE FROM admins WHERE lower(email) = 'admin@portfolio.dev'`
+    }
+  }
 
   await sql`
     CREATE TABLE IF NOT EXISTS portfolio_settings (
@@ -61,12 +99,6 @@ async function createSchema() {
   `
 
   await sql`CREATE INDEX IF NOT EXISTS idx_portfolio_projects_sort ON portfolio_projects (sort_order, id)`
-
-  await sql`
-    INSERT INTO admins (email, password_hash)
-    VALUES ('admin@portfolio.dev', ${DEFAULT_ADMIN_HASH})
-    ON CONFLICT (email) DO NOTHING
-  `
 
   const insertedSettings = await sql`
     INSERT INTO portfolio_settings (id, about_text, profile_image_url, whatsapp, email, github, linkedin, resume_url)

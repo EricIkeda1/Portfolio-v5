@@ -10,7 +10,3 @@ export function allowMethods(req: any, res: any, methods: string[]) {
 export function noStore(res: any) {
   res.setHeader('Cache-Control', 'no-store, max-age=0')
 }
-
-export function messageFromError(error: unknown) {
-  return error instanceof Error ? error.message : 'Erro inesperado no servidor.'
-}

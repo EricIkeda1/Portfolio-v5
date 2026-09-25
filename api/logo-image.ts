@@ -1,4 +1,4 @@
-import { allowMethods, messageFromError } from './_lib/http.js'
+import { allowMethods } from './_lib/http.js'
 
 const LOGO_URL =
   'https://drive.google.com/thumbnail?id=19o0-cXysNK5HsufGJJSZThSlPpuury__&sz=w1000'
@@ -82,6 +82,6 @@ export default async function handler(req: any, res: any) {
     return res.status(502).json({ error: 'Não foi possível carregar a logo.' })
   } catch (error) {
     console.error('GET /api/logo-image', error)
-    return res.status(500).json({ error: messageFromError(error) })
+    return res.status(500).json({ error: 'Não foi possível carregar a logo.' })
   }
 }

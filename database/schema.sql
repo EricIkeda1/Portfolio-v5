@@ -8,6 +8,20 @@ CREATE TABLE IF NOT EXISTS admins (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+CREATE UNIQUE INDEX IF NOT EXISTS idx_admins_email_lower
+  ON admins (lower(email));
+
+CREATE TABLE IF NOT EXISTS admin_login_attempts (
+  key TEXT PRIMARY KEY,
+  attempt_count INTEGER NOT NULL DEFAULT 0,
+  window_started_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  blocked_until TIMESTAMPTZ,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_admin_login_attempts_updated
+  ON admin_login_attempts (updated_at);
+
 CREATE TABLE IF NOT EXISTS portfolio_settings (
   id INTEGER PRIMARY KEY DEFAULT 1 CHECK (id = 1),
   about_text TEXT NOT NULL,

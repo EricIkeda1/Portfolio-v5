@@ -8,7 +8,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "format": "oxfmt",
-    "dev:vercel": "npx vercel dev"
+    "dev:vercel": "npx vercel dev",
+    "admin:hash": "node scripts/hash-admin-password.mjs"
   },
   "dependencies": {
     "react": "^19.0.0",

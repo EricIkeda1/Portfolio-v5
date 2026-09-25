@@ -1,7 +1,8 @@
-import { createHmac, scryptSync, timingSafeEqual } from 'node:crypto'
+import { createHmac, randomBytes, scryptSync, timingSafeEqual } from 'node:crypto'
 
 const COOKIE_NAME = 'portfolio_admin_session'
 const SESSION_SECONDS = 60 * 60 * 8
+const MIN_SESSION_SECRET_LENGTH = 32
 
 type SessionPayload = {
   id: number
@@ -9,14 +10,16 @@ type SessionPayload = {
   exp: number
 }
 
-function getSecret() {
-  const secret = process.env.SESSION_SECRET || process.env.DATABASE_URL
-  if (!secret) throw new Error('SESSION_SECRET ou DATABASE_URL não configurada.')
+export function getSessionSecret() {
+  const secret = process.env.SESSION_SECRET
+  if (!secret || secret.length < MIN_SESSION_SECRET_LENGTH) {
+    throw new Error(`SESSION_SECRET deve estar configurada com pelo menos ${MIN_SESSION_SECRET_LENGTH} caracteres.`)
+  }
   return secret
 }
 
 function sign(value: string) {
-  return createHmac('sha256', getSecret()).update(value).digest('base64url')
+  return createHmac('sha256', getSessionSecret()).update(value).digest('base64url')
 }
 
 export function createSessionToken(user: { id: number; email: string }) {
@@ -48,12 +51,28 @@ export function verifySessionToken(token: string | undefined): SessionPayload | 
   }
 }
 
+export function hashPassword(password: string) {
+  const salt = randomBytes(16).toString('hex')
+  const hash = scryptSync(password, salt, 64).toString('hex')
+  return `scrypt$${salt}$${hash}`
+}
+
 export function verifyPassword(password: string, stored: string) {
   const [algorithm, salt, hash] = stored.split('$')
-  if (algorithm !== 'scrypt' || !salt || !hash) return false
-  const candidate = scryptSync(password, salt, 64)
-  const expected = Buffer.from(hash, 'hex')
-  return candidate.length === expected.length && timingSafeEqual(candidate, expected)
+  if (algorithm !== 'scrypt' || !salt || !hash || !/^[a-f0-9]{128}$/i.test(hash)) return false
+
+  try {
+    const candidate = scryptSync(password, salt, 64)
+    const expected = Buffer.from(hash, 'hex')
+    return candidate.length === expected.length && timingSafeEqual(candidate, expected)
+  } catch {
+    return false
+  }
+}
+
+export function burnPasswordCheck(password: string) {
+  // Mantém um custo semelhante mesmo quando o e-mail não existe, dificultando enumeração por tempo de resposta.
+  scryptSync(password, 'portfolio-login-dummy-salt', 64)
 }
 
 function parseCookies(header = '') {
@@ -64,24 +83,40 @@ function parseCookies(header = '') {
       .filter(Boolean)
       .map((part) => {
         const index = part.indexOf('=')
-        return index === -1 ? [part, ''] : [part.slice(0, index), decodeURIComponent(part.slice(index + 1))]
+        if (index === -1) return [part, '']
+        const rawValue = part.slice(index + 1)
+        try {
+          return [part.slice(0, index), decodeURIComponent(rawValue)]
+        } catch {
+          return [part.slice(0, index), '']
+        }
       }),
   )
 }
 
 export function getSessionFromRequest(req: any) {
   const cookies = parseCookies(req.headers?.cookie || '')
-  return verifySessionToken(cookies[COOKIE_NAME])
+  try {
+    return verifySessionToken(cookies[COOKIE_NAME])
+  } catch {
+    return null
+  }
 }
 
 export function setSessionCookie(res: any, token: string) {
   const secure = process.env.NODE_ENV === 'production' ? '; Secure' : ''
-  res.setHeader('Set-Cookie', `${COOKIE_NAME}=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${SESSION_SECONDS}${secure}`)
+  res.setHeader(
+    'Set-Cookie',
+    `${COOKIE_NAME}=${encodeURIComponent(token)}; Path=/api; HttpOnly; SameSite=Strict; Max-Age=${SESSION_SECONDS}; Priority=High${secure}`,
+  )
 }
 
 export function clearSessionCookie(res: any) {
   const secure = process.env.NODE_ENV === 'production' ? '; Secure' : ''
-  res.setHeader('Set-Cookie', `${COOKIE_NAME}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0${secure}`)
+  res.setHeader(
+    'Set-Cookie',
+    `${COOKIE_NAME}=; Path=/api; HttpOnly; SameSite=Strict; Max-Age=0; Priority=High${secure}`,
+  )
 }
 
 export function requireAdmin(req: any, res: any) {

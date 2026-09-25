@@ -1,20 +1,37 @@
 import { requireAdmin } from './_lib/auth.js'
 import { ensureSchema, getSql, normalizeProject } from './_lib/db.js'
-import { allowMethods, messageFromError, noStore } from './_lib/http.js'
+import { allowMethods, noStore } from './_lib/http.js'
+import { enforceSameOrigin, requireJson } from './_lib/security.js'
+
+function safeUrl(value: string, allowEmpty = true) {
+  if (!value && allowEmpty) return true
+  try {
+    const url = new URL(value)
+    return url.protocol === 'https:' || url.protocol === 'http:'
+  } catch {
+    return false
+  }
+}
 
 function cleanProject(body: any) {
-  const tags = Array.isArray(body?.tags) ? body.tags.map(String).map((value: string) => value.trim()).filter(Boolean) : []
-  const highlights = Array.isArray(body?.highlights) ? body.highlights.map(String).map((value: string) => value.trim()).filter(Boolean) : []
+  const tags = Array.isArray(body?.tags)
+    ? body.tags.map(String).map((value: string) => value.trim().slice(0, 60)).filter(Boolean).slice(0, 20)
+    : []
+  const highlights = Array.isArray(body?.highlights)
+    ? body.highlights.map(String).map((value: string) => value.trim().slice(0, 120)).filter(Boolean).slice(0, 20)
+    : []
+
+  const rawOrder = Number(body?.sort_order)
   return {
-    name: String(body?.name ?? '').trim(),
-    type: String(body?.type ?? '').trim(),
-    description: String(body?.description ?? '').trim(),
+    name: String(body?.name ?? '').trim().slice(0, 120),
+    type: String(body?.type ?? '').trim().slice(0, 120),
+    description: String(body?.description ?? '').trim().slice(0, 5_000),
     tags,
     highlights,
-    github: String(body?.github ?? '').trim(),
-    color: String(body?.color ?? '#4285FF').trim() || '#4285FF',
-    image_url: String(body?.image_url ?? '').trim() || null,
-    sort_order: Number.isFinite(Number(body?.sort_order)) ? Number(body.sort_order) : 0,
+    github: String(body?.github ?? '').trim().slice(0, 2_048),
+    color: String(body?.color ?? '#4285FF').trim(),
+    image_url: String(body?.image_url ?? '').trim().slice(0, 2_048) || null,
+    sort_order: Number.isFinite(rawOrder) ? Math.max(0, Math.min(10_000, Math.trunc(rawOrder))) : 0,
     published: body?.published !== false,
   }
 }
@@ -22,6 +39,8 @@ function cleanProject(body: any) {
 export default async function handler(req: any, res: any) {
   noStore(res)
   if (!allowMethods(req, res, ['POST', 'PUT', 'DELETE'])) return
+  if (!enforceSameOrigin(req, res)) return
+  if (req.method !== 'DELETE' && !requireJson(req, res)) return
   if (!requireAdmin(req, res)) return
 
   try {
@@ -38,6 +57,14 @@ export default async function handler(req: any, res: any) {
     const project = cleanProject(req.body)
     if (!project.name || !project.type || !project.description) {
       return res.status(400).json({ error: 'Nome, tipo e descrição são obrigatórios.' })
+    }
+
+    if (!/^#[0-9a-f]{6}$/i.test(project.color)) {
+      return res.status(400).json({ error: 'Cor inválida.' })
+    }
+
+    if (!safeUrl(project.github) || !safeUrl(project.image_url ?? '')) {
+      return res.status(400).json({ error: 'Use apenas URLs HTTP/HTTPS válidas nos links do projeto.' })
     }
 
     if (req.method === 'POST') {
@@ -72,9 +99,9 @@ export default async function handler(req: any, res: any) {
     `
 
     if (!rows[0]) return res.status(404).json({ error: 'Projeto não encontrado.' })
-    res.status(200).json(normalizeProject(rows[0] as Record<string, unknown>))
+    return res.status(200).json(normalizeProject(rows[0] as Record<string, unknown>))
   } catch (error) {
     console.error(`${req.method} /api/admin-projects`, error)
-    res.status(500).json({ error: messageFromError(error) })
+    return res.status(500).json({ error: 'Não foi possível atualizar os projetos.' })
   }
 }

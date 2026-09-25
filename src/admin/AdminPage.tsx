@@ -8,7 +8,9 @@ import {
   deleteAdminProject,
   getAdminContent,
   updateAdminContent,
+  updateAdminCredentials,
   updateAdminProject,
+  type AdminUser,
 } from '@/lib/api'
 import { DEFAULT_CONTENT, type PortfolioContent, type PortfolioProject } from '@/lib/portfolio'
 import ProtectedLogo from '@/components/ProtectedLogo'
@@ -64,8 +66,8 @@ function Icon({ name, size = 18 }: { name: IconName; size?: number }) {
   return <svg {...props}>{paths[name]}</svg>
 }
 
-function LoginScreen({ onLogin }: { onLogin: () => void }) {
-  const [email, setEmail] = useState('admin@portfolio.dev')
+function LoginScreen({ onLogin }: { onLogin: (user: AdminUser) => void }) {
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
@@ -76,8 +78,8 @@ function LoginScreen({ onLogin }: { onLogin: () => void }) {
     setSubmitting(true)
     setError('')
     try {
-      await adminLogin(email, password)
-      onLogin()
+      const result = await adminLogin(email, password)
+      onLogin(result.user)
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : 'Não foi possível entrar no painel.')
     } finally {
@@ -102,7 +104,7 @@ function LoginScreen({ onLogin }: { onLogin: () => void }) {
         <form className="admin-login-form" onSubmit={submit}>
           <label>
             <span>E-mail</span>
-            <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="username" />
+            <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="username" placeholder="seu-email@dominio.com" />
           </label>
           <label>
             <span>Senha</span>
@@ -339,16 +341,72 @@ function ContactEditor({ content, onUpdated }: { content: PortfolioContent; onUp
   )
 }
 
-function SettingsPanel() {
+function SettingsPanel({ user, onUserUpdated }: { user: AdminUser; onUserUpdated: (user: AdminUser) => void }) {
+  const [email, setEmail] = useState(user.email)
+  const [currentPassword, setCurrentPassword] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [notice, setNotice] = useState<Notice>(null)
+  const [saving, setSaving] = useState(false)
+
+  useEffect(() => setEmail(user.email), [user.email])
+
+  const saveCredentials = async (event: FormEvent) => {
+    event.preventDefault()
+    setNotice(null)
+
+    if (newPassword && newPassword !== confirmPassword) {
+      setNotice({ type: 'error', text: 'A confirmação da nova senha não confere.' })
+      return
+    }
+    if (newPassword && newPassword.length < 12) {
+      setNotice({ type: 'error', text: 'Use uma nova senha com pelo menos 12 caracteres.' })
+      return
+    }
+
+    setSaving(true)
+    try {
+      const result = await updateAdminCredentials({
+        email,
+        current_password: currentPassword,
+        ...(newPassword ? { new_password: newPassword } : {}),
+      })
+      onUserUpdated(result.user)
+      setCurrentPassword('')
+      setNewPassword('')
+      setConfirmPassword('')
+      setNotice({ type: 'success', text: 'Credenciais administrativas atualizadas com segurança.' })
+    } catch (error) {
+      setNotice({ type: 'error', text: error instanceof Error ? error.message : 'Não foi possível atualizar as credenciais.' })
+    } finally {
+      setSaving(false)
+    }
+  }
+
   return (
-    <><PageHeading title="Configurações" description="Informações técnicas da integração administrativa." /><div className="admin-settings-grid">
-      <section className="admin-panel-card"><div className="admin-panel-title"><div><span>BACKEND</span><h2>Integração ativa</h2></div></div><div className="admin-setting-item"><div><strong>Banco</strong><small>PostgreSQL serverless.</small></div><span className="admin-setting-badge">Neon</span></div><div className="admin-setting-item"><div><strong>Atualização</strong><small>O portfólio consulta a API e recebe alterações do painel.</small></div><span className="admin-setting-badge">Ao vivo</span></div></section>
-      <section className="admin-panel-card"><div className="admin-panel-title"><div><span>SEGURANÇA</span><h2>Sessão administrativa</h2></div></div><p className="admin-setting-description">O login é validado no backend. A sessão usa cookie HttpOnly e a DATABASE_URL fica apenas nas variáveis de ambiente da Vercel.</p></section>
-    </div></>
+    <>
+      <PageHeading title="Configurações" description="Informações técnicas e segurança da área administrativa." />
+      <NoticeBox notice={notice} />
+      <div className="admin-settings-grid">
+        <section className="admin-panel-card"><div className="admin-panel-title"><div><span>BACKEND</span><h2>Integração ativa</h2></div></div><div className="admin-setting-item"><div><strong>Banco</strong><small>PostgreSQL serverless.</small></div><span className="admin-setting-badge">Neon</span></div><div className="admin-setting-item"><div><strong>Proteção do login</strong><small>Bloqueio temporário após tentativas repetidas.</small></div><span className="admin-setting-badge">Ativa</span></div></section>
+        <section className="admin-panel-card"><div className="admin-panel-title"><div><span>SEGURANÇA</span><h2>Sessão administrativa</h2></div></div><p className="admin-setting-description">A sessão usa cookie HttpOnly, Secure em produção e SameSite Strict. A DATABASE_URL e a SESSION_SECRET permanecem somente no servidor.</p></section>
+      </div>
+      <section className="admin-panel-card admin-editor-card">
+        <div className="admin-panel-title"><div><span>CREDENCIAIS</span><h2>Alterar acesso do administrador</h2></div></div>
+        <form className="admin-form-stack narrow" onSubmit={saveCredentials}>
+          <label><span>E-mail administrativo</span><input type="email" value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="username" required /></label>
+          <label><span>Senha atual</span><input type="password" value={currentPassword} onChange={(event) => setCurrentPassword(event.target.value)} autoComplete="current-password" required /></label>
+          <label><span>Nova senha (opcional)</span><input type="password" value={newPassword} onChange={(event) => setNewPassword(event.target.value)} autoComplete="new-password" minLength={12} placeholder="Mínimo de 12 caracteres" /></label>
+          <label><span>Confirmar nova senha</span><input type="password" value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} autoComplete="new-password" /></label>
+          <small>Como o hash antigo já esteve no repositório, troque a senha após publicar esta versão.</small>
+          <div className="admin-form-row"><button className="admin-primary-action" type="submit" disabled={saving}><Icon name="save" size={16}/> {saving ? 'Atualizando...' : 'Atualizar credenciais'}</button></div>
+        </form>
+      </section>
+    </>
   )
 }
 
-function Dashboard({ onLogout }: { onLogout: () => void }) {
+function Dashboard({ user, onUserUpdated, onLogout }: { user: AdminUser; onUserUpdated: (user: AdminUser) => void; onLogout: () => void }) {
   const [active, setActive] = useState('overview')
   const [mobileMenu, setMobileMenu] = useState(false)
   const [content, setContent] = useState<PortfolioContent>(DEFAULT_CONTENT)
@@ -381,7 +439,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
           {!loading && !loadError && active === 'profile' && <ProfileEditor content={content} onUpdated={setContent} />}
           {!loading && !loadError && active === 'projects' && <ProjectsEditor projects={content.projects} onProjectsChange={updateProjects} />}
           {!loading && !loadError && active === 'contact' && <ContactEditor content={content} onUpdated={setContent} />}
-          {!loading && !loadError && active === 'settings' && <SettingsPanel />}
+          {!loading && !loadError && active === 'settings' && <SettingsPanel user={user} onUserUpdated={onUserUpdated} />}
         </main>
       </div>
     </div>
@@ -390,12 +448,16 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
 
 export default function AdminPage() {
   const [checking, setChecking] = useState(true)
-  const [authenticated, setAuthenticated] = useState(false)
+  const [user, setUser] = useState<AdminUser | null>(null)
 
   useEffect(() => {
-    void adminSession().then((session) => setAuthenticated(session.authenticated)).finally(() => setChecking(false))
+    void adminSession()
+      .then((session) => {
+        if (session.authenticated) setUser(session.user)
+      })
+      .finally(() => setChecking(false))
   }, [])
 
   if (checking) return <div className="admin-login-page"><main className="admin-login-card"><div className="admin-login-copy"><div className="section-label">Área restrita</div><h1>Verificando <span>sessão</span></h1><p>Conectando ao painel administrativo...</p></div></main></div>
-  return authenticated ? <Dashboard onLogout={() => setAuthenticated(false)} /> : <LoginScreen onLogin={() => setAuthenticated(true)} />
+  return user ? <Dashboard user={user} onUserUpdated={setUser} onLogout={() => setUser(null)} /> : <LoginScreen onLogin={setUser} />
 }
