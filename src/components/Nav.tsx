@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import ProtectedLogo from '@/components/ProtectedLogo'
-import { usePortfolioContent } from '@/context/PortfolioContentContext'
 
 const links = [
   { label: 'Início', href: '#' },
@@ -11,7 +10,6 @@ const links = [
 ]
 
 export default function Nav() {
-  const { content } = usePortfolioContent()
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
 
@@ -144,39 +142,6 @@ export default function Nav() {
             </a>
           ))}
 
-          <a
-            href={content.resume_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-mono"
-            style={{
-              background: 'var(--blue)',
-              color: '#fff',
-              textDecoration: 'none',
-              padding: '0.48rem 1.15rem',
-              borderRadius: 3,
-              fontSize: '0.76rem',
-              letterSpacing: '0.1em',
-              textTransform: 'uppercase',
-              fontWeight: 700,
-              transition: 'opacity 0.2s, box-shadow 0.2s',
-            }}
-            onMouseEnter={(e) => {
-              const el = e.currentTarget as HTMLElement
-
-              el.style.opacity = '0.82'
-              el.style.boxShadow =
-                '0 0 22px var(--blue-glow)'
-            }}
-            onMouseLeave={(e) => {
-              const el = e.currentTarget as HTMLElement
-
-              el.style.opacity = '1'
-              el.style.boxShadow = 'none'
-            }}
-          >
-            Currículo
-          </a>
         </nav>
 
         {/* Hamburger */}
@@ -280,27 +245,6 @@ export default function Nav() {
             </a>
           ))}
 
-          <a
-            href={content.resume_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={close}
-            className="font-mono"
-            style={{
-              background: 'var(--blue)',
-              color: '#fff',
-              textDecoration: 'none',
-              padding: '0.75rem 1.25rem',
-              borderRadius: 3,
-              fontSize: '0.8rem',
-              letterSpacing: '0.1em',
-              textTransform: 'uppercase',
-              fontWeight: 700,
-              textAlign: 'center',
-            }}
-          >
-            Currículo
-          </a>
         </nav>
       </div>
     </header>

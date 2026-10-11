@@ -162,7 +162,7 @@ function Overview({ content, onNavigate }: { content: PortfolioContent; onNaviga
           <div className="admin-quick-list">
             <button onClick={() => onNavigate('profile')}><span className="admin-quick-icon"><Icon name="profile"/></span><span><strong>Quem sou eu</strong><small>Texto e imagem do perfil</small></span><b>→</b></button>
             <button onClick={() => onNavigate('projects')}><span className="admin-quick-icon"><Icon name="projects"/></span><span><strong>Projetos em destaque</strong><small>Adicionar, editar e excluir</small></span><b>→</b></button>
-            <button onClick={() => onNavigate('contact')}><span className="admin-quick-icon"><Icon name="contact"/></span><span><strong>Informações de contato</strong><small>WhatsApp, e-mail, GitHub, LinkedIn e currículo</small></span><b>→</b></button>
+            <button onClick={() => onNavigate('contact')}><span className="admin-quick-icon"><Icon name="contact"/></span><span><strong>Informações de contato</strong><small>WhatsApp, e-mail, GitHub e LinkedIn</small></span><b>→</b></button>
           </div>
         </section>
         <section className="admin-panel-card">
@@ -334,7 +334,6 @@ function ContactEditor({ content, onUpdated }: { content: PortfolioContent; onUp
         <label><span>E-mail</span><input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })}/></label>
         <label><span>GitHub</span><input value={form.github} onChange={(e) => setForm({ ...form, github: e.target.value })}/></label>
         <label><span>LinkedIn</span><input value={form.linkedin} onChange={(e) => setForm({ ...form, linkedin: e.target.value })}/></label>
-        <label><span>Currículo (Google Drive)</span><input value={form.resume_url} onChange={(e) => setForm({ ...form, resume_url: e.target.value })} placeholder="https://drive.google.com/file/d/.../view"/><small>Esse link fica salvo no Neon e é usado automaticamente pelos botões de currículo do site.</small></label>
         <div className="admin-form-row"><button className="admin-primary-action" onClick={() => void save()} disabled={saving}><Icon name="save" size={16}/> {saving ? 'Salvando...' : 'Salvar e publicar'}</button></div>
       </div></section>
     </>

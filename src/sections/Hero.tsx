@@ -316,47 +316,6 @@ export default function Hero() {
                   </svg>
                 </a>
 
-                <a
-                  href={content.resume_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-mono"
-                  style={{
-                    background: 'transparent',
-                    color: 'var(--text)',
-                    textDecoration: 'none',
-                    padding: '0.8rem 1.75rem',
-                    borderRadius: 3,
-                    fontSize: '0.76rem',
-                    letterSpacing: '0.12em',
-                    textTransform: 'uppercase',
-                    fontWeight: 700,
-                    border: '1px solid var(--border-bright)',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: 7,
-                    transition: 'border-color 0.2s, color 0.2s, background 0.2s',
-                  }}
-                  onMouseEnter={(e) => {
-                    const el = e.currentTarget as HTMLElement
-                    el.style.borderColor = 'var(--blue)'
-                    el.style.color = 'var(--blue)'
-                    el.style.background = 'var(--blue-dim)'
-                  }}
-                  onMouseLeave={(e) => {
-                    const el = e.currentTarget as HTMLElement
-                    el.style.borderColor = 'var(--border-bright)'
-                    el.style.color = 'var(--text)'
-                    el.style.background = 'transparent'
-                  }}
-                >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                    <path d="M12 3v12" />
-                    <path d="m7 10 5 5 5-5" />
-                    <path d="M5 21h14" />
-                  </svg>
-                  Currículo
-                </a>
 
                 <a
                   href={content.linkedin}
