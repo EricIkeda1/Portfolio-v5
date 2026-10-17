@@ -46,3 +46,151 @@
 .sales-audiences{background:#f6f6f1}.sales-audiences-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid #cfd2c9;border-left:1px solid #cfd2c9}.sales-audience{padding:30px 26px 36px;border-right:1px solid #cfd2c9;border-bottom:1px solid #cfd2c9;transition:background .3s}.sales-audience:hover{background:#e9ede2}.sales-audience>span{font-size:11px;letter-spacing:1.5px;color:#7d8975}.sales-audience h3{font-size:clamp(19px,2vw,28px);letter-spacing:-.035em;font-weight:550;margin:27px 0 12px}.sales-audience p{font-size:14px;line-height:1.7;color:#6b7168;margin:0}.sales-audiences-note{font-size:14px;color:#6b7168;margin-top:30px}
 @media(max-width:900px){.sales-audiences-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.sales-page .sales-visual-bottom{transform:translateY(-12px)}}
 @media(max-width:600px){.sales-audiences-grid{grid-template-columns:1fr}.sales-audience{padding:25px 20px}.sales-audience h3{margin-top:18px}.sales-page .sales-visual-bottom{transform:translateY(-10px)}}
+
+/* EYI: mobile navigation, accessible touch targets and full-page concept previews */
+.sales-page{overflow-x:clip}
+.sales-nav{position:fixed;top:0;left:0;right:0;z-index:100}
+.sales-page{padding-top:84px}
+.sales-preview-window{overflow:hidden;isolation:isolate;background:#e7e8e1}
+.sales-preview-pages{display:flex;transition:transform .65s cubic-bezier(.22,1,.36,1);will-change:transform}
+.sales-preview-page{flex:0 0 100%;min-width:0;aspect-ratio:1.45;overflow:hidden}
+.sales-preview-page>.sales-mock{height:100%;width:100%;border:0;box-shadow:none;transform:none!important}
+.sales-preview-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 16px;background:#242b23;color:#e9eee2}
+.sales-preview-toolbar>span{font-size:10px;letter-spacing:1.2px}.sales-preview-toolbar b{font-weight:400;color:#b6c4a4;margin-left:8px}
+.sales-preview-toolbar>div{display:flex;gap:8px}
+.sales-preview-toolbar button{border:1px solid #778373;border-radius:50%;width:40px;height:40px;background:transparent;color:white;font-size:19px;cursor:pointer;transition:background .25s,transform .25s}
+.sales-preview-toolbar button:hover{background:#54684c;transform:translateY(-2px)}
+.sales-preview-inside{background:#eae6dc;padding:6%;color:#292e26;display:flex;flex-direction:column}
+.sales-preview-inside--dark{background:#d6e0d2}
+.sales-preview-minihead{display:flex;justify-content:space-between;align-items:center;font-size:9px;letter-spacing:1px}.sales-preview-minihead b{font-size:19px;letter-spacing:-1px}
+.sales-preview-kicker{font-size:9px;letter-spacing:2px;margin-top:auto;color:#65745c}
+.sales-preview-inside h3{font-family:Georgia,serif;font-size:clamp(24px,3.6vw,56px);line-height:1.06;letter-spacing:-1.6px;margin:14px 0 18px;font-weight:400}
+.sales-preview-inside h3 em{color:#667d61}
+.sales-preview-columns{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:stretch;min-height:28%}
+.sales-preview-columns>div:first-child{border-top:1px solid #7e8877;padding-top:12px;display:flex;flex-direction:column;gap:6px}
+.sales-preview-columns span,.sales-preview-contactbox span{font-size:9px;letter-spacing:1.3px}
+.sales-preview-columns strong{font-size:clamp(12px,1.5vw,20px);line-height:1.25}
+.sales-preview-columns p{font-size:11px;line-height:1.5;margin:0;color:#6e7469}
+.sales-preview-shape{background:radial-gradient(circle at 68% 30%,#d1dbbc,#8b9b82 45%,#465b4e);border-radius:48% 48% 10% 10%}
+.sales-preview-contact--warm{background:#283129;color:#f1f0e8}.sales-preview-contact--dark{background:#2d3c32;color:#f1f0e8}
+.sales-preview-contact--warm h3 em,.sales-preview-contact--dark h3 em{color:#c2d5a5}
+.sales-preview-contactbox{border-top:1px solid #778575;padding-top:18px;display:flex;flex-direction:column;gap:14px}
+.sales-preview-contactbox strong{font-size:clamp(14px,1.9vw,24px)}
+.sales-preview-fakebutton{align-self:flex-start;padding:12px 16px;background:#c1d2a0;color:#20281f}
+@media(max-width:900px){
+.sales-page{padding-top:74px}
+.sales-nav-links{top:74px!important;bottom:0;height:calc(100dvh - 74px)!important;justify-content:flex-start!important;padding:clamp(25px,6vh,55px) 7% 36px!important;background:#f4f3ed!important;gap:0!important;overscroll-behavior:contain}
+.sales-nav-links::before{content:'NAVEGAÇÃO';font-size:10px;letter-spacing:2.5px;color:#7b886d;margin:0 0 20px}
+.sales-nav-links>a:not(.sales-nav-cta){display:flex;align-items:center;gap:14px;font-size:clamp(28px,7vw,44px)!important;letter-spacing:-1.5px;padding:16px 4px!important;min-height:64px;line-height:1.1}
+.sales-nav-links>a:not(.sales-nav-cta):hover{background:transparent;color:#668048}
+.sales-nav-links>a>span:first-child{font-size:10px;margin-right:0;min-width:20px}
+.sales-nav-links .sales-nav-cta{margin-top:28px!important;width:100%;min-height:54px;display:flex;align-items:center;justify-content:space-between;border-radius:8px;padding:15px 22px}
+.sales-nav-links.is-open>a:nth-child(5){transition-delay:.24s}
+.sales-menu-toggle{border-radius:12px!important;background:#e9ede2!important;width:46px!important;height:46px!important;flex-shrink:0}
+.sales-menu-toggle.is-active{background:#d5e1c4!important}
+.sales-hero-copy{padding-top:clamp(48px,8vw,76px)}
+.sales-hero h1{font-size:clamp(42px,8.5vw,72px);overflow-wrap:break-word}
+.sales-hero-visual{min-width:0}
+.sales-work-grid{gap:28px}
+.sales-preview-inside h3{font-size:clamp(23px,5vw,46px)}
+}
+@media(max-width:600px){
+.sales-nav{padding-inline:5%}
+.sales-brand-monogram{font-size:27px}
+.sales-hero-copy{padding:48px 6% 30px}
+.sales-hero h1{font-size:clamp(40px,10.2vw,58px);line-height:1.06}
+.sales-hero-actions{display:flex;flex-wrap:wrap;gap:18px}
+.sales-hero-foot{display:flex;flex-wrap:wrap;gap:12px;padding-top:32px}
+.sales-hero-visual{min-height:300px;padding:18px 5% 32px}
+.sales-hero-slides{min-height:210px}
+.sales-visual-label span:last-child{max-width:55%;text-align:right}
+.sales-section-heading h2,.sales-faq h2{font-size:clamp(34px,9vw,43px)}
+.sales-service{grid-template-columns:28px minmax(0,1fr) 22px}
+.sales-steps{grid-template-columns:1fr 1fr}
+.sales-preview-page{aspect-ratio:1.15}
+.sales-preview-inside{padding:7%}
+.sales-preview-inside h3{font-size:clamp(25px,7vw,37px)}
+.sales-preview-columns p{display:none}
+.sales-preview-minihead{font-size:7px}
+.sales-preview-contactbox{gap:8px}
+.sales-preview-fakebutton{padding:10px;font-size:8px!important}
+.sales-preview-toolbar>span{font-size:9px;letter-spacing:.5px}
+.sales-footer-top>div{gap:18px}
+}
+@media(max-width:360px){.sales-brand-monogram{font-size:24px}.sales-nav-links>a:not(.sales-nav-cta){font-size:28px!important}.sales-hero h1{font-size:38px}}
+@media(prefers-reduced-motion:reduce){.sales-preview-pages{transition:none}}
+
+/* Visualização contínua: três seções da MESMA página, navegáveis por rolagem vertical. */
+.sales-project-preview .sales-preview-window{position:relative;aspect-ratio:1.45;overflow-y:auto;overflow-x:hidden;scroll-snap-type:y mandatory;scrollbar-width:thin;scrollbar-color:#a8b39d transparent;overscroll-behavior:contain}
+.sales-project-preview .sales-preview-pages{display:flex;flex-direction:column;transform:none!important;transition:none;will-change:auto}
+.sales-project-preview .sales-preview-page{flex:none;width:100%;min-width:0;height:auto;aspect-ratio:1.45;scroll-snap-align:start;scroll-snap-stop:always}
+.sales-project-preview .sales-preview-page>.sales-mock{height:100%}
+.sales-project-preview .sales-preview-inside{justify-content:center}
+.sales-project-preview .sales-preview-kicker{margin-top:clamp(14px,3vw,40px)}
+@media(max-width:600px){.sales-project-preview .sales-preview-window{aspect-ratio:1.15}.sales-project-preview .sales-preview-page{aspect-ratio:1.15}}
+@media(prefers-reduced-motion:reduce){.sales-project-preview .sales-preview-window{scroll-behavior:auto}}
+
+/* Demonstração editorial de clínica odontológica, sem imagens ou fotografias. */
+.sales-project-preview .dental-preview{font-family:Arial,Helvetica,sans-serif;display:flex;flex-direction:column;padding:4.6% 5.2%;color:#244d4b;background:#f4f5f0}
+.dental-nav{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:clamp(7px,.75vw,11px);letter-spacing:1.1px;font-weight:600}
+.dental-nav b{font-size:clamp(21px,2.4vw,35px);letter-spacing:-2px;font-weight:600}.dental-nav b span{color:#c2a77d}
+.dental-nav small{font-size:inherit;border:1px solid currentColor;padding:10px 13px;border-radius:30px;white-space:nowrap}
+.dental-hero{background:#edf2ed!important}
+.dental-hero-body{flex:1;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:5% 1%}
+.dental-hero-body>div:first-child{max-width:68%;z-index:1}
+.dental-kicker{font-size:clamp(7px,.65vw,10px);letter-spacing:2px;font-weight:700;color:#8b9f93}
+.dental-preview h3{font-family:Georgia,'Times New Roman',serif;font-size:clamp(26px,4vw,65px);font-weight:400;letter-spacing:-2px;line-height:1.07;margin:22px 0}
+.dental-preview h3 em{font-weight:400;color:#83a89b}
+.dental-preview p{font-size:clamp(9px,1vw,15px);line-height:1.7;max-width:360px;color:#607a70}
+.dental-cta,.dental-contact-cta{display:inline-block;margin-top:17px;background:#285b55;color:#fff;padding:13px 19px;border-radius:2px;font-size:clamp(8px,.8vw,12px);letter-spacing:1px}
+.dental-monogram{width:clamp(80px,17vw,240px);height:clamp(80px,17vw,240px);border-radius:50%;border:1px solid #b4cbc0;display:grid;place-items:center;font-family:Georgia,serif;font-size:clamp(70px,14vw,210px);font-style:italic;color:#acc7b8;transform:rotate(-12deg);flex-shrink:0}
+.dental-monogram span{color:#c2a77d}
+.dental-hero-foot{display:flex;justify-content:space-between;font-size:clamp(7px,.7vw,10px);letter-spacing:1.4px;color:#779086}
+.dental-treatments{background:#f8f7f2!important}.dental-section-body{display:flex;flex-direction:column;justify-content:center;flex:1;padding:5% 1%}
+.dental-treatments h3{margin:15px 0 24px}.dental-treat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.dental-treat-grid>div{border-top:1px solid #b6c9bd;padding-top:13px}.dental-treat-grid span{font-size:10px;color:#8ca69a}.dental-treat-grid strong{display:block;font-size:clamp(12px,1.5vw,21px);margin:12px 0 6px;font-weight:500}.dental-treat-grid p{font-size:clamp(8px,.8vw,12px);margin:0}
+.dental-contact{background:#234c48!important;color:#f6f5ef!important}.dental-contact .dental-nav b,.dental-contact .dental-preview h3{color:#f6f5ef}.dental-contact .dental-kicker{color:#b7d0c2}.dental-contact h3 em{color:#c5d9cd}.dental-contact p{color:#c1d1ca}
+.dental-contact-cta{background:#e2d7bf;color:#234c48}.dental-contact-footer{display:flex;justify-content:space-between;border-top:1px solid #69877c;padding-top:12px;margin-top:auto;font-size:clamp(7px,.7vw,10px);letter-spacing:1px;color:#b9cfc5}
+@media(max-width:600px){.dental-nav>span{display:none}.dental-nav small{padding:7px;font-size:7px}.dental-hero-body>div:first-child{max-width:78%}.dental-preview h3{font-size:clamp(24px,7vw,40px);margin:12px 0}.dental-preview p{font-size:9px}.dental-monogram{width:65px;height:65px;font-size:60px}.dental-treat-grid{gap:6px}.dental-treat-grid strong{font-size:10px}.dental-treat-grid p{font-size:8px}.dental-cta,.dental-contact-cta{padding:8px;font-size:7px;margin-top:7px}.dental-contact-footer{font-size:6px}}
+
+/* Identidade EYI aplicada aos exemplos e composição odontológica editorial. */
+.sales-project-preview .dental-nav .dental-eyi-logo{font-family:Arial,Helvetica,sans-serif;font-weight:900;letter-spacing:-.075em;font-size:clamp(21px,2.7vw,39px);color:#34594e}
+.sales-project-preview .dental-nav .dental-eyi-logo span{color:#8da75c}
+.dental-contact .dental-nav .dental-eyi-logo{color:#f6f5ef}
+.dental-monogram{position:relative;transform:none;border:0;border-radius:48% 52% 47% 53%;background:radial-gradient(ellipse at 38% 35%,#e6ede3 0%,#cfdfd1 54%,#b9d0c2 100%);box-shadow:inset 0 0 0 1px #d1e0d3;overflow:hidden}
+.dental-monogram-ring{position:absolute;width:115%;height:60%;border:1px solid #8fad9b;border-radius:50%;transform:rotate(-42deg)}
+.dental-monogram .dental-monogram-text{position:relative;font:400 clamp(13px,2vw,31px)/1.12 Georgia,serif;letter-spacing:-.035em;text-align:center;color:#315e52}
+.dental-monogram .dental-monogram-text i{color:#779c87}
+@media(max-width:600px){.dental-monogram .dental-monogram-text{font-size:11px}.sales-project-preview .dental-nav .dental-eyi-logo{font-size:23px}}
+
+/* Navegação editorial discreta nas prévias, sem instrução redundante no desktop */
+.sales-preview-toolbar .sales-preview-counter{display:flex;align-items:center;gap:8px;font-size:12px;letter-spacing:1.4px;color:#aeb9a8;font-variant-numeric:tabular-nums}
+.sales-preview-toolbar .sales-preview-counter b{font-size:16px;font-weight:600;color:#f4f6f0;margin:0}
+.sales-preview-counter-separator{opacity:.5}
+/* Ajuste do carrossel inicial em celulares: texto legível e controles fora do mockup */
+@media (max-width:600px){
+  .sales-page .sales-hero-visual{display:flex;flex-direction:column;gap:18px;min-height:0;padding:22px 16px 26px;overflow:hidden}
+  .sales-page .sales-visual-label{align-items:center;gap:8px;font-size:8px;line-height:1.5;letter-spacing:1px}
+  .sales-page .sales-visual-label span:last-child{max-width:70%;text-align:right}
+  .sales-page .sales-hero-slides{flex:none;display:block;position:relative;width:100%;height:auto;min-height:0;aspect-ratio:1.22;overflow:visible}
+  .sales-page .sales-hero-slide{inset:0;display:flex;align-items:center;justify-content:center}
+  .sales-page .sales-hero-slide>.sales-mock{width:95%;height:auto;max-width:none;aspect-ratio:1.22;transform:rotate(-2deg);border-width:5px;box-shadow:0 12px 28px #303c2930}
+  .sales-page .sales-mock-top{height:17%;font-size:clamp(5px,1.6vw,7px);letter-spacing:.2px;padding:0 5%;gap:5px}
+  .sales-page .sales-mock-logo{font-size:clamp(17px,5vw,23px)}
+  .sales-page .sales-mock-pill{padding:5px 7px;white-space:nowrap}
+  .sales-page .sales-mock-content{margin:8% 0 0 7%;max-width:72%}
+  .sales-page .sales-mock-eyebrow{font-size:clamp(6px,1.65vw,8px);letter-spacing:.8px}
+  .sales-page .sales-mock-heading{font-size:clamp(28px,8vw,42px);line-height:1.04;letter-spacing:-1.2px;margin:10px 0}
+  .sales-page .sales-mock-line{margin:10px 0;width:30px}
+  .sales-page .sales-mock-description{font-size:clamp(8px,2.25vw,11px);line-height:1.5;max-width:190px}
+  .sales-page .sales-mock-button{font-size:clamp(7px,1.85vw,9px);margin-top:12px}
+  .sales-page .sales-visual-bottom{position:relative;z-index:2;transform:none!important;align-items:center;gap:12px;min-height:24px;font-size:8px;line-height:1.5;letter-spacing:.8px}
+  .sales-page .sales-visual-bottom>span{max-width:55%}
+  .sales-page .sales-slide-controls{gap:6px;flex-shrink:0}
+  .sales-page .sales-slide-controls button{height:4px;width:18px}
+  .sales-page .sales-slide-controls button.is-current{width:32px}
+}
+@media(max-width:370px){
+ .sales-page .sales-mock-heading{font-size:clamp(24px,7.5vw,31px)}
+ .sales-page .sales-mock-content{max-width:75%}
+}
