@@ -1,0 +1,157 @@
+/* Cada prévia tem identidade própria; a navegação externa continua funcional. */
+.lp-demo{container-type:inline-size;position:relative;display:flex;flex-direction:column;isolation:isolate;padding:0;background:#f1ede3;color:#263e35;font-family:Arial,Helvetica,sans-serif;line-height:1.25;letter-spacing:0;overflow:hidden}
+.lp-demo *{box-sizing:border-box}
+.lp-demo .lp-nav{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:4% 5%;flex:none}
+.lp-demo .lp-brand{display:flex;align-items:baseline;gap:1px;font-size:clamp(16px,3.3cqw,28px);font-weight:900;letter-spacing:-1.5px;white-space:nowrap}
+.lp-brand>span{color:#a59c70}
+.lp-demo .lp-brand small{font-size:clamp(5px,.9cqw,8px);font-weight:500;letter-spacing:1px;margin-left:9px}
+.lp-demo .lp-nav-links,.lp-demo .lp-nav-contact{font-size:clamp(6px,1.1cqw,9px);font-weight:600;white-space:nowrap;letter-spacing:.4px}
+.lp-demo .lp-nav-contact{border-bottom:1px solid currentColor;padding-bottom:4px}
+.lp-demo h3{font:400 clamp(22px,6.4cqw,54px)/.99 Georgia,'Times New Roman',serif;letter-spacing:-.045em;margin:16px 0;color:inherit}
+.lp-demo h3 em{font-weight:400}
+.lp-demo p{font-size:clamp(8px,1.45cqw,12px);line-height:1.65;margin:0;color:inherit}
+.lp-demo .lp-kicker{font-size:clamp(5px,1.05cqw,9px);font-weight:600;letter-spacing:1.2px;display:block;line-height:1.6}
+.lp-demo .lp-cta{display:inline-flex;align-items:center;justify-content:center;align-self:flex-start;padding:12px 18px;border-radius:30px;font-size:clamp(7px,1.2cqw,10px);font-weight:600;line-height:1.3;white-space:nowrap;background:#274a3d;color:#fff}
+.lp-demo .lp-footer{position:relative;z-index:2;display:flex;justify-content:space-between;gap:14px;align-items:center;padding:2.5% 5%;font-size:clamp(5px,.85cqw,7px);letter-spacing:.7px;border-top:1px solid #2c44301c;flex:none;margin-top:auto}
+.lp-clinic-hero{display:grid;grid-template-columns:54% 46%;flex:1;min-height:0}
+.lp-clinic-copy{align-self:center;padding:5% 7% 7% 9.3%}
+.lp-clinic-copy h3 em{color:#71816a}
+.lp-clinic-copy .lp-kicker{max-width:200px;color:#6d7c62}
+.lp-clinic-copy .lp-cta{margin-top:22px}
+.lp-clinic-photo{position:relative;min-width:0;margin:1% 8% 7% 0;overflow:hidden;border-radius:8px;background:#ccd4c5}
+.lp-clinic-photo img{position:absolute;width:100%;height:100%;object-fit:cover;object-position:48% center;filter:saturate(.55)}
+.lp-clinic-photo::after{content:'';position:absolute;inset:50% 0 0;background:linear-gradient(transparent,#132c28cc)}
+.lp-clinic-photo figcaption{position:absolute;z-index:1;bottom:9%;left:10%;font:400 clamp(15px,3.5cqw,29px)/1.1 Georgia,serif;color:#fff}
+.lp-photo-index{position:absolute;z-index:1;right:8%;top:12%;writing-mode:vertical-rl;color:#314a3c;font-size:clamp(5px,.85cqw,7px);letter-spacing:1px}
+.lp-demo.lp-architecture.lp-step-0{background:#202721;color:#f5f0e6}
+.lp-architecture-cover{position:absolute;z-index:-2;inset:0;width:100%;height:100%;object-fit:cover;object-position:60% center}
+.lp-architecture-shade{position:absolute;z-index:-1;inset:0;background:linear-gradient(90deg,#12201ae8 0%,#14201a70 55%,#14201a15 100%),linear-gradient(0deg,#101a16ba,transparent 55%)}
+.lp-architecture-copy{position:relative;flex:1;display:flex;flex-direction:column;justify-content:center;padding:3% 5% 5%}
+.lp-demo .lp-architecture-copy h3{font-size:clamp(25px,7.4cqw,62px);letter-spacing:-.055em;margin:16px 0 22px}
+.lp-architecture-copy h3 em{color:#d4c6a5}
+.lp-architecture-intro{display:flex;justify-content:space-between;gap:16px;align-items:end}
+.lp-demo .lp-architecture-intro .lp-cta{background:transparent;border:1px solid #f4eddb85;color:#fff;border-radius:0;align-self:flex-end}
+.lp-demo.lp-architecture.lp-step-0 .lp-footer{border-color:#e8eed52e}
+.lp-demo.lp-clinic.lp-step-1{background:#294b3f;color:#f2ecdc}
+.lp-care-body{display:grid;grid-template-columns:1fr 1fr;gap:7%;align-items:center;flex:1;min-height:0;padding:2% 5% 7%}
+.lp-care-body h3 em{color:#b2c3a2}
+.lp-demo .lp-care-body p{color:#c4d0bc}
+.lp-care-list>div{display:flex;gap:16px;align-items:center;border-top:1px solid #dce5d13b;padding:16px 0}
+.lp-care-list>div:last-child{border-bottom:1px solid #dce5d13b}
+.lp-care-list>div>span{font-size:clamp(6px,1.1cqw,9px);color:#b5c7a5}
+.lp-care-list strong{display:block;font-size:clamp(10px,2.1cqw,17px);font-weight:500;margin-bottom:4px}
+.lp-care-list i{margin-left:auto;width:9px;height:9px;border:1px solid #b5c7a5;border-radius:50%;flex-shrink:0}
+.lp-demo.lp-clinic.lp-step-1 .lp-footer{border-color:#dce5d13b}
+.lp-demo.lp-architecture.lp-step-1{background:#e9e4d9;color:#353a31}
+.lp-project-body{display:grid;grid-template-columns:48% 52%;flex:1;min-height:0;padding:2% 5% 5%}
+.lp-project-copy{align-self:center;padding-right:7%}
+.lp-demo .lp-project-copy h3{font-size:clamp(23px,6.2cqw,52px);margin:14px 0}
+.lp-project-copy h3 em{color:#7f7966}
+.lp-project-types{display:flex;flex-direction:column;gap:7px;margin-top:20px;font-size:clamp(7px,1.2cqw,10px)}
+.lp-project-types span{border-bottom:1px solid #a19c8950;padding-bottom:6px}
+.lp-project-body figure{position:relative;margin:0;min-width:0;background:#b8bba9;overflow:hidden}
+.lp-project-body figure img{width:100%;height:100%;position:absolute;object-fit:cover;object-position:65% center}
+.lp-project-body figcaption{position:absolute;bottom:0;left:0;right:0;background:#222e24bf;color:#fff;padding:12px;font-size:clamp(5px,.8cqw,7px);letter-spacing:.6px}
+.lp-demo.lp-clinic.lp-step-2{background:#dfe7d6}
+.lp-clinic-contact,.lp-architecture-contact{position:relative;flex:1;padding:4% 5% 5%;display:flex;flex-direction:column;justify-content:center}
+.lp-clinic-contact h3{position:relative;z-index:1;max-width:75%}
+.lp-clinic-contact h3 em{color:#69805c}
+.lp-contact-bottom{display:flex;align-items:end;justify-content:space-between;gap:12px;margin-top:16px;position:relative;z-index:1}
+.lp-contact-seal{position:absolute;right:7%;top:15%;width:22%;aspect-ratio:1;border:1px solid #8ca07e70;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;font:400 clamp(13px,3.5cqw,29px)/1 Georgia,serif;color:#718465;transform:rotate(-12deg)}
+.lp-demo.lp-architecture.lp-step-2{background:#33382e;color:#f1ecde}
+.lp-demo .lp-architecture-contact h3{font-size:clamp(24px,7cqw,59px);margin:14px 0}
+.lp-architecture-contact h3 em{color:#d6c9a8}
+.lp-demo .lp-architecture-contact .lp-cta{background:#d6c9a8;color:#283025;border-radius:0}
+.lp-demo.lp-architecture.lp-step-2 .lp-footer{border-color:#f1ecde33}
+.sales-page .sales-project-preview{border-radius:14px;overflow:hidden;box-shadow:0 18px 45px -30px #273e3370;border:1px solid #f9fbf099}
+.sales-page .sales-work-grid{gap:32px;align-items:start}
+.sales-page .sales-demo-heading{display:flex;justify-content:space-between;gap:14px;font-size:10px;letter-spacing:1.3px;color:#53604a;margin-bottom:12px}
+.sales-page .sales-demo-heading>span:last-child{letter-spacing:.3px;color:#69765f}
+.sales-page .sales-work-caption strong{font-size:clamp(16px,1.2vw,20px);font-weight:600;letter-spacing:-.02em}
+.sales-page .sales-work-caption div span{font-size:9px;letter-spacing:1px;line-height:1.6}
+@container(max-width:480px){
+ .lp-demo .lp-nav{gap:7px;padding:4% 5%}
+ .lp-demo .lp-nav-links{display:none}
+ .lp-demo .lp-brand small{margin-left:6px;letter-spacing:.5px}
+ .lp-demo .lp-kicker{letter-spacing:.6px}
+ .lp-demo h3{margin:10px 0 12px}
+ .lp-demo .lp-cta{padding:8px 11px}
+ .lp-demo .lp-footer{letter-spacing:.25px;gap:8px;padding-block:3%}
+ .lp-clinic-copy{padding:4% 8% 5% 9.3%}
+ .lp-clinic-copy .lp-cta{margin-top:12px}
+ .lp-clinic-photo{margin-bottom:6%;border-radius:6px}
+ .lp-demo .lp-architecture-copy h3{margin:12px 0 16px}
+ .lp-architecture-intro{gap:8px}
+ .lp-care-body{gap:5%}
+ .lp-care-list>div{padding:11px 0;gap:8px}
+ .lp-care-list i{width:6px;height:6px}
+ .lp-care-list p{font-size:7px}
+ .lp-project-types{margin-top:12px;gap:5px}
+ .lp-project-types span{padding-bottom:4px}
+ .lp-contact-bottom{margin-top:8px;gap:8px}
+ .lp-contact-bottom p{font-size:7px}
+}
+@media(max-width:600px){.sales-page .sales-demo-heading{font-size:9px;letter-spacing:.7px}.sales-page .sales-work-grid{gap:30px}}
+@container(max-width:340px){
+ .lp-demo .lp-project-copy h3{font-size:20px;margin:8px 0}
+ .lp-demo .lp-project-copy>p{font-size:7px;line-height:1.5}
+ .lp-demo .lp-project-types{margin-top:8px;gap:3px;font-size:6px}
+ .lp-demo .lp-project-types span{padding-bottom:3px}
+}
+/* Terceira proposta da vitrine: restaurante, com papel quente e tons de vinho. */
+.lp-demo.lp-restaurant{background:#f2e8d7;color:#632d24}
+.lp-restaurant .lp-brand>span{color:#be7845}
+.lp-demo.lp-restaurant .lp-nav-contact{padding:7px 11px;border:1px solid #632d2450;border-radius:3px}
+.lp-restaurant-body{display:grid;grid-template-columns:52% 46%;flex:1;min-height:0;padding:1% 5% 5%;gap:2%}
+.lp-restaurant-copy{align-self:center;padding-right:8%}
+.lp-demo .lp-restaurant-copy h3{font-size:clamp(23px,7.3cqw,61px);margin:14px 0 18px;line-height:.98}
+.lp-restaurant-copy h3 em{color:#ad6240}
+.lp-restaurant-copy>.lp-kicker{color:#986b4e}
+.lp-demo .lp-restaurant-copy p{color:#775d4a}
+.lp-demo .lp-restaurant-copy .lp-cta{margin-top:20px;background:#74382c;color:#fff;border-radius:3px}
+.lp-restaurant-note{display:block;font-size:clamp(5px,.8cqw,7px);letter-spacing:.7px;margin-top:20px;color:#9c7c5e;line-height:1.5}
+.lp-restaurant-photo{position:relative;min-width:0;overflow:hidden;margin:0;background:#26211c;border-radius:4px}
+.lp-restaurant-photo img{position:absolute;width:100%;height:100%;object-fit:cover;object-position:58% center}
+.lp-restaurant-photo::after{content:'';position:absolute;inset:0;background:linear-gradient(0deg,#261a13d9,transparent 58%)}
+.lp-restaurant-photo-label{position:absolute;z-index:1;left:9%;right:6%;top:7%;color:#efdfc6;font-size:clamp(5px,.85cqw,7px);letter-spacing:.8px}
+.lp-restaurant-photo figcaption{position:absolute;z-index:1;bottom:8%;left:9%;color:#f8ecd7;font:400 clamp(16px,3.7cqw,31px)/1.05 Georgia,serif;letter-spacing:-.03em}
+.lp-demo.lp-restaurant .lp-footer{border-color:#74382c25;color:#91694a}
+@container(max-width:480px){
+ .lp-demo .lp-restaurant-copy h3{margin:9px 0 12px}
+ .lp-demo .lp-restaurant-copy .lp-cta{margin-top:12px}
+ .lp-restaurant-note{margin-top:12px;letter-spacing:.3px}
+ .lp-demo.lp-restaurant .lp-nav-contact{padding:5px 7px}
+}
+@container(max-width:300px){
+ .lp-demo .lp-restaurant-copy h3{font-size:22px;margin:8px 0 10px}
+ .lp-demo .lp-restaurant-copy p{font-size:7px;line-height:1.5}
+ .lp-restaurant-note{margin-top:9px}
+}
+/* Restaurante em formato de banner: fotografia ampla, sem recorte lateral. */
+.lp-demo.lp-restaurant-banner{background:#211811;color:#fff4e4}
+.lp-restaurant-banner .lp-restaurant-photo{position:absolute;inset:0;z-index:-2;width:100%;height:100%;margin:0;border-radius:0}
+.lp-restaurant-banner .lp-restaurant-photo img{object-position:60% 52%;filter:saturate(.9)}
+.lp-restaurant-banner .lp-restaurant-photo::after{display:none}
+.lp-restaurant-banner-shade{position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,#19120df0 0%,#25170dc7 35%,#25170d40 70%,#25170d15 100%),linear-gradient(0deg,#19120da8,transparent 42%)}
+.lp-restaurant-banner .lp-restaurant-body{display:flex;position:relative;padding:1% 6% 5%;gap:0;align-items:center}
+.lp-restaurant-banner .lp-restaurant-copy{padding:0;max-width:66%}
+.lp-demo.lp-restaurant-banner .lp-brand>span,.lp-demo.lp-restaurant-banner .lp-restaurant-copy h3 em{color:#ecc390}
+.lp-demo.lp-restaurant-banner .lp-restaurant-copy h3{margin:13px 0 16px}
+.lp-demo.lp-restaurant-banner .lp-restaurant-copy>.lp-kicker{color:#eed2aa}
+.lp-demo.lp-restaurant-banner .lp-restaurant-copy p{color:#eadfce}
+.lp-demo.lp-restaurant-banner .lp-restaurant-copy .lp-cta{background:#e8bf8e;color:#352115;border-radius:3px;margin-top:18px}
+.lp-demo.lp-restaurant-banner .lp-nav-contact{color:#fff2dc;border-color:#f8dfb978}
+.lp-demo.lp-restaurant-banner .lp-footer{border-color:#eed2aa40;color:#ead4b6}
+.lp-restaurant-indicators{display:flex;align-items:center;gap:7px}
+.lp-restaurant-indicators b{font-weight:400;margin-right:8px;font-variant-numeric:tabular-nums}
+.lp-restaurant-indicators i{width:14px;height:2px;background:#ffffff50;display:block;border-radius:2px}
+.lp-restaurant-indicators i.is-current{width:24px;background:#f3c58d}
+@container(max-width:480px){
+ .lp-demo.lp-restaurant-banner .lp-restaurant-copy h3{margin:9px 0 12px}
+ .lp-demo.lp-restaurant-banner .lp-restaurant-copy .lp-cta{margin-top:12px}
+ .lp-restaurant-banner .lp-restaurant-copy{max-width:75%}
+ .lp-restaurant-indicators{gap:5px}
+ .lp-restaurant-indicators b{margin-right:3px}
+ .lp-restaurant-indicators i{width:10px}
+ .lp-restaurant-indicators i.is-current{width:18px}
+}
