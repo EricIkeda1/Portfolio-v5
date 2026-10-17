@@ -330,3 +330,25 @@
 .sales-page .sales-intro>.sales-hero{flex:1 0 auto}
 .sales-page .sales-intro>.sales-marquee{flex:none}
 @media(max-width:900px){.sales-page .sales-intro{min-height:calc(100vh - 74px);min-height:calc(100svh - 74px)}}
+
+/* Vitrine com volume: borda iluminada e sombra suave na divisão da introdução. */
+.sales-page .sales-hero{background:#d4dfca;isolation:isolate}
+.sales-page .sales-hero-visual{
+ position:relative;z-index:1;
+ background:radial-gradient(ellipse at 60% 42%,#dce4d3 0%,#cdd8c5 60%,#c2cfba 100%);
+ border-radius:48px 0 0 48px;
+ border-left:1px solid #f3f7eb;
+ box-shadow:-18px 0 34px -16px #35482d55,inset 1px 0 0 #ffffff80;
+}
+.sales-page .sales-visual-label{align-items:center;min-height:30px}
+.sales-page .sales-visual-label>span:first-child{border:1px solid #6a7d5d40;border-radius:20px;padding:6px 12px;background:#e9efdf70;color:#405039;font-variant-numeric:tabular-nums;white-space:nowrap}
+@media(min-width:901px){
+ .sales-page .sales-hero-slide>.sales-mock{border-radius:5px;transform:rotate(-3deg);box-shadow:0 30px 44px -18px #293d2d70,0 2px 4px #293d2d15}
+}
+@media(max-width:900px){
+ .sales-page .sales-hero-visual{border-left:0;border-top:1px solid #f3f7eb;border-radius:32px 32px 0 0;box-shadow:0 -12px 24px -16px #35482d66,inset 0 1px 0 #ffffff80}
+}
+@media(max-width:600px){
+ .sales-page .sales-hero-visual{border-radius:26px 26px 0 0}
+ .sales-page .sales-visual-label>span:first-child{padding:5px 9px}
+}
