@@ -7,8 +7,7 @@ import './index.css'
 if ('scrollRestoration' in window.history) window.history.scrollRestoration = 'manual'
 if (!window.location.hash) window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-)
+const root = document.getElementById('root')!
+const app = <React.StrictMode><App /></React.StrictMode>
+if (root.hasChildNodes()) ReactDOM.hydrateRoot(root, app)
+else ReactDOM.createRoot(root).render(app)

@@ -404,3 +404,6 @@
  .sales-page .sales-hero-slides{aspect-ratio:1}
  .sales-page .sales-hero-slide>.sales-hero-demo{aspect-ratio:1}
 }
+
+/* O conteúdo pré-renderizado continua visível sem JavaScript. */
+.sales-page:not(.sales-motion-ready) .sales-reveal{opacity:1;translate:none;filter:none}

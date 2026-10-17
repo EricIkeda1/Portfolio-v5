@@ -104,8 +104,8 @@ function PortfolioPage() {
   )
 }
 
-export default function App() {
-  const normalizedPath = window.location.pathname.replace(/\/+$/, '') || '/'
+export default function App({ pathname = window.location.pathname }: { pathname?: string } = {}) {
+  const normalizedPath = pathname.replace(/\/+$/, '') || '/'
 
   if (normalizedPath === '/admin') {
     return <AdminPage />

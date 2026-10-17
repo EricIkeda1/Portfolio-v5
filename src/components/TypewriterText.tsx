@@ -15,11 +15,13 @@ interface TypewriterTextProps {
 
 export function TypewriterText({ segments, speed = 65, startDelay = 300, cursor = true, onDone }: TypewriterTextProps) {
   const fullText = segments.map((s) => s.text).join('')
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(fullText.length)
   const [started, setStarted] = useState(false)
   const [done, setDone] = useState(false)
 
   useEffect(() => {
+    setCount(0)
+    setDone(false)
     const t = setTimeout(() => setStarted(true), startDelay)
     return () => clearTimeout(t)
   }, [startDelay])
@@ -33,11 +35,11 @@ export function TypewriterText({ segments, speed = 65, startDelay = 300, cursor 
   }, [started, count, fullText.length, speed])
 
   useEffect(() => {
-    if (count >= fullText.length && fullText.length > 0) {
+    if (started && count >= fullText.length && fullText.length > 0) {
       setDone(true)
       onDone?.()
     }
-  }, [count, fullText.length, onDone])
+  }, [started, count, fullText.length, onDone])
 
   // Build display segments from character count
   let remaining = count

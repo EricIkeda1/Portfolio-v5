@@ -9,7 +9,7 @@ export default function NotFoundPage() {
   const [scanning, setScanning] = useState(false)
   const [scanLabel, setScanLabel] = useState('ROTA NÃO LOCALIZADA')
 
-  const path = decodeURI(window.location.pathname)
+  const path = typeof window === 'undefined' ? '' : window.location.pathname
 
   useEffect(() => {
     const previousTitle = document.title
