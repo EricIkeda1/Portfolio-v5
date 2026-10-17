@@ -194,3 +194,21 @@
  .sales-page .sales-mock-heading{font-size:clamp(24px,7.5vw,31px)}
  .sales-page .sales-mock-content{max-width:75%}
 }
+
+/* Fundos EYI: paleta verde acinzentado, sem branco puro */
+.sales-page{--paper:#eaece5;--muted:#596357;background:#eaece5}
+.sales-page .sales-nav{background:rgba(235,237,229,.95);border-bottom-color:#cdd3c6}
+.sales-page .sales-nav.is-scrolled{background:rgba(235,237,229,.98)}
+.sales-page .sales-hero-copy{background:#eaece5}
+.sales-page .sales-hero-visual{background:#cbd3c7}
+.sales-page .sales-section:not(.sales-work):not(.sales-audiences):not(.sales-faq):not(.sales-contact){background:#eaece5}
+.sales-page .sales-audiences{background:#dfe5da}
+.sales-page .sales-work{background:#d9dfd5}
+.sales-page .sales-faq{background:#e1e5db}
+.sales-page .sales-marquee{background:#cdd9bd;border-color:#bdc9ae}
+.sales-page .sales-contact{background:#b9cba9}
+.sales-page .sales-service:hover{background:#dce3d6}
+.sales-page .sales-audience:hover{background:#d3ddcd}
+.sales-page .sales-outline-link:hover{background:#cbd6c5}
+.sales-page .sales-section-heading>p,.sales-page .sales-service p,.sales-page .sales-steps p,.sales-page .sales-faq-item p,.sales-page .sales-audience p{color:#535f51}
+@media(max-width:900px){.sales-page .sales-nav-links{background:#e7ebe2!important}.sales-page .sales-menu-toggle{background:#d8e0d3!important}.sales-page .sales-hero-copy{background:#eaece5}}
