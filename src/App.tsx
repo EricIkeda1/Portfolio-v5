@@ -10,6 +10,7 @@ import Contact from '@/sections/Contact'
 import { PortfolioContentProvider } from '@/context/PortfolioContentContext'
 import AdminPage from '@/admin/AdminPage'
 import NotFoundPage from '@/NotFoundPage'
+import SalesPage from '@/SalesPage'
 
 function PortfolioPage() {
   const [hovering, setHovering] = useState(false)
@@ -110,7 +111,11 @@ export default function App() {
     return <AdminPage />
   }
 
-  if (normalizedPath !== '/') {
+  if (normalizedPath === '/') {
+    return <SalesPage />
+  }
+
+  if (normalizedPath !== '/portfolio') {
     return <NotFoundPage />
   }
 
