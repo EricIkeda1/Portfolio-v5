@@ -352,3 +352,44 @@
  .sales-page .sales-hero-visual{border-radius:26px 26px 0 0}
  .sales-page .sales-visual-label>span:first-child{padding:5px 9px}
 }
+
+/* Digitação sem deslocar os elementos abaixo do título. */
+.sales-type-line{display:grid;min-width:0}
+.sales-type-line>*{grid-area:1/1;min-width:0}
+.sales-type-reserve{visibility:hidden;pointer-events:none}
+.sales-type-visible{display:block}
+.sales-type-caret{display:inline-block;width:0;height:.73em;vertical-align:-.03em;box-shadow:2px 0 currentColor;animation:salesCaretBlink 1s step-end infinite}
+@keyframes salesCaretBlink{50%{opacity:0}}
+/* Botões da página; o cabeçalho mantém o estilo existente. */
+.sales-page main .sales-button{min-height:54px;padding:17px 24px;border-radius:12px;border:1px solid #425a35;font-size:13px;font-weight:700;line-height:1.5;gap:12px;box-shadow:0 8px 18px #35482d22,inset 0 1px 0 #ffffff24;transition:transform .18s ease,box-shadow .18s ease,background .18s ease}
+.sales-page main .sales-button-primary,.sales-page main .sales-button-light{background:linear-gradient(135deg,#56733e,#344d2c);color:#fff!important}
+.sales-page main .sales-button-secondary{display:inline-flex;align-items:center;justify-content:center;min-height:54px;padding:17px 24px;border:1px solid #697f5355;border-radius:12px;background:#edf3e3a6;color:#35482d;line-height:1.5;box-shadow:inset 0 1px 0 #ffffff80;transition:transform .18s ease,background .18s ease,box-shadow .18s ease}
+.sales-page .sales-preview-toolbar button{border-radius:10px;background:#eff6e60c;border-color:#a8b69b80;transition:background .18s ease}
+.sales-page .sales-whatsapp-icon{display:block;flex-shrink:0}
+.sales-page .sales-faq-item button>span{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;flex-shrink:0;border-radius:50%;background:#cbd7c080;line-height:1}
+.sales-page main a:focus-visible,.sales-page main button:focus-visible{outline:3px solid #597b3d;outline-offset:4px}
+@media(hover:hover){
+ .sales-page main .sales-button:hover{transform:translateY(-2px);background:linear-gradient(135deg,#4a6635,#293f24);box-shadow:0 12px 22px #35482d30,inset 0 1px 0 #ffffff24}
+ .sales-page main .sales-button-secondary:hover{transform:translateY(-2px);background:#eef5e7;box-shadow:0 5px 14px #35482d12}
+ .sales-page .sales-preview-toolbar button:hover{background:#75896a55}
+ .sales-page .sales-faq-item button:hover>span{transform:none;background:#bfceaf}
+}
+.sales-page main .sales-button:active,.sales-page main .sales-button-secondary:active{transform:translateY(0);box-shadow:inset 0 2px 5px #1b2c1a20}
+@media(max-width:600px){
+ .sales-page main .sales-button,.sales-page main .sales-button-secondary{padding:15px 20px;min-height:52px}
+ .sales-page .sales-hero-actions{gap:12px}
+ .sales-page .sales-button-light{max-width:100%}
+ .sales-page .sales-button-light>span{min-width:0}
+}
+@media(prefers-reduced-motion:reduce){.sales-type-caret{display:none}.sales-page main .sales-button,.sales-page main .sales-button-secondary{transition:none}}
+
+/* Cursor literal, sempre visível ao digitar e piscando nas pausas. */
+.sales-page .sales-type-caret{display:inline-block;width:auto;height:auto;margin-left:.025em;vertical-align:baseline;font-family:Arial,sans-serif;font-weight:400;font-style:normal;line-height:1;color:#30482a;box-shadow:none;animation:none;opacity:1}
+.sales-page .sales-type-caret.is-paused{animation:salesCaretBlink .85s step-end infinite}
+.sales-page .sales-type-reserve .sales-type-caret{animation:none}
+.sales-page .sales-whatsapp-badge{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;width:34px;height:34px;border-radius:50%;background:#ffffff20;box-shadow:inset 0 0 0 1px #ffffff2b}
+.sales-page main .sales-button-light{gap:12px}
+@media(prefers-reduced-motion:reduce){.sales-page .sales-type-caret,.sales-page .sales-type-caret.is-paused{display:inline-block;animation:none}}
+
+/* O cursor acompanha a última letra sem ocupar largura nem criar outra linha. */
+.sales-page .sales-type-caret{width:0;margin-left:0;overflow:visible;white-space:nowrap;letter-spacing:0;line-height:inherit}
