@@ -58,7 +58,7 @@ function Icon({ name, size = 18 }: { name: IconName; size?: number }) {
     edit: <><path d="M4 20h4l11-11-4-4L4 16z"/><path d="m13.5 6.5 4 4"/></>,
     trash: <><path d="M4 7h16"/><path d="M9 7V4h6v3"/><path d="M7 7l1 13h8l1-13"/><path d="M10 11v5M14 11v5"/></>,
     save: <><path d="M5 3h12l2 2v16H5z"/><path d="M8 3v6h8V3"/><path d="M8 21v-7h8v7"/></>,
-    external: <><path d="M14 4h6v6"/><path d="m20 4-9 9"/><path d="M18 13v6H5V6h6"/></>,
+    external: <><path d="M18 13v6H5V6h6"/></>,
     menu: <><path d="M4 7h16M4 12h16M4 17h16"/></>,
     close: <><path d="m6 6 12 12M18 6 6 18"/></>,
   }
@@ -90,7 +90,7 @@ function LoginScreen({ onLogin }: { onLogin: (user: AdminUser) => void }) {
   return (
     <div className="admin-login-page">
       <div className="admin-login-glow" />
-      <a className="admin-login-back" href="/">← Voltar ao portfólio</a>
+      <a className="admin-login-back" href="/"> Voltar ao portfólio</a>
       <main className="admin-login-card" aria-labelledby="admin-login-title">
         <div className="admin-brand-mark">
           <ProtectedLogo alt="Eric Y. Ikeda" />
@@ -114,7 +114,7 @@ function LoginScreen({ onLogin }: { onLogin: (user: AdminUser) => void }) {
             </div>
           </label>
           {error && <div className="admin-login-error">{error}</div>}
-          <button className="admin-login-submit" type="submit" disabled={submitting}>{submitting ? 'Entrando...' : 'Entrar no painel'} <span>→</span></button>
+          <button className="admin-login-submit" type="submit" disabled={submitting}>{submitting ? 'Entrando...' : 'Entrar no painel'} </button>
         </form>
         <p className="admin-demo-note">Autenticação protegida no backend. A conexão com o Neon nunca é enviada ao navegador.</p>
       </main>
@@ -160,9 +160,9 @@ function Overview({ content, onNavigate }: { content: PortfolioContent; onNaviga
         <section className="admin-panel-card admin-quick-card">
           <div className="admin-panel-title"><div><span>ATALHOS</span><h2>Edição rápida</h2></div></div>
           <div className="admin-quick-list">
-            <button onClick={() => onNavigate('profile')}><span className="admin-quick-icon"><Icon name="profile"/></span><span><strong>Quem sou eu</strong><small>Texto e imagem do perfil</small></span><b>→</b></button>
-            <button onClick={() => onNavigate('projects')}><span className="admin-quick-icon"><Icon name="projects"/></span><span><strong>Projetos em destaque</strong><small>Adicionar, editar e excluir</small></span><b>→</b></button>
-            <button onClick={() => onNavigate('contact')}><span className="admin-quick-icon"><Icon name="contact"/></span><span><strong>Informações de contato</strong><small>WhatsApp, e-mail, GitHub e LinkedIn</small></span><b>→</b></button>
+            <button onClick={() => onNavigate('profile')}><span className="admin-quick-icon"><Icon name="profile"/></span><span><strong>Quem sou eu</strong><small>Texto e imagem do perfil</small></span></button>
+            <button onClick={() => onNavigate('projects')}><span className="admin-quick-icon"><Icon name="projects"/></span><span><strong>Projetos em destaque</strong><small>Adicionar, editar e excluir</small></span></button>
+            <button onClick={() => onNavigate('contact')}><span className="admin-quick-icon"><Icon name="contact"/></span><span><strong>Informações de contato</strong><small>WhatsApp, e-mail, GitHub e LinkedIn</small></span></button>
           </div>
         </section>
         <section className="admin-panel-card">

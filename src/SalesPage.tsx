@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type MouseEvent } from 'react'
 import './SalesPage.css'
 import { getPublicContent } from './lib/api'
 
@@ -16,8 +16,8 @@ const faqs = [
 ]
 function Mockup({ variant = 'light' }: {variant?: 'light' | 'dark' | 'warm'}) {
   return <div className={`sales-mock sales-mock--${variant}`} aria-hidden="true">
-    <div className="sales-mock-top"><span className="sales-mock-logo">EYI<span>.</span></span><span>INÍCIO &nbsp; SOBRE &nbsp; SERVIÇOS</span><span className="sales-mock-pill">CONTATO ↗</span></div>
-    <div className="sales-mock-content"><div className="sales-mock-eyebrow">DESIGN • ESTRATÉGIA • PRESENÇA</div><div className="sales-mock-heading">Ideias que<br/><em>ganham forma.</em></div><div className="sales-mock-line"/><div className="sales-mock-description">Uma experiência digital feita para destacar o que torna sua marca única.</div><span className="sales-mock-button">EXPLORE O PROJETO ↗</span></div>
+    <div className="sales-mock-top"><span className="sales-mock-logo">EYI<span>.</span></span><span>INÍCIO &nbsp; SOBRE &nbsp; SERVIÇOS</span><span className="sales-mock-pill">CONTATO</span></div>
+    <div className="sales-mock-content"><div className="sales-mock-eyebrow">DESIGN • ESTRATÉGIA • PRESENÇA</div><div className="sales-mock-heading">Ideias que<br/><em>ganham forma.</em></div><div className="sales-mock-line"/><div className="sales-mock-description">Uma experiência digital feita para destacar o que torna sua marca única.</div><span className="sales-mock-button">EXPLORE O PROJETO</span></div>
     <div className="sales-mock-art"><div className="sales-mock-orbit"/><div className="sales-mock-orbit second"/></div>
   </div>
 }
@@ -31,31 +31,76 @@ export default function SalesPage() {
   useEffect(() => {
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const targets = document.querySelectorAll<HTMLElement>('.sales-page .sales-reveal')
-    if (!('IntersectionObserver' in window) || reduce) {
+    if (!('IntersectionObserver' in window) || reduce || window.matchMedia('(max-width: 900px)').matches) {
       targets.forEach(el => el.classList.add('is-visible'))
       return
     }
     const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
-        entry.target.classList.toggle('is-visible', entry.isIntersecting)
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible')
+          observer.unobserve(entry.target)
+        }
       })
     }, { threshold: 0.08, rootMargin: '0px 0px -35px 0px' })
     targets.forEach(el => observer.observe(el))
     return () => observer.disconnect()
   }, [])
   useEffect(() => {
-    const onScroll = () => {
+    const sections = ['servicos', 'projetos', 'sobre', 'contato']
+      .map(id => document.getElementById(id)).filter((el): el is HTMLElement => !!el)
+    let frame = 0
+    const update = () => {
+      frame = 0
       setScrolled(window.scrollY > 22)
-      const ids = ['contato', 'sobre', 'projetos', 'servicos']
-      const found = ids.find(id => {
-        const el = document.getElementById(id)
-        return el && el.getBoundingClientRect().top < window.innerHeight * .38 && el.getBoundingClientRect().bottom > 110
-      })
-      setActive(found || 'topo')
+      const navHeight = document.querySelector('.sales-nav')?.getBoundingClientRect().height ?? 84
+      let current = 'topo'
+      for (const section of sections) {
+        if (section.getBoundingClientRect().top <= navHeight + 24) current = section.id
+      }
+      setActive(previous => previous === current ? previous : current)
     }
-    onScroll()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
+    const schedule = () => { if (!frame) frame = window.requestAnimationFrame(update) }
+    update()
+    window.addEventListener('scroll', schedule, { passive: true })
+    window.addEventListener('resize', schedule, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', schedule)
+      window.removeEventListener('resize', schedule)
+      window.cancelAnimationFrame(frame)
+    }
+  }, [])
+  const scrollToSection = (id: string, smooth = true) => {
+    const section = document.getElementById(id)
+    if (!section) return
+    const navHeight = document.querySelector('.sales-nav')?.getBoundingClientRect().height ?? 84
+    const anchor = id === 'projetos' ? section.querySelector('.sales-section-heading') ?? section : section
+    const top = id === 'topo' ? 0 : window.scrollY + anchor.getBoundingClientRect().top - navHeight - 12
+    window.scrollTo({ top: Math.max(0, top), behavior: smooth && Math.abs(window.scrollY - top) < window.innerHeight * 3 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'smooth' : 'instant' })
+  }
+  const navigateSection = (event: MouseEvent<HTMLDivElement>) => {
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
+    const link = (event.target as Element).closest<HTMLAnchorElement>('a[href^="#"]')
+    const id = link?.getAttribute('href')?.slice(1)
+    if (!id || !document.getElementById(id) || link?.getAttribute('aria-disabled') === 'true') return
+    event.preventDefault()
+    setMenu(false)
+    document.body.style.overflow = ''
+    window.history.pushState(null, '', `#${id}`)
+    window.requestAnimationFrame(() => scrollToSection(id))
+  }
+  useEffect(() => {
+    let frame = 0
+    const followHash = () => {
+      window.cancelAnimationFrame(frame)
+      frame = window.requestAnimationFrame(() => {
+        const id = window.location.hash.slice(1)
+        if (id) scrollToSection(id, false)
+      })
+    }
+    followHash()
+    window.addEventListener('hashchange', followHash)
+    return () => { window.cancelAnimationFrame(frame); window.removeEventListener('hashchange', followHash) }
   }, [])
   useEffect(() => {
     document.body.style.overflow = menu ? 'hidden' : ''
@@ -68,15 +113,32 @@ export default function SalesPage() {
   }, [])
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    const timer = window.setInterval(() => setSlide(n => (n + 1) % 3), 4500)
-    return () => window.clearInterval(timer)
+    let timer: number | undefined
+    let visible = true
+    const syncTimer = () => {
+      window.clearInterval(timer)
+      if (!document.hidden && visible) timer = window.setInterval(() => setSlide(n => (n + 1) % 3), 4500)
+    }
+    const hero = document.querySelector('.sales-hero')
+    const observer = 'IntersectionObserver' in window ? new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting
+      syncTimer()
+    }) : null
+    if (hero) observer?.observe(hero)
+    document.addEventListener('visibilitychange', syncTimer)
+    syncTimer()
+    return () => {
+      window.clearInterval(timer)
+      observer?.disconnect()
+      document.removeEventListener('visibilitychange', syncTimer)
+    }
   }, [])
   const changePreview = (index: number, direction: number) => {
     const next = (previewStep[index] + direction + 3) % 3
     const viewport = document.getElementById(`sales-preview-scroll-${index}`)
     if (viewport) {
       const section = viewport.querySelectorAll<HTMLElement>('.sales-preview-page')[next]
-      if (section) viewport.scrollTo({ top: section.offsetTop - viewport.offsetTop, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' })
+      if (section) viewport.scrollTo({ top: viewport.scrollTop + section.getBoundingClientRect().top - viewport.getBoundingClientRect().top, behavior: window.matchMedia('(max-width: 900px), (prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' })
     }
     setPreviewStep(previous => previous.map((value, i) => i === index ? next : value))
   }
@@ -93,36 +155,38 @@ export default function SalesPage() {
     return digits.length >= 10 && digits.length <= 13 ? `https://wa.me/${digits.length <= 11 ? '55' + digits : digits}` : null
   })() : contact?.email?.trim() ? `mailto:${contact.email.trim()}` : contact?.linkedin?.trim() ? contact.linkedin.trim() : null
   const [openFaq, setOpenFaq] = useState<number | null>(0)
-  return <div className="sales-page" id="topo">
+  return <div className="sales-page" id="topo" onClick={navigateSection}>
     <header className={`sales-nav ${scrolled ? 'is-scrolled' : ''} ${menu ? 'menu-open' : ''}`}>
       <a className="sales-brand" href="/" aria-label="EYI início" onClick={() => setMenu(false)}><span className="sales-brand-monogram">EYI<span>.</span></span><small>ESTÚDIO DIGITAL <b> / </b> ERIC Y. IKEDA</small></a>
       <nav aria-hidden={false} className={`sales-nav-links ${menu ? 'is-open' : ''}`} aria-label="Navegação principal" id="sales-navigation">
-        <a onClick={() => setMenu(false)} href="#topo"><span>00</span> Início</a>
+        <a className={active === 'topo' ? 'is-active' : ''} onClick={() => setMenu(false)} href="#topo"><span>00</span> Início</a>
         <a className={active === 'servicos' ? 'is-active' : ''} onClick={() => setMenu(false)} href="#servicos"><span>01</span> Serviços</a>
         <a className={active === 'projetos' ? 'is-active' : ''} onClick={() => setMenu(false)} href="#projetos"><span>02</span> Projetos</a>
         <a className={active === 'sobre' ? 'is-active' : ''} onClick={() => setMenu(false)} href="#sobre"><span>03</span> Sobre</a>
-        <a onClick={() => setMenu(false)} className="sales-nav-cta" href="#contato">Vamos conversar <span aria-hidden="true">↗</span></a>
+        <a onClick={() => setMenu(false)} className={`sales-nav-cta ${active === 'contato' ? 'is-active' : ''}`} href="#contato">Vamos conversar </a>
       </nav>
       <button type="button" className={`sales-menu-toggle ${menu ? 'is-active' : ''}`} aria-label={menu ? 'Fechar menu' : 'Abrir menu'} aria-controls="sales-navigation" aria-expanded={menu} onClick={() => setMenu(!menu)}><span/><span/><span/></button>
     </header>
     <main>
-      <section className="sales-hero sales-reveal"><div className="sales-hero-copy"><h1>Sites com identidade.<br/><em>Não apenas presença.</em></h1><p>Criação e modernização de sites para empresas que querem ser reconhecidas pelo que fazem com clareza, personalidade e atenção aos detalhes.</p><div className="sales-hero-actions"><a className="sales-button sales-button-primary" href="#contato">Vamos criar seu site <span>↗</span></a><a className="sales-text-link" href="#projetos">Explorar projetos <span>↘</span></a></div><div className="sales-hero-foot"><span>WORDPRESS</span><span>DESIGN RESPONSIVO</span><span>SITES PERSONALIZADOS</span></div></div><div className="sales-hero-visual"><div className="sales-visual-label"><span>0{slide+1} / 03</span><span>UMA NOVA FORMA DE SE APRESENTAR</span></div><div className="sales-hero-slides" aria-label="Carrossel de conceitos visuais">{(['light','warm','dark'] as const).map((variant, index) => <div key={variant} className={`sales-hero-slide ${slide===index ? 'is-current' : ''}`} aria-hidden={slide!==index}><Mockup variant={variant}/></div>)}</div><div className="sales-visual-bottom"><span>CONCEITOS VISUAIS • DEMONSTRAÇÃO</span><div className="sales-slide-controls" aria-label="Selecionar imagem do carrossel">{[0,1,2].map(i=><button key={i} type="button" aria-label={`Ver imagem ${i+1}`} aria-pressed={slide===i} className={slide===i?'is-current':''} onClick={()=>setSlide(i)}/>)}</div></div></div></section>
+      <div className="sales-intro">
+      <section className="sales-hero sales-reveal"><div className="sales-hero-copy"><h1>Sites com identidade.<br/><em>Não apenas presença.</em></h1><p>Criação e modernização de sites para empresas que querem ser reconhecidas pelo que fazem com clareza, personalidade e atenção aos detalhes.</p><div className="sales-hero-actions"><a className="sales-button sales-button-primary" href="#contato">Vamos criar seu site </a><a className="sales-text-link" href="#projetos">Explorar projetos </a></div><div className="sales-hero-foot"><span>WORDPRESS</span><span>DESIGN RESPONSIVO</span><span>SITES PERSONALIZADOS</span></div></div><div className="sales-hero-visual"><div className="sales-visual-label"><span>0{slide+1} / 03</span><span>UMA NOVA FORMA DE SE APRESENTAR</span></div><div className="sales-hero-slides" aria-label="Carrossel de conceitos visuais">{(['light','warm','dark'] as const).map((variant, index) => <div key={variant} className={`sales-hero-slide ${slide===index ? 'is-current' : ''}`} aria-hidden={slide!==index}><Mockup variant={variant}/></div>)}</div><div className="sales-visual-bottom"><span>CONCEITOS VISUAIS • DEMONSTRAÇÃO</span><div className="sales-slide-controls" aria-label="Selecionar imagem do carrossel">{[0,1,2].map(i=><button key={i} type="button" aria-label={`Ver imagem ${i+1}`} aria-pressed={slide===i} className={slide===i?'is-current':''} onClick={()=>setSlide(i)}/>)}</div></div></div></section>
       <div className="sales-marquee" aria-label="Serviços oferecidos"><span>WORDPRESS & DESIGN</span><i>✳</i><span>FEITO SOB MEDIDA</span><i>✳</i><span>EXPERIÊNCIAS DIGITAIS</span><i>✳</i></div>
-      <section className="sales-section sales-services sales-reveal" id="servicos"><div className="sales-section-heading"><div><span className="sales-overline">01 O QUE EU FAÇO</span><h2>Seu negócio, <em>bem apresentado.</em></h2></div><p>Da primeira impressão ao último detalhe, cada página é pensada para transmitir confiança e facilitar o contato com seus clientes.</p></div><div className="sales-service-list">{services.map(s=><article className="sales-service sales-reveal" key={s.n}><span className="sales-service-number">{s.n}</span><h3>{s.title}</h3><p>{s.desc}</p><span className="sales-service-arrow">↗</span></article>)}</div></section>
+      </div>
+      <section className="sales-section sales-services sales-reveal" id="servicos"><div className="sales-section-heading"><div><span className="sales-overline">01 O QUE EU FAÇO</span><h2>Seu negócio, <em>bem apresentado.</em></h2></div><p>Da primeira impressão ao último detalhe, cada página é pensada para transmitir confiança e facilitar o contato com seus clientes.</p></div><div className="sales-service-list">{services.map(s=><article className="sales-service sales-reveal" key={s.n}><span className="sales-service-number">{s.n}</span><h3>{s.title}</h3><p>{s.desc}</p></article>)}</div></section>
       <section className="sales-section sales-audiences sales-reveal" id="segmentos"><div className="sales-section-heading"><div><span className="sales-overline">PARA QUEM É</span><h2>Seu trabalho merece <em>ser encontrado.</em></h2></div><p>Landing pages para apresentar serviços com clareza e facilitar o contato com novos clientes.</p></div><div className="sales-audiences-grid">{[
 ['01','Advogados e escritórios','Áreas de atuação e contato profissional.'],['02','Dentistas e clínicas','Especialidades, equipe e agendamento.'],['03','Arquitetos e engenheiros','Projetos e pedidos de orçamento.'],['04','Psicólogos e terapeutas','Apresentação do atendimento e contato.'],['05','Imobiliárias e corretores','Imóveis e captação de interessados.'],['06','Salões e profissionais da beleza','Serviços, resultados e agendamento.'],['07','Oficinas e serviços automotivos','Serviços e solicitação de orçamento.'],['08','Restaurantes e cafeterias','Cardápio, localização e pedidos.'],['09','Prestadores de serviços','Eletricistas, encanadores, instaladores e mais.']
 ].map(([n,title,description])=><article className="sales-audience sales-reveal" key={n}><span>{n}</span><h3>{title}</h3><p>{description}</p></article>)}</div><p className="sales-audiences-note">Seu segmento não está aqui? Também desenvolvo páginas para outros tipos de negócio.</p></section>
       <section className="sales-section sales-work sales-reveal" id="projetos"><div className="sales-section-heading"><div><span className="sales-overline">02 IDEIAS EM DESTAQUE</span><h2>Design que dá<br/><em>vontade de explorar.</em></h2></div><p>Algumas direções visuais que mostram como um site pode apresentar melhor uma marca. Os exemplos abaixo são conceitos demonstrativos.</p></div><div className="sales-work-grid">{(['warm','dark'] as const).map((variant,index)=><article className="sales-work-card sales-reveal" key={variant}>
         <div className="sales-project-preview"><div className="sales-preview-window" id={`sales-preview-scroll-${index}`} onScroll={() => syncPreview(index)}><div className="sales-preview-pages">
-          {index===0 ? <div className="sales-preview-page dental-preview dental-hero"><div className="dental-nav"><b className="dental-eyi-logo">EYI<span>.</span></b><span>CLÍNICA · TRATAMENTOS · CONTATO</span><small>AGENDAR CONSULTA ↗</small></div><div className="dental-hero-body"><div><span className="dental-kicker">ODONTOLOGIA COM ATENÇÃO A CADA DETALHE</span><h3>Seu sorriso,<br/><em>nosso cuidado.</em></h3><p>Uma experiência acolhedora, com atendimento individualizado e confiança em cada etapa.</p><span className="dental-cta">CONHEÇA A CLÍNICA ↗</span></div><div className="dental-monogram"><span className="dental-monogram-ring"/><span className="dental-monogram-text">cuidado<br/>em cada<br/><i>detalhe.</i></span></div></div><div className="dental-hero-foot"><span>ESTÉTICA · PREVENÇÃO · BEM-ESTAR</span><span>01 / 03</span></div></div> : <div className="sales-preview-page"><Mockup variant={variant}/></div>}
+          {index===0 ? <div className="sales-preview-page dental-preview dental-hero"><div className="dental-nav"><b className="dental-eyi-logo">EYI<span>.</span></b><span>CLÍNICA · TRATAMENTOS · CONTATO</span><small>AGENDAR CONSULTA</small></div><div className="dental-hero-body"><div><span className="dental-kicker">ODONTOLOGIA COM ATENÇÃO A CADA DETALHE</span><h3>Seu sorriso,<br/><em>nosso cuidado.</em></h3><p>Uma experiência acolhedora, com atendimento individualizado e confiança em cada etapa.</p><span className="dental-cta">CONHEÇA A CLÍNICA</span></div><div className="dental-monogram"><span className="dental-monogram-ring"/><span className="dental-monogram-text">cuidado<br/>em cada<br/><i>detalhe.</i></span></div></div><div className="dental-hero-foot"><span>ESTÉTICA · PREVENÇÃO · BEM-ESTAR</span><span>01 / 03</span></div></div> : <div className="sales-preview-page"><Mockup variant={variant}/></div>}
           {index===0 ? <div className="sales-preview-page dental-preview dental-treatments"><div className="dental-nav"><b className="dental-eyi-logo">EYI<span>.</span></b><span>NOSSOS CUIDADOS</span><small>02 / 03</small></div><div className="dental-section-body"><span className="dental-kicker">CUIDADO COMPLETO</span><h3>Odontologia que<br/><em>acolhe você.</em></h3><div className="dental-treat-grid"><div><span>01</span><strong>Prevenção</strong><p>Cuidados para a saúde bucal.</p></div><div><span>02</span><strong>Estética dental</strong><p>Tratamentos personalizados.</p></div><div><span>03</span><strong>Ortodontia</strong><p>Planejamento e acompanhamento.</p></div></div></div></div> : <div className={`sales-preview-page sales-preview-inside sales-preview-inside--${variant}`}><div className="sales-preview-minihead"><b>EYI.</b><span>SOBRE · SERVIÇOS · CONTATO</span></div><span className="sales-preview-kicker">01 / CONTEÚDO</span><h3>Uma presença digital<br/><em>com personalidade.</em></h3><div className="sales-preview-columns"><div><span>O QUE FAZEMOS</span><strong>Projetos sob medida para cada negócio.</strong><p>Conteúdo, identidade e experiência pensados para quem visita.</p></div><div className="sales-preview-shape"/></div></div>}
-          {index===0 ? <div className="sales-preview-page dental-preview dental-contact"><div className="dental-nav"><b className="dental-eyi-logo">EYI<span>.</span></b><span>FALE CONOSCO</span><small>03 / 03</small></div><div className="dental-section-body"><span className="dental-kicker">ESTAMOS AQUI POR VOCÊ</span><h3>O próximo passo<br/><em>começa com cuidado.</em></h3><p>Agende uma conversa e conheça nosso espaço e nossos atendimentos.</p><span className="dental-contact-cta">AGENDAR CONSULTA ↗</span><div className="dental-contact-footer">ATENDIMENTO COM HORA MARCADA <span>CONCEITO ODONTOLÓGICO · EYI</span></div></div></div> : <div className={`sales-preview-page sales-preview-inside sales-preview-contact--${variant}`}><div className="sales-preview-minihead"><b>EYI.</b><span>PROJETOS · CONTATO</span></div><span className="sales-preview-kicker">02 / CONTATO</span><h3>Seu próximo projeto<br/><em>começa aqui.</em></h3><div className="sales-preview-contactbox"><span>FALE COM A GENTE</span><strong>Vamos criar algo único?</strong><span className="sales-preview-fakebutton">SOLICITAR ORÇAMENTO ↗</span></div></div>}
-        </div></div><div className="sales-preview-toolbar"><span className="sales-preview-counter"><b>0{previewStep[index]+1}</b><span className="sales-preview-counter-separator">/</span>03</span><div><button type="button" aria-label="Seção anterior do exemplo" onClick={()=>changePreview(index,-1)}>←</button><button type="button" aria-label="Próxima seção do exemplo" onClick={()=>changePreview(index,1)}>→</button></div></div></div>
+          {index===0 ? <div className="sales-preview-page dental-preview dental-contact"><div className="dental-nav"><b className="dental-eyi-logo">EYI<span>.</span></b><span>FALE CONOSCO</span><small>03 / 03</small></div><div className="dental-section-body"><span className="dental-kicker">ESTAMOS AQUI POR VOCÊ</span><h3>O próximo passo<br/><em>começa com cuidado.</em></h3><p>Agende uma conversa e conheça nosso espaço e nossos atendimentos.</p><span className="dental-contact-cta">AGENDAR CONSULTA</span><div className="dental-contact-footer">ATENDIMENTO COM HORA MARCADA <span>CONCEITO ODONTOLÓGICO · EYI</span></div></div></div> : <div className={`sales-preview-page sales-preview-inside sales-preview-contact--${variant}`}><div className="sales-preview-minihead"><b>EYI.</b><span>PROJETOS · CONTATO</span></div><span className="sales-preview-kicker">02 / CONTATO</span><h3>Seu próximo projeto<br/><em>começa aqui.</em></h3><div className="sales-preview-contactbox"><span>FALE COM A GENTE</span><strong>Vamos criar algo único?</strong><span className="sales-preview-fakebutton">SOLICITAR ORÇAMENTO</span></div></div>}
+        </div></div><div className="sales-preview-toolbar"><span className="sales-preview-counter"><b>0{previewStep[index]+1}</b><span className="sales-preview-counter-separator">/</span>03</span><div><button type="button" aria-label="Seção anterior do exemplo" onClick={()=>changePreview(index,-1)}>Anterior</button><button type="button" aria-label="Próxima seção do exemplo" onClick={()=>changePreview(index,1)}>Próxima</button></div></div></div>
         <div className="sales-work-caption"><div><strong>{index===0?'Conceito WordPress para clínica odontológica':'Conceito de landing page WordPress'}</strong><span>INÍCIO · CONTEÚDO · CONTATO / DEMONSTRAÇÃO</span></div><span>0{index+1}</span></div></article>)}</div></section>
       <section className="sales-about sales-reveal" id="sobre"><div className="sales-about-aside"><span className="sales-overline">03 QUEM ESTÁ POR TRÁS</span><div className="sales-about-mark">EYI<span>.</span></div><span>DESIGN. CÓDIGO. DETALHES.</span></div><div className="sales-about-copy"><h2>Um site bonito é bom.<br/><em>Um site pensado para você é melhor.</em></h2><p>Sou Eric Y. Ikeda, engenheiro de software e desenvolvedor web. Uno design e tecnologia para criar experiências digitais modernas, funcionais e alinhadas à identidade de cada negócio.</p><p>Do WordPress a projetos personalizados, meu objetivo é entregar uma presença online que faça sentido para sua empresa sem soluções genéricas.</p></div></section>
       <section className="sales-section sales-process sales-reveal"><div className="sales-section-heading"><div><span className="sales-overline">04 COMO FUNCIONA</span><h2>Simples do início <em>ao lançamento.</em></h2></div></div><div className="sales-steps">{[['01','Conversa inicial','Entendo seu negócio, objetivos e o que você precisa.'],['02','Proposta e direção','Definimos escopo, identidade visual, prazo e orçamento.'],['03','Criação do site','Desenvolvo a experiência com atenção a cada detalhe.'],['04','Entrega','Revisamos o resultado e preparamos a publicação.']].map(([n,t,d])=><article className="sales-reveal" key={n}><span>{n}</span><h3>{t}</h3><p>{d}</p></article>)}</div></section>
       <section className="sales-section sales-faq sales-reveal"><div><span className="sales-overline">05 DÚVIDAS FREQUENTES</span><h2>Antes de <em>começarmos.</em></h2></div><div className="sales-faq-items">{faqs.map(([q,a],i)=><div className="sales-faq-item sales-reveal" key={q}><button onClick={()=>setOpenFaq(openFaq===i?null:i)} aria-expanded={openFaq===i}>{q}<span>{openFaq===i?'−':'+'}</span></button>{openFaq===i&&<p>{a}</p>}</div>)}</div></section>
-      <section className="sales-contact sales-reveal" id="contato"><div className="sales-contact-inner"><span className="sales-overline">06 VAMOS CONVERSAR?</span><h2>Seu próximo site<br/>começa com <em>uma ideia.</em></h2><p>Conte um pouco sobre seu projeto e vamos encontrar o melhor caminho para colocar sua marca em destaque.</p><a className="sales-button sales-button-light" href={contactUrl || "#contato"} aria-disabled={!contactUrl} onClick={e => { if (!contactUrl) e.preventDefault() }} target={contactUrl?.startsWith("http") ? "_blank" : undefined} rel="noopener noreferrer">Conversar sobre meu projeto <span>↗</span></a></div><span className="sales-contact-deco">↗</span></section>
-    </main><footer className="sales-footer"><div className="sales-footer-top"><a className="sales-brand" href="/">EYI<span>.</span><small>DESENVOLVIMENTO WEB</small></a><div><a href="#topo">Voltar ao topo ↑</a><a href="/portfolio">Portfólio</a><a href={contactUrl || "#contato"} onClick={e => { if (!contactUrl) e.preventDefault() }}>Contato</a></div></div><div className="sales-footer-bottom"><span>© {new Date().getFullYear()} Eric Y. Ikeda. Todos os direitos reservados.</span><span>DESENVOLVIDO POR ERIC Y. IKEDA</span></div></footer>
+      <section className="sales-contact sales-reveal" id="contato"><div className="sales-contact-inner"><span className="sales-overline">06 VAMOS CONVERSAR?</span><h2>Seu próximo site<br/>começa com <em>uma ideia.</em></h2><p>Conte um pouco sobre seu projeto e vamos encontrar o melhor caminho para colocar sua marca em destaque.</p><a className="sales-button sales-button-light" href={contactUrl || "#contato"} aria-disabled={!contactUrl} onClick={e => { if (!contactUrl) e.preventDefault() }} target={contactUrl?.startsWith("http") ? "_blank" : undefined} rel="noopener noreferrer">Conversar sobre meu projeto </a></div></section>
+    </main><footer className="sales-footer"><div className="sales-footer-top"><a className="sales-brand" href="/">EYI<span>.</span><small>DESENVOLVIMENTO WEB</small></a><div><a href="#topo">Voltar ao topo</a><a href="/portfolio">Portfólio</a><a href={contactUrl || "#contato"} onClick={e => { if (!contactUrl) e.preventDefault() }}>Contato</a></div></div><div className="sales-footer-bottom"><span>© {new Date().getFullYear()} Eric Y. Ikeda. Todos os direitos reservados.</span><span>DESENVOLVIDO POR ERIC Y. IKEDA</span></div></footer>
   </div>
 }

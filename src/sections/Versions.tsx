@@ -45,13 +45,6 @@ const versions = [
   },
 ]
 
-const ExternalIcon = () => (
-  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-    <polyline points="15 3 21 3 21 9" />
-    <line x1="10" y1="14" x2="21" y2="3" />
-  </svg>
-)
 
 function VersionCard({ v, index }: { v: (typeof versions)[0]; index: number }) {
   const ref = useRef<HTMLDivElement>(null)
@@ -184,7 +177,7 @@ function VersionCard({ v, index }: { v: (typeof versions)[0]; index: number }) {
             onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = 'var(--blue)')}
             onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = 'var(--muted)')}
           >
-            Visitar <ExternalIcon />
+            Visitar 
           </a>
         ) : (
           <div className="font-mono" style={{ fontSize: '0.72rem', letterSpacing: '0.1em', color: 'var(--blue)', textTransform: 'uppercase' }}>

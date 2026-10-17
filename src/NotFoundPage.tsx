@@ -134,9 +134,7 @@ export default function NotFoundPage() {
           <div className="not-found-actions">
             <a className="not-found-primary font-mono" href="/">
               <span>Voltar ao início</span>
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M5 12h14M13 6l6 6-6 6" />
-              </svg>
+              
             </a>
 
             <button className="not-found-secondary font-mono" type="button" onClick={goBack}>

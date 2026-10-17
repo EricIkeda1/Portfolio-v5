@@ -304,16 +304,7 @@ export default function Hero() {
                 >
                   Ver projetos
 
-                  <svg
-                    width="13"
-                    height="13"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                  >
-                    <path d="M5 12h14M12 5l7 7-7 7" />
-                  </svg>
+                  
                 </a>
 
 
@@ -469,32 +460,6 @@ export default function Hero() {
           >
             Scroll
           </span>
-
-          {/* Three cascading chevrons */}
-          {[0, 1, 2].map((i) => (
-            <svg
-              key={i}
-              width="20"
-              height="12"
-              viewBox="0 0 20 12"
-              fill="none"
-              style={{
-                animation: `chevronCascade 1.4s ease-in-out ${
-                  i * 220
-                }ms infinite`,
-                display: 'block',
-                marginTop: i === 0 ? 0 : -3,
-              }}
-            >
-              <polyline
-                points="2,2 10,10 18,2"
-                stroke="var(--muted-2)"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          ))}
         </div>
       </div>
 

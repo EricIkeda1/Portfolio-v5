@@ -94,7 +94,7 @@ function PortfolioPage() {
                   <span className="site-footer-protocol">https://</span>
                   <span>ericyikeda</span><strong>.com.br</strong>
                 </span>
-                <span className="site-footer-domain-arrow" aria-hidden="true">↗</span>
+                
               </a>
             </div>
           </footer>
