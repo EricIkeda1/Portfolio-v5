@@ -1,8 +1,8 @@
 import './LandingPageDemo.css'
 import RestaurantDemo from './RestaurantDemo'
+import { demoImages as photos } from './demoImages'
 
 type Props = { kind: 'clinic' | 'architecture' | 'restaurant'; step: number; eager?: boolean }
-const photos = { clinic: '/demo-images/clinic.jpg', architecture: '/demo-images/architecture.jpg' }
 
 export default function LandingPageDemo({ kind, step, eager = false }: Props) {
   if (kind === 'restaurant') return <RestaurantDemo eager={eager}/>
