@@ -48,6 +48,8 @@ CREATE TABLE IF NOT EXISTS portfolio_projects (
   tags JSONB NOT NULL DEFAULT '[]'::jsonb,
   highlights JSONB NOT NULL DEFAULT '[]'::jsonb,
   github TEXT NOT NULL DEFAULT '',
+  demo_url TEXT NOT NULL DEFAULT '',
+  category TEXT NOT NULL DEFAULT 'auto',
   color TEXT NOT NULL DEFAULT '#4285FF',
   image_url TEXT,
   sort_order INTEGER NOT NULL DEFAULT 0,
@@ -58,3 +60,7 @@ CREATE TABLE IF NOT EXISTS portfolio_projects (
 
 CREATE INDEX IF NOT EXISTS idx_portfolio_projects_sort
   ON portfolio_projects (sort_order, id);
+
+-- Migração aditiva para bancos já existentes.
+ALTER TABLE portfolio_projects ADD COLUMN IF NOT EXISTS demo_url TEXT NOT NULL DEFAULT '';
+ALTER TABLE portfolio_projects ADD COLUMN IF NOT EXISTS category TEXT NOT NULL DEFAULT 'auto';

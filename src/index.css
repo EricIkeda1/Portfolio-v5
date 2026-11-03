@@ -1031,3 +1031,6 @@ a {
   }
 }
 
+
+.admin-form-stack select { width: 100%; min-height: 44px; padding: .7rem; background: var(--card); color: var(--text); border: 1px solid var(--border-bright); border-radius: 6px; font: inherit; font-size: .8rem; }
+.admin-app-shell, .admin-login-page { color: var(--text); background: var(--bg); }

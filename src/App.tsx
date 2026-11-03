@@ -1,123 +1,50 @@
-import { useState, type CSSProperties, type PointerEvent } from 'react'
-import Nav from '@/components/Nav'
-import Hero from '@/sections/Hero'
-import About from '@/sections/About'
-import Skills from '@/sections/Skills'
-import Highlights from '@/sections/Highlights'
-import Experience from '@/sections/Experience'
-import Versions from '@/sections/Versions'
-import Contact from '@/sections/Contact'
-import { PortfolioContentProvider } from '@/context/PortfolioContentContext'
-import AdminPage from '@/admin/AdminPage'
-import NotFoundPage from '@/NotFoundPage'
-import SalesPage from '@/SalesPage'
+import { lazy, Suspense, useEffect, useState, type MouseEvent } from 'react'
+import { PortfolioContentProvider, usePortfolioContent } from '@/context/PortfolioContentContext'
+import { AboutPage, ContactPage, HomePage, NotFound, PortfolioPage, ProjectPage } from '@/web/Pages'
+import { Footer, Header } from '@/web/Chrome'
+import { projectSlug, webProjects } from '@/web/projects'
+import { pageMeta } from './seo'
+import './web/web.css'
 
-function PortfolioPage() {
-  const [hovering, setHovering] = useState(false)
-  const [cursor, setCursor] = useState({ x: 0, y: 0 })
+const AdminPage = lazy(() => import('@/admin/AdminPage'))
 
-  const handlePointerMove = (event: PointerEvent<HTMLDivElement>) => {
-    const rect = event.currentTarget.getBoundingClientRect()
-    setCursor({ x: event.clientX - rect.left, y: event.clientY - rect.top })
-  }
-
-  const mask = `radial-gradient(circle at ${cursor.x}px ${cursor.y}px, #000 80px, transparent 140px)`
-
-  const dotsBase: CSSProperties = {
-    position: 'fixed',
-    inset: 0,
-    backgroundImage:
-      'radial-gradient(circle at center, rgba(66, 133, 255, 0.18) 1px, transparent 1.2px)',
-    backgroundSize: '22px 22px',
-    pointerEvents: 'none',
-    zIndex: 0,
-  }
-
-  const dotsHover: CSSProperties = {
-    position: 'fixed',
-    inset: 0,
-    backgroundImage:
-      'radial-gradient(circle at center, rgba(66, 133, 255, 0.5) 1.8px, transparent 2px)',
-    backgroundSize: '22px 22px',
-    opacity: hovering ? 1 : 0,
-    maskImage: mask,
-    WebkitMaskImage: mask,
-    transition: 'opacity 0.15s',
-    pointerEvents: 'none',
-    zIndex: 0,
-  }
-
-  return (
-    <PortfolioContentProvider>
-      <div
-        style={{ backgroundColor: 'var(--bg)', minHeight: '100vh', position: 'relative' }}
-        onPointerEnter={() => setHovering(true)}
-        onPointerMove={handlePointerMove}
-        onPointerLeave={() => setHovering(false)}
-      >
-        <div style={dotsBase} />
-        <div style={dotsHover} />
-
-        <div style={{ position: 'relative', zIndex: 1 }}>
-          <Nav />
-          <main>
-            <Hero />
-            <About />
-            <Highlights />
-            <Skills />
-            <Experience />
-            <Versions />
-            <Contact />
-          </main>
-          <footer className="site-footer">
-            <div className="site-footer-inner">
-              <div className="site-footer-signature">
-                <span className="site-footer-monogram" aria-hidden="true">EI</span>
-                <div>
-                  <span className="site-footer-copy">
-                    © {new Date().getFullYear()} ERIC Y. IKEDA
-                  </span>
-                  <span className="site-footer-version">PORTFOLIO V5</span>
-                </div>
-              </div>
-
-              <a
-                className="site-footer-domain"
-                href="https://www.ericyikeda.com.br/"
-                aria-label="Acessar ericyikeda.com.br, domínio oficial do portfólio"
-              >
-                <span className="site-footer-domain-meta">
-                  <span className="site-footer-domain-dot" aria-hidden="true" />
-                  DOMÍNIO OFICIAL
-                </span>
-                <span className="site-footer-domain-address">
-                  <span className="site-footer-protocol">https://</span>
-                  <span>ericyikeda</span><strong>.com.br</strong>
-                </span>
-                
-              </a>
-            </div>
-          </footer>
-        </div>
-      </div>
-    </PortfolioContentProvider>
-  )
+function PublicSite({ pathname }: { pathname: string }) {
+  const { content, loading, source, refresh } = usePortfolioContent()
+  const projects = webProjects(content.projects)
+  let slug = ''
+  try { if (pathname.startsWith('/portfolio/')) slug = decodeURIComponent(pathname.slice('/portfolio/'.length)) } catch { /* URL inválida segue para 404. */ }
+  const project = projects.find((item) => projectSlug(item) === slug || String(item.id) === slug)
+  const meta = pageMeta(pathname, project?.name)
+  useEffect(() => {
+    document.title = meta.title
+    document.querySelector('meta[name="description"]')?.setAttribute('content', meta.description)
+    document.querySelector('link[rel="canonical"]')?.setAttribute('href', meta.url)
+    document.querySelector('meta[name="robots"]')?.setAttribute('content', slug && !project && !loading ? 'noindex, follow' : 'index, follow, max-image-preview:large')
+  }, [meta.title, meta.description, meta.url, slug, project, loading])
+  const page = pathname === '/' ? <HomePage /> : pathname === '/portfolio' ? <PortfolioPage /> : pathname === '/sobre' ? <AboutPage /> : pathname === '/contato' ? <ContactPage /> : project ? <ProjectPage project={project} /> : slug && loading ? <div className="page-loading wrap" role="status">Carregando projeto...</div> : <NotFound />
+  return <div className="public-site"><Header pathname={pathname} /><main id="main-content" tabIndex={-1}>{source === 'offline' && <div className="content-notice wrap" role="status">Não foi possível atualizar o conteúdo. Exibindo a versão de apresentação. <button onClick={() => void refresh()} type="button">Tentar novamente</button></div>}{page}</main><Footer /></div>
 }
 
-export default function App({ pathname = window.location.pathname }: { pathname?: string } = {}) {
-  const normalizedPath = pathname.replace(/\/+$/, '') || '/'
-
-  if (normalizedPath === '/admin') {
-    return <AdminPage />
+export default function App({ pathname }: { pathname?: string } = {}) {
+  const initial = pathname ?? (typeof window !== 'undefined' ? window.location.pathname : '/')
+  const [current, setCurrent] = useState(initial.replace(/\/+$/, '') || '/')
+  useEffect(() => {
+    const pop = () => { setCurrent(window.location.pathname.replace(/\/+$/, '') || '/'); window.scrollTo(0, 0) }
+    window.addEventListener('popstate', pop)
+    return () => window.removeEventListener('popstate', pop)
+  }, [])
+  const navigate = (event: MouseEvent<HTMLDivElement>) => {
+    if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.altKey || event.shiftKey) return
+    const target = (event.target as HTMLElement).closest('a')
+    if (!target || target.target || target.hasAttribute('download')) return
+    const url = new URL(target.href, window.location.href)
+    if (url.origin !== window.location.origin || url.hash || !/^\/(?:portfolio(?:\/[^/]+)?|sobre|contato)?\/?$/.test(url.pathname)) return
+    event.preventDefault()
+    window.history.pushState({}, '', url)
+    setCurrent(url.pathname.replace(/\/+$/, '') || '/')
+    window.scrollTo({ top: 0, behavior: 'instant' })
+    requestAnimationFrame(() => document.getElementById('main-content')?.focus({ preventScroll: true }))
   }
-
-  if (normalizedPath === '/') {
-    return <SalesPage />
-  }
-
-  if (normalizedPath !== '/portfolio') {
-    return <NotFoundPage />
-  }
-
-  return <PortfolioPage />
+  if (current === '/admin') return <Suspense fallback={<div className="page-loading">Carregando administração...</div>}><AdminPage /></Suspense>
+  return <PortfolioContentProvider><div onClick={navigate}><PublicSite pathname={current} /></div></PortfolioContentProvider>
 }

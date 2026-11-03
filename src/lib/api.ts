@@ -25,7 +25,7 @@ async function request<T>(url: string, options: RequestInit = {}): Promise<T> {
 
   if (!isJson || body === null) {
     throw new Error(
-      `A rota ${url} não retornou JSON. No desenvolvimento local, execute "npm run dev:vercel" para iniciar o frontend e as funções /api juntos.`,
+      `A rota ${url} não retornou JSON. No desenvolvimento local, execute "npm run dev" para iniciar o frontend e as funções /api juntos.`,
     )
   }
 
@@ -33,7 +33,7 @@ async function request<T>(url: string, options: RequestInit = {}): Promise<T> {
 }
 
 export async function getPublicContent() {
-  const body = await request<unknown>('/api/content', { method: 'GET', cache: 'no-store' })
+  const body = await request<unknown>('/api/content', { method: 'GET', cache: 'no-store', signal: AbortSignal.timeout(20000) })
   return normalizePortfolioContent(body)
 }
 

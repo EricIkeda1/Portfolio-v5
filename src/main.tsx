@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App'
 import './index.css'
+import App from './App'
 
 // Preserve links diretos às seções; a página comercial calcula o espaço do cabeçalho.
 if ('scrollRestoration' in window.history) window.history.scrollRestoration = 'manual'

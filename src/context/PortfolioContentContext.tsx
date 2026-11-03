@@ -1,10 +1,11 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { getPublicContent } from '@/lib/api'
 import { DEFAULT_CONTENT, normalizePortfolioContent, type PortfolioContent } from '@/lib/portfolio'
 
 type PortfolioContentContextValue = {
   content: PortfolioContent
   loading: boolean
+  source: 'loading' | 'neon' | 'offline'
   refresh: () => Promise<void>
 }
 
@@ -13,16 +14,25 @@ const PortfolioContentContext = createContext<PortfolioContentContextValue | nul
 export function PortfolioContentProvider({ children }: { children: ReactNode }) {
   const [content, setContent] = useState<PortfolioContent>(DEFAULT_CONTENT)
   const [loading, setLoading] = useState(true)
+  const [source, setSource] = useState<'loading' | 'neon' | 'offline'>('loading')
 
-  const refresh = useCallback(async () => {
+  const inFlight = useRef<Promise<void> | null>(null)
+  const refresh = useCallback(() => {
+    if (inFlight.current) return inFlight.current
+    inFlight.current = (async () => {
     try {
       const next = await getPublicContent()
       setContent(normalizePortfolioContent(next))
+      setSource('neon')
     } catch (error) {
-      console.warn('Não foi possível carregar o conteúdo do banco. Usando conteúdo padrão.', error)
+      console.warn('Conteúdo público indisponível.', error instanceof Error ? error.message : '')
+      setSource('offline')
     } finally {
       setLoading(false)
+      inFlight.current = null
     }
+    })()
+    return inFlight.current
   }, [])
 
   useEffect(() => {
@@ -46,7 +56,7 @@ export function PortfolioContentProvider({ children }: { children: ReactNode }) 
     }
   }, [refresh])
 
-  const value = useMemo<PortfolioContentContextValue>(() => ({ content, loading, refresh }), [content, loading, refresh])
+  const value = useMemo<PortfolioContentContextValue>(() => ({ content, loading, source, refresh }), [content, loading, source, refresh])
 
   return <PortfolioContentContext.Provider value={value}>{children}</PortfolioContentContext.Provider>
 }

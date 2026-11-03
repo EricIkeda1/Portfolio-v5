@@ -10,6 +10,8 @@ export interface PortfolioProject {
   image_url?: string | null
   sort_order: number
   published?: boolean
+  demo_url?: string | null
+  category?: 'auto' | 'web' | 'mobile' | 'other'
 }
 
 export interface PortfolioContent {
@@ -24,7 +26,7 @@ export interface PortfolioContent {
   projects: PortfolioProject[]
 }
 
-export const DEFAULT_ABOUT_TEXT = `Meu nome é Eric, sou desenvolvedor de software e gosto de transformar ideias em projetos reais. Desenvolvo sites, sistemas e aplicações, sempre buscando criar soluções modernas, rápidas e que realmente façam a diferença para quem as utiliza.
+export const DEFAULT_ABOUT_TEXT = `Sou Eric Ikeda, formado em Engenharia de Software pela UniSenai PR. Desenvolvo sites e aplicações web com atenção ao design, à usabilidade e à organização do código.
 
 Gosto de participar de todas as etapas do desenvolvimento, desde o planejamento até a entrega, cuidando tanto da experiência visual quanto da qualidade do código. Meu objetivo é criar projetos organizados, funcionais e que ofereçam a melhor experiência possível.
 
@@ -36,7 +38,7 @@ export const DEFAULT_GITHUB = 'https://github.com/EricIkeda1'
 export const DEFAULT_LINKEDIN = 'https://www.linkedin.com/in/ericikeda1'
 export const DEFAULT_RESUME_URL = 'https://drive.google.com/file/d/1VTpI8VouOdHnPuDKxZmskY_02dhK2wIC/view?usp=sharing'
 
-export const DEFAULT_PROJECTS: PortfolioProject[] = [
+export const LEGACY_PROJECTS: PortfolioProject[] = [
   {
     id: 1,
     name: 'Ademiconnect',
@@ -95,6 +97,14 @@ export const DEFAULT_PROJECTS: PortfolioProject[] = [
   },
 ]
 
+// Conteúdo de apresentação usado somente antes da resposta da API ou sem configuração local.
+// Com o Neon disponível, os registros do banco substituem integralmente esta lista.
+export const DEFAULT_PROJECTS: PortfolioProject[] = [
+  { id: 7, name: 'WebShop', type: 'E-commerce', description: 'E-commerce demonstrativo com catálogo integrado, carrinho de compras, favoritos e consulta de CEP.', tags: ['React', 'TypeScript', 'APIs REST'], highlights: ['Catálogo integrado', 'Carrinho e favoritos', 'Consulta de CEP', 'Checkout demonstrativo'], github: 'https://github.com/EricIkeda1/webshop', demo_url: 'https://webshopeyi.vercel.app/', color: '#1260eb', image_url: null, sort_order: 0, published: true, category: 'web' },
+  { id: 8, name: 'Delivery-Restaurante', type: 'Aplicação web', description: 'Catálogo de restaurantes, personalização de pizzas, carrinho e acompanhamento de pedidos demonstrativos.', tags: ['React', 'TypeScript', 'Next.js'], highlights: ['Catálogo de restaurantes', 'Personalização de pizzas', 'Carrinho de compras', 'Pedidos demonstrativos'], github: 'https://github.com/EricIkeda1/Delivery-Restaurante', demo_url: 'https://deliveryeyi.vercel.app/', color: '#be724c', image_url: '/projects/delivery-hero.jpg', sort_order: 1, published: true, category: 'web' },
+  { id: 5, name: 'Galeria de fotos', type: 'Sistema web', description: 'Plataforma para divulgação de ensaios fotográficos, com galerias e gerenciamento de conteúdo.', tags: ['React', 'TypeScript'], highlights: ['Galerias de fotos', 'Gerenciamento de conteúdo', 'Interface responsiva'], github: 'https://github.com/EricIkeda1/PortfolioFotos2.0', demo_url: 'https://blogjovemribeiro.vercel.app/', color: '#697369', image_url: null, sort_order: 2, published: true, category: 'web' },
+]
+
 export const DEFAULT_CONTENT: PortfolioContent = {
   about_text: DEFAULT_ABOUT_TEXT,
   profile_image_url: '',
@@ -146,6 +156,12 @@ export function normalizePortfolioContent(value: unknown): PortfolioContent {
       typeof raw.updated_at === 'string'
         ? raw.updated_at
         : '',
-    projects: Array.isArray(raw.projects) ? raw.projects : DEFAULT_CONTENT.projects,
+    projects: Array.isArray(raw.projects) ? raw.projects.filter((p) => p && typeof p === 'object' && Number.isFinite(Number(p.id))).map((p) => ({
+      ...p,
+      id: Number(p.id), name: String(p.name ?? ''), type: String(p.type ?? ''), description: String(p.description ?? ''),
+      tags: Array.isArray(p.tags) ? p.tags.map(String) : [], highlights: Array.isArray(p.highlights) ? p.highlights.map(String) : [],
+      github: String(p.github ?? ''), color: /^#[a-f0-9]{6}$/i.test(p.color) ? p.color : '#1260eb',
+      sort_order: Number(p.sort_order) || 0,
+    })) : DEFAULT_CONTENT.projects,
   }
 }

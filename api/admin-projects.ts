@@ -29,6 +29,8 @@ function cleanProject(body: any) {
     tags,
     highlights,
     github: String(body?.github ?? '').trim().slice(0, 2_048),
+    demo_url: String(body?.demo_url ?? '').trim().slice(0, 2_048),
+    category: ['web', 'mobile', 'other'].includes(body?.category) ? body.category : 'auto',
     color: String(body?.color ?? '#4285FF').trim(),
     image_url: String(body?.image_url ?? '').trim().slice(0, 2_048) || null,
     sort_order: Number.isFinite(rawOrder) ? Math.max(0, Math.min(10_000, Math.trunc(rawOrder))) : 0,
@@ -63,16 +65,17 @@ export default async function handler(req: any, res: any) {
       return res.status(400).json({ error: 'Cor inválida.' })
     }
 
-    if (!safeUrl(project.github) || !safeUrl(project.image_url ?? '')) {
+    const imageValid = !project.image_url || /^\/(?!\/)[a-z0-9/_.-]+$/i.test(project.image_url) || safeUrl(project.image_url)
+    if (!safeUrl(project.github) || !safeUrl(project.demo_url) || !imageValid) {
       return res.status(400).json({ error: 'Use apenas URLs HTTP/HTTPS válidas nos links do projeto.' })
     }
 
     if (req.method === 'POST') {
       const rows = await sql`
         INSERT INTO portfolio_projects
-          (name, type, description, tags, highlights, github, color, image_url, sort_order, published)
+          (name, type, description, tags, highlights, github, demo_url, category, color, image_url, sort_order, published)
         VALUES
-          (${project.name}, ${project.type}, ${project.description}, ${JSON.stringify(project.tags)}::jsonb, ${JSON.stringify(project.highlights)}::jsonb, ${project.github}, ${project.color}, ${project.image_url}, ${project.sort_order}, ${project.published})
+          (${project.name}, ${project.type}, ${project.description}, ${JSON.stringify(project.tags)}::jsonb, ${JSON.stringify(project.highlights)}::jsonb, ${project.github}, ${project.demo_url}, ${project.category}, ${project.color}, ${project.image_url}, ${project.sort_order}, ${project.published})
         RETURNING *
       `
       return res.status(201).json(normalizeProject(rows[0] as Record<string, unknown>))
@@ -89,6 +92,8 @@ export default async function handler(req: any, res: any) {
           tags = ${JSON.stringify(project.tags)}::jsonb,
           highlights = ${JSON.stringify(project.highlights)}::jsonb,
           github = ${project.github},
+          demo_url = ${project.demo_url},
+          category = ${project.category},
           color = ${project.color},
           image_url = ${project.image_url},
           sort_order = ${project.sort_order},

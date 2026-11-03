@@ -1,7 +1,7 @@
 {
   "name": "portfolio-v5",
   "private": true,
-  "version": "1.0.0",
+  "version": "2.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
@@ -10,7 +10,11 @@
     "format": "oxfmt",
     "dev:vercel": "npx vercel dev",
     "admin:hash": "node scripts/hash-admin-password.mjs",
-    "prebuild": "node scripts/check-demo-assets.mjs"
+    "prebuild": "node scripts/check-demo-assets.mjs",
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.api.json --noEmit",
+    "test": "node --test tests/web.test.mjs",
+    "test:integration": "node tests/integration.mjs",
+    "check": "npm run typecheck && npm test && npm run build"
   },
   "dependencies": {
     "react": "^19.0.0",

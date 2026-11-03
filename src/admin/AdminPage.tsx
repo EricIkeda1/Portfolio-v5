@@ -203,7 +203,7 @@ function ProfileEditor({ content, onUpdated }: { content: PortfolioContent; onUp
         <div className="admin-editor-layout">
           <div className="admin-form-stack">
             <label><span>Imagem de perfil</span><input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} /><small>Use uma URL pública, inclusive link direto do Google Drive.</small></label>
-            <label><span>Texto “Quem sou eu”</span><textarea rows={13} value={about} onChange={(e) => setAbout(e.target.value)} /></label>
+            <label><span>Texto “Sobre mim”</span><textarea rows={13} value={about} onChange={(e) => setAbout(e.target.value)} /></label>
             <div className="admin-form-row">
               <button className="admin-primary-action" onClick={() => void save()} disabled={saving}><Icon name="save" size={16}/> {saving ? 'Salvando...' : 'Salvar e publicar'}</button>
               <button className="admin-ghost-action" onClick={() => setAbout(DEFAULT_CONTENT.about_text)}>Restaurar texto padrão</button>
@@ -217,7 +217,7 @@ function ProfileEditor({ content, onUpdated }: { content: PortfolioContent; onUp
 }
 
 const EMPTY_PROJECT: Omit<PortfolioProject, 'id'> = {
-  name: '', type: '', description: '', tags: [], highlights: [], github: '', color: '#4285FF', image_url: null, sort_order: 1, published: true,
+  name: '', type: '', description: '', tags: [], highlights: [], github: '', demo_url: '', category: 'web', color: '#4285FF', image_url: null, sort_order: 1, published: true,
 }
 
 function ProjectsEditor({ projects, onProjectsChange }: { projects: PortfolioProject[]; onProjectsChange: (projects: PortfolioProject[]) => void }) {
@@ -234,7 +234,7 @@ function ProjectsEditor({ projects, onProjectsChange }: { projects: PortfolioPro
 
   const openEdit = (project: PortfolioProject) => {
     setCreating(false); setEditing(project); setNotice(null)
-    setDraft({ name: project.name, type: project.type, description: project.description, tags: [...project.tags], highlights: [...project.highlights], github: project.github, color: project.color, image_url: project.image_url ?? null, sort_order: project.sort_order, published: project.published !== false })
+    setDraft({ name: project.name, type: project.type, description: project.description, tags: [...project.tags], highlights: [...project.highlights], github: project.github, demo_url: project.demo_url ?? '', category: project.category ?? 'auto', color: project.color, image_url: project.image_url ?? null, sort_order: project.sort_order, published: project.published !== false })
   }
 
   const closeForm = () => { setCreating(false); setEditing(null) }
@@ -282,7 +282,9 @@ function ProjectsEditor({ projects, onProjectsChange }: { projects: PortfolioPro
             <label><span>Destaques</span><input value={draft.highlights.join(', ')} onChange={(e) => setDraft({ ...draft, highlights: e.target.value.split(',').map((item) => item.trim()).filter(Boolean) })} placeholder="Responsivo, API REST, Login" /></label>
           </div>
           <div className="admin-form-stack">
-            <label><span>GitHub / link do projeto</span><input value={draft.github} onChange={(e) => setDraft({ ...draft, github: e.target.value })} /></label>
+            <label><span>URL do repositório GitHub</span><input value={draft.github} onChange={(e) => setDraft({ ...draft, github: e.target.value })} /></label>
+            <label><span>URL da demonstração (opcional)</span><input value={draft.demo_url ?? ''} onChange={(e) => setDraft({ ...draft, demo_url: e.target.value })} placeholder="https://seu-projeto.vercel.app" /></label>
+            <label><span>Categoria pública</span><select value={draft.category ?? 'auto'} onChange={(e) => setDraft({ ...draft, category: e.target.value as PortfolioProject['category'] })}><option value="auto">Automático (compatibilidade)</option><option value="web">Desenvolvimento web</option><option value="mobile">Mobile (fora da vitrine web)</option><option value="other">Outro (fora da vitrine web)</option></select><small>Somente projetos web publicados aparecem no site. A opção automática usa o tipo e as tecnologias para identificar registros antigos.</small></label>
             <label><span>URL da imagem (opcional)</span><input value={draft.image_url ?? ''} onChange={(e) => setDraft({ ...draft, image_url: e.target.value || null })} /></label>
             <label><span>Cor</span><input type="color" value={draft.color} onChange={(e) => setDraft({ ...draft, color: e.target.value })} /></label>
             <label><span>Ordem</span><input type="number" min="0" value={draft.sort_order} onChange={(e) => setDraft({ ...draft, sort_order: Number(e.target.value) })} /></label>
@@ -430,7 +432,7 @@ function Dashboard({ user, onUserUpdated, onLogout }: { user: AdminUser; onUserU
       </aside>
       {mobileMenu && <button className="admin-sidebar-overlay" aria-label="Fechar menu" onClick={() => setMobileMenu(false)} />}
       <div className="admin-main-area">
-        <header className="admin-topbar"><button className="admin-mobile-menu" onClick={() => setMobileMenu(true)}><Icon name="menu"/></button><div><span>Painel administrativo</span><strong>{currentLabel}</strong></div><div className="admin-topbar-status"><span/><em>Neon conectado</em></div></header>
+        <header className="admin-topbar"><button className="admin-mobile-menu" onClick={() => setMobileMenu(true)}><Icon name="menu"/></button><div><span>Painel administrativo</span><strong>{currentLabel}</strong></div><div className="admin-topbar-status"><span/><em>{loading ? 'Conectando' : loadError ? 'Sem conexão' : 'Neon conectado'}</em></div></header>
         <main className="admin-dashboard-content">
           {loading && <div className="admin-panel-card"><p className="admin-setting-description">Carregando conteúdo do Neon...</p></div>}
           {!loading && loadError && <div className="admin-toast-demo admin-toast-error">{loadError}</div>}
