@@ -3,7 +3,7 @@ import { createECDH, randomBytes } from 'node:crypto'
 import webpush from 'web-push'
 import { createServer } from 'vite'
 
-if (process.env.CONTACT_TEST_DATABASE !== '1' || !process.env.DATABASE_URL) throw new Error('Use apenas DATABASE_URL de uma branch isolada e CONTACT_TEST_DATABASE=1.')
+if (process.env.CONTACT_TEST_DATABASE !== '1' || !process.env.DATABASE_URL || !process.env.CONTACT_ENCRYPTION_KEY) throw new Error('Use DATABASE_URL de uma branch isolada, uma CONTACT_ENCRYPTION_KEY de testes e CONTACT_TEST_DATABASE=1.')
 const timeout = setTimeout(() => { console.error('Teste excedeu 180 segundos.'); process.exit(1) }, 180000)
 timeout.unref()
 const originalSend = webpush.sendNotification
