@@ -168,19 +168,28 @@ export function normalizeProject(row: Record<string, unknown>) {
   }
 }
 
+// Existing databases need only SELECTs. Bootstrap only when tables/columns are missing.
+export async function queryWithSchemaFallback<T>(query: () => Promise<T>): Promise<T> {
+  try {
+    return await query()
+  } catch (error) {
+    const code = (error as { code?: string }).code
+    if (code !== '42P01' && code !== '42703') throw error
+    await ensureSchema()
+    return query()
+  }
+}
+
 export async function readPortfolioContent(includeUnpublished = false) {
-  await ensureSchema()
   const sql = getSql()
-  const settingsRows = await sql`
+  const [settingsRows, projects] = await queryWithSchemaFallback(() => Promise.all([sql`
     SELECT about_text, profile_image_url, whatsapp, email, github, linkedin, resume_url, updated_at
     FROM portfolio_settings
     WHERE id = 1
     LIMIT 1
-  `
-
-  const projects = includeUnpublished
-    ? await sql`SELECT * FROM portfolio_projects ORDER BY sort_order ASC, id ASC`
-    : await sql`SELECT * FROM portfolio_projects WHERE published = true ORDER BY sort_order ASC, id ASC`
+  `, includeUnpublished
+    ? sql`SELECT * FROM portfolio_projects ORDER BY sort_order ASC, id ASC`
+    : sql`SELECT * FROM portfolio_projects WHERE published = true ORDER BY sort_order ASC, id ASC`]))
 
   const settings = settingsRows[0] ?? {}
   return {

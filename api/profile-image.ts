@@ -1,4 +1,4 @@
-import { ensureSchema, getSql } from './_lib/db.js'
+import { queryWithSchemaFallback, getSql } from './_lib/db.js'
 import { allowMethods, noStore } from './_lib/http.js'
 
 function getDriveFileId(url: string) {
@@ -35,8 +35,8 @@ function getImageCandidates(value: string) {
 
   if (fileId) {
     candidates.unshift(
+      `https://drive.google.com/thumbnail?id=${encodeURIComponent(fileId)}&sz=w800`,
       `https://lh3.googleusercontent.com/d/${encodeURIComponent(fileId)}`,
-      `https://drive.google.com/thumbnail?id=${encodeURIComponent(fileId)}&sz=w1000`,
     )
   }
 
@@ -48,14 +48,13 @@ export default async function handler(req: any, res: any) {
   if (!allowMethods(req, res, ['GET'])) return
 
   try {
-    await ensureSchema()
     const sql = getSql()
-    const rows = await sql`
+    const rows = await queryWithSchemaFallback(() => sql`
       SELECT profile_image_url
       FROM portfolio_settings
       WHERE id = 1
       LIMIT 1
-    `
+    `)
 
     const profileImageUrl = String(rows[0]?.profile_image_url ?? '').trim()
     if (!profileImageUrl) {
@@ -72,6 +71,7 @@ export default async function handler(req: any, res: any) {
         const response = await fetch(imageUrl, {
           method: 'GET',
           redirect: 'follow',
+          signal: AbortSignal.timeout(8000),
           headers: {
             Accept: 'image/avif,image/webp,image/png,image/jpeg,image/*,*/*',
           },
@@ -84,6 +84,7 @@ export default async function handler(req: any, res: any) {
 
         const bytes = Buffer.from(await response.arrayBuffer())
 
+        res.setHeader('Cache-Control', 'public, max-age=300, s-maxage=300, stale-while-revalidate=600')
         res.setHeader('Content-Type', contentType)
         res.setHeader('Content-Disposition', 'inline')
         res.setHeader('X-Content-Type-Options', 'nosniff')

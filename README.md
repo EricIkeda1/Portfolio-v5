@@ -28,6 +28,21 @@ Os dados do portfólio são armazenados em um banco **PostgreSQL hospedado na Ne
 
 O projeto foi pensado para funcionar bem tanto no **desktop quanto no mobile**, mantendo uma navegação simples, responsiva e organizada.
 
+## Interface e desempenho
+
+- Desktop com tipografia do sistema, tons neutros e detalhes em verde sálvia.
+- Mobile com botões amplos, navegação flutuante e menu modal inspirado no Material Design 3 Expressive.
+- Projetos publicados carregados de `/api/content`, com filtros, carrossel por toque e teclado, tecnologias e links cadastrados.
+- O campo de link existente aceita demonstrações, repositórios e publicações. O rótulo acompanha o destino.
+- Imagens cadastradas em `image_url` são carregadas sob demanda. Imagens do Drive recebem tamanhos responsivos; outras URLs mantêm o arquivo de origem. Na ausência de imagem, o projeto usa uma capa tipográfica.
+- Painel administrativo e seu CSS carregados separadamente, sem downloads de fontes externas ou efeitos de cursor na página pública.
+- Pedidos simultâneos de conteúdo são deduplicados. A atualização ocorre ao retornar à aba após dois minutos ou após uma alteração anunciada pelo painel, em vez de consultas a cada 30 segundos.
+- Animações pontuais, com suporte a `prefers-reduced-motion`. O carrossel não avança sozinho.
+- Consultas públicas de configurações e projetos executadas em paralelo. A inicialização do esquema ocorre somente se a estrutura estiver ausente, evitando DDL a cada inicialização de função pública.
+- Credenciais do Neon permanecem nas funções do servidor; não use variáveis `VITE_*` para segredos.
+
+Validação local: `npx tsc -b` e `npm run build`.
+
 ## Tecnologias
 
 O projeto foi desenvolvido utilizando:
