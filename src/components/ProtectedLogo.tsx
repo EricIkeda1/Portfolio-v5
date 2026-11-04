@@ -15,7 +15,7 @@ export default function ProtectedLogo({
 }: ProtectedLogoProps) {
   return (
     <img
-      src="/brand/eric-y-ikeda.png"
+      src="/api/logo-image"
       alt={alt}
       className={className}
       loading={loading}

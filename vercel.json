@@ -3,7 +3,7 @@
   "framework": "vite",
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
-  "installCommand": "npm ci",
+  "installCommand": "npm install",
   "headers": [
     {
       "source": "/(.*)",
@@ -68,29 +68,8 @@
   ],
   "rewrites": [
     {
-      "source": "/api/project-preview",
-      "destination": "/api/admin-project-preview?preview_route=image"
-    },
-    {
       "source": "/admin",
       "destination": "/admin/index.html"
-    },
-    {
-      "source": "/sobre",
-      "destination": "/sobre/index.html"
-    },
-    {
-      "source": "/contato",
-      "destination": "/contato/index.html"
-    },
-    {
-      "source": "/portfolio/:slug",
-      "destination": "/portfolio-detail.html"
     }
-  ],
-  "functions": {
-    "api/admin-project-preview.ts": {
-      "maxDuration": 300
-    }
-  }
+  ]
 }

@@ -1,6 +1,0 @@
-webshop-logo.png: arquivo public/assets/logo.png do repositório https://github.com/EricIkeda1/webshop
-  Marca do projeto, não captura de interface.
-delivery-hero.jpg: arquivo public/assets/hero.jpg do repositório https://github.com/EricIkeda1/Delivery-Restaurante
-  Foto de capa existente no projeto, não captura da aplicação.
-../brand/eric-y-ikeda.png: logo original fornecida por Eric Y. Ikeda nesta conversa.
-As imagens são preservadas e usadas no portfólio do próprio titular.

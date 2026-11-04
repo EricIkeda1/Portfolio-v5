@@ -25,7 +25,7 @@ async function request<T>(url: string, options: RequestInit = {}): Promise<T> {
 
   if (!isJson || body === null) {
     throw new Error(
-      `A rota ${url} não retornou JSON. No desenvolvimento local, execute "npm run dev" para iniciar o frontend e as funções /api juntos.`,
+      `A rota ${url} não retornou JSON. No desenvolvimento local, execute "npm run dev:vercel" para iniciar o frontend e as funções /api juntos.`,
     )
   }
 
@@ -33,7 +33,7 @@ async function request<T>(url: string, options: RequestInit = {}): Promise<T> {
 }
 
 export async function getPublicContent() {
-  const body = await request<unknown>('/api/content', { method: 'GET', cache: 'no-store', signal: AbortSignal.timeout(20000) })
+  const body = await request<unknown>('/api/content', { method: 'GET', cache: 'no-store' })
   return normalizePortfolioContent(body)
 }
 
@@ -105,22 +105,4 @@ export function announcePortfolioUpdate() {
   } catch {
     // BroadcastChannel pode não existir em navegadores muito antigos.
   }
-}
-
-export type RepositoryPreview = {
-  repository: string
-  revision: string
-  files: string[]
-  images: { url: string; path: string }[]
-  image_url?: string
-  generated?: boolean
-}
-export function previewConfiguration() {
-  return request<{ configured: boolean; model: string; githubConfigured: boolean }>('/api/admin-project-preview', { method: 'GET', cache: 'no-store' })
-}
-export function inspectProjectRepository(projectId: number, repository?: string) {
-  return request<RepositoryPreview>('/api/admin-project-preview', { method: 'POST', body: JSON.stringify({ project_id: projectId, action: 'inspect', ...(repository?.includes('github.com') ? { repo_url: repository } : {}) }), signal: AbortSignal.timeout(90000) })
-}
-export function generateProjectPreview(projectId: number, repository?: string) {
-  return request<RepositoryPreview>('/api/admin-project-preview', { method: 'POST', body: JSON.stringify({ project_id: projectId, action: 'generate', ...(repository?.includes('github.com') ? { repo_url: repository } : {}) }), signal: AbortSignal.timeout(280000) })
 }

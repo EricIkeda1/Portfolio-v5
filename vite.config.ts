@@ -11,11 +11,6 @@ const apiRoutes: Record<string, string> = {
   '/api/admin-logout': '/api/admin-logout.ts',
   '/api/admin-projects': '/api/admin-projects.ts',
   '/api/admin-session': '/api/admin-session.ts',
-  '/api/admin-credentials': '/api/admin-credentials.ts',
-  '/api/health': '/api/health.ts',
-  '/api/admin-project-preview': '/api/admin-project-preview.ts',
-  '/api/project-preview': '/api/_lib/public-preview-handler.ts',
-  '/api/mobile-data': '/api/mobile-data.ts',
   '/api/profile-image': '/api/profile-image.ts',
   '/api/logo-image': '/api/logo-image.ts',
 }
@@ -94,7 +89,7 @@ function apiDevPlugin(): Plugin {
           }
 
           if (!res.writableEnded) {
-            res.end(JSON.stringify({ error: 'Não foi possível concluir a requisição.' }))
+            res.end(JSON.stringify({ error: error instanceof Error ? error.message : 'Erro interno.' }))
           }
         }
       })
@@ -115,17 +110,15 @@ export default defineConfig(({ mode }) => {
     plugins: [apiDevPlugin(), react(), tailwindcss()],
     resolve: {
       alias: {
-        '@': path.resolve(import.meta.dirname, './src'),
+        '@': path.resolve(__dirname, './src'),
       },
     },
     server: {
       host: '0.0.0.0',
-      allowedHosts: ['terminal.local'],
       port: parseInt(process.env.PORT || '5173'),
     },
     preview: {
       host: '0.0.0.0',
-      allowedHosts: ['terminal.local'],
       port: parseInt(process.env.PORT || '4173'),
     },
   }
