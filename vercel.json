@@ -83,5 +83,10 @@
       "source": "/portfolio/:slug",
       "destination": "/portfolio-detail.html"
     }
-  ]
+  ],
+  "functions": {
+    "api/admin-project-preview.ts": {
+      "maxDuration": 300
+    }
+  }
 }

@@ -372,3 +372,24 @@ body { background: #e7ebf2; color: #1d1d1f; }
 .public-site .project-card { box-shadow: 0 5px 20px #253d650a; }
 .public-site .hero-copy > .eyebrow { color: #3b4e69; }
 @media (max-width: 760px) { .craft-band .wrap { flex-wrap: wrap; justify-content: center; gap: 10px 18px; } .hero-stack { row-gap: 9px; } .showcase-label { max-width: 100%; text-align: right; } }
+
+/* Navegação grafite: contraste permanente em relação às superfícies claras. */
+.public-site .floating-header { background: #202b3bf5; border-color: #53627b; color: #f4f7ff; box-shadow: 0 10px 30px #18243a33, inset 0 1px 0 #ffffff12; }
+.public-site .brand-wordmark { color: #f4f7ff; }
+.public-site .brand-wordmark b { color: #94baff; }
+.public-site .desktop-nav a { color: #e3ebf8; }
+.public-site .desktop-nav a:hover { background: #33435c; }
+.public-site .desktop-nav a[aria-current] { background: #465a78; color: #fff; }
+.public-site .header-github { color: #e9effb; }
+.public-site .header-actions > .button { background: #edf3ff; color: #172740 !important; border-color: #edf3ff; }
+.public-site .menu-trigger { color: #fff; background: #405570; border-color: #6b81a0; }
+.menu-dialog .menu-panel { background: #202d42fa; border-color: #657d9e; color: #f4f7ff; box-shadow: 0 30px 100px #08101f66; }
+.menu-dialog .menu-top .eyebrow { color: #cad7ed; }
+.menu-dialog .icon-button { color: #fff; background: #405675; }
+.menu-dialog .menu-panel nav a { color: #edf3ff; }
+.menu-dialog .menu-panel nav a:hover { background: #344a69; }
+.menu-dialog .menu-panel nav a[aria-current] { background: #dce8ff; color: #1b2d48; }
+.menu-dialog .menu-social { border-color: #5c718f; }
+.menu-dialog .menu-social a { color: #e0ebff; }
+.menu-dialog .menu-cta { background: #e9f0ff; color: #1a2b45 !important; border-color: #e9f0ff; }
+.ai-preview-label { position: absolute; z-index: 2; left: 14px; top: 14px; color: #fff; background: #15233be8; border: 1px solid #7185a8; border-radius: 999px; padding: 6px 11px; font-size: .72rem; font-weight: 600; letter-spacing: .01em; }

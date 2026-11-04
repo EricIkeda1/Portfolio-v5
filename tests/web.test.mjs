@@ -3,7 +3,7 @@ import { before, after, test } from 'node:test'
 import { createServer } from 'vite'
 let server, projects, defaults, auth, handler
 before(async () => {
- server=await createServer({server:{middlewareMode:true},appType:'custom'})
+ server=await createServer({server:{middlewareMode:true,hmr:false},appType:'custom'})
  projects=await server.ssrLoadModule('/src/web/projects.ts')
  defaults=await server.ssrLoadModule('/src/lib/portfolio.ts')
  auth=await server.ssrLoadModule('/api/_lib/auth.ts')

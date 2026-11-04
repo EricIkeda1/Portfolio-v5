@@ -1034,3 +1034,22 @@ a {
 
 .admin-form-stack select { width: 100%; min-height: 44px; padding: .7rem; background: var(--card); color: var(--text); border: 1px solid var(--border-bright); border-radius: 6px; font: inherit; font-size: .8rem; }
 .admin-app-shell, .admin-login-page { color: var(--text); background: var(--bg); }
+
+.admin-ai-preview { padding: 1.5rem; margin: 1.2rem 0; border: 1px solid #4e6488; border-radius: 12px; background: #111b2c; color: #f2f6ff; }
+.admin-ai-preview h3 { font-size: 1.3rem; margin: .7rem 0; }
+.admin-ai-preview p { font-size: .84rem; color: #c5d2e9; margin: .8rem 0; }
+.admin-ai-preview > small { display:block; font-size:.75rem; color:#aebfdc; margin-top:1rem; }
+.admin-ai-preview button:disabled { opacity:.5; cursor: not-allowed; }
+.admin-ai-preview .admin-ai-config { background:#283c59; padding: .85rem; border-radius:8px; }
+.admin-ai-evidence { display:grid; gap:.7rem; margin-block:1rem; font-size:.8rem; }
+.admin-ai-evidence a, .admin-github-images a { color:#a9cbff; }
+.admin-ai-evidence ul { list-style:none; overflow-wrap:anywhere; margin-top:.5rem; color:#b9cceb; }
+.admin-ai-result { margin-top:1rem; }
+.admin-ai-result > img { display:block; width:100%; max-height:460px; object-fit:contain; background:#080e19; border:1px solid #49617f; border-radius:12px; }
+.admin-ai-result figcaption { margin:.8rem 0; font-size:.8rem; color:#c6d5ed; }
+.admin-github-images { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1rem; margin-top:1rem; }
+.admin-github-images figure { padding:.8rem; background:#17253b; border-radius:10px; min-width:0; }
+.admin-github-images img { display:block; width:100%; height:150px; object-fit:contain; }
+.admin-github-images figcaption { overflow-wrap:anywhere; color:#d1ddf2; margin:.7rem 0; font-size:.75rem; }
+.admin-github-images a { display:block; margin-top:.7rem; font-size:.8rem; }
+@media(max-width:760px) { .admin-github-images { grid-template-columns:1fr; } .admin-ai-preview { padding:1.1rem; } .admin-ai-preview .admin-form-row { flex-direction:column; align-items:stretch; } }

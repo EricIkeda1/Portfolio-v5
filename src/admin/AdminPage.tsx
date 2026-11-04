@@ -14,6 +14,7 @@ import {
 } from '@/lib/api'
 import { DEFAULT_CONTENT, type PortfolioContent, type PortfolioProject } from '@/lib/portfolio'
 import ProtectedLogo from '@/components/ProtectedLogo'
+import ProjectPreviewAssistant from './ProjectPreviewAssistant'
 
 type IconName =
   | 'dashboard'
@@ -293,6 +294,9 @@ function ProjectsEditor({ projects, onProjectsChange }: { projects: PortfolioPro
           </div>
         </div>
       </section>}
+
+      {editing && <ProjectPreviewAssistant key={editing.id} projectId={editing.id} repository={draft.github} onUse={(url) => setDraft((current) => ({ ...current, image_url: url }))} />}
+      {creating && <p className="admin-setting-description">Salve o novo projeto primeiro. Depois, abra Editar para analisar seu GitHub e gerar uma prévia.</p>}
 
       <section className="admin-panel-card">
         <div className="admin-panel-title"><div><span>PORTFÓLIO</span><h2>Projetos cadastrados</h2></div><span className="admin-pill-count">{projects.length} itens</span></div>

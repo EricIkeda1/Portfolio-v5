@@ -1,7 +1,7 @@
 {
   "name": "portfolio-v5",
   "private": true,
-  "version": "2.0.0",
+  "version": "2.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
@@ -12,23 +12,24 @@
     "admin:hash": "node scripts/hash-admin-password.mjs",
     "prebuild": "node scripts/check-demo-assets.mjs",
     "typecheck": "tsc --noEmit && tsc -p tsconfig.api.json --noEmit",
-    "test": "node --test tests/web.test.mjs",
+    "test": "node --test --test-concurrency=1 tests/web.test.mjs tests/preview.test.mjs",
     "test:integration": "node tests/integration.mjs",
     "check": "npm run typecheck && npm test && npm run build"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^1.1.0",
+    "ai": "^7.0.162",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "@neondatabase/serverless": "^1.1.0"
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
+    "@tailwindcss/vite": "^4.0.0",
     "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^6.0.0",
-    "tailwindcss": "^4.0.0",
-    "@tailwindcss/vite": "^4.0.0",
     "oxfmt": "^0.2.0",
+    "tailwindcss": "^4.0.0",
     "typescript": "^5.7.0",
     "vite": "^8.0.0"
   }

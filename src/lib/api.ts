@@ -106,3 +106,21 @@ export function announcePortfolioUpdate() {
     // BroadcastChannel pode não existir em navegadores muito antigos.
   }
 }
+
+export type RepositoryPreview = {
+  repository: string
+  revision: string
+  files: string[]
+  images: { url: string; path: string }[]
+  image_url?: string
+  generated?: boolean
+}
+export function previewConfiguration() {
+  return request<{ configured: boolean; model: string; githubConfigured: boolean }>('/api/admin-project-preview', { method: 'GET', cache: 'no-store' })
+}
+export function inspectProjectRepository(projectId: number, repository?: string) {
+  return request<RepositoryPreview>('/api/admin-project-preview', { method: 'POST', body: JSON.stringify({ project_id: projectId, action: 'inspect', ...(repository?.includes('github.com') ? { repo_url: repository } : {}) }), signal: AbortSignal.timeout(90000) })
+}
+export function generateProjectPreview(projectId: number, repository?: string) {
+  return request<RepositoryPreview>('/api/admin-project-preview', { method: 'POST', body: JSON.stringify({ project_id: projectId, action: 'generate', ...(repository?.includes('github.com') ? { repo_url: repository } : {}) }), signal: AbortSignal.timeout(280000) })
+}

@@ -19,3 +19,11 @@ O servidor isolado de prévia do navegador não conseguiu acessar o endpoint ext
 Não houve push no GitHub, deploy no domínio ou alteração dos registros de produção. A migração foi exercitada na branch de teste. A branch de teste foi mantida para revisão; ela não é referenciada nem tem credenciais no pacote. Use suas variáveis atuais de produção ao publicar.
 
 O formulário de contato prepara e-mail no aplicativo do visitante; não é um serviço de envio de e-mail no backend.
+
+## Atualização 2.1: GitHub + IA e navegação grafite
+
+- 12 testes de comportamento e segurança, TypeScript e build aprovados.
+- Repositório WebShop lido realmente pela API GitHub; oito arquivos selecionados, sem execução do projeto.
+- Armazenamento de imagem e bloqueio de acesso a prévias não publicadas testados na branch isolada do Neon. O registro temporário de teste foi removido; nenhum registro de produção foi alterado.
+- Navegação e menu flutuante conferidos em grafite com texto claro e item ativo destacado.
+- Geração paga não executada nesta sessão. É necessário configurar o serviço de IA; detalhes em IA-PREVIAS.md.

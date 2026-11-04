@@ -110,3 +110,7 @@ Os testes de integração são de leitura, além da migração aditiva caso o es
 - `scripts/prerender.mjs`: HTML inicial e metadados para as páginas públicas.
 
 Nenhuma credencial de Neon ou senha está incluída no ZIP.
+
+## Novo: prévias por IA e navegação grafite
+
+A navegação e o menu flutuante agora têm fundo grafite independente do plano de fundo, com texto claro e item ativo destacado. O painel de projetos recebeu um assistente para buscar capturas do GitHub e gerar imagens de interface a partir dos arquivos do repositório. A geração precisa de `AI_GATEWAY_API_KEY` no servidor e usa o saldo do serviço configurado. Veja `IA-PREVIAS.md` para ativação, revisão das imagens e limites. Sua capa só muda após escolher a imagem e salvar o projeto.

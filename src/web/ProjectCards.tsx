@@ -7,8 +7,10 @@ export function ProjectCover({ project, priority = false }: { project: Portfolio
   const cover = projectCover(project)
   const [failed, setFailed] = useState(false)
   useEffect(() => { setFailed(false) }, [cover.src])
+  const generated = /^\/api\/project-preview\?id=/.test(String(project.image_url ?? ''))
   return <div className={`project-cover cover-${cover.kind} ${failed || !cover.src ? 'cover-type' : ''}`}>
-    {cover.src && !failed ? <img src={cover.src} alt={cover.kind === 'brand' ? `Marca do projeto ${project.name}` : `Imagem do projeto ${project.name}`} loading={priority ? 'eager' : 'lazy'} decoding="async" fetchPriority={priority ? 'high' : 'auto'} onError={() => setFailed(true)} /> : <><span className="cover-code" aria-hidden="true">{'</>'}</span><span className="cover-title">{project.name}</span><span className="cover-caption">{project.type}</span></>}
+    {generated && !failed && <span className="ai-preview-label">Prévia com IA</span>}
+    {cover.src && !failed ? <img src={cover.src} alt={cover.kind === 'brand' ? `Marca do projeto ${project.name}` : `Imagem do projeto ${project.name}${generated ? ' (prévia ilustrativa com IA)' : ''}`} loading={priority ? 'eager' : 'lazy'} decoding="async" fetchPriority={priority ? 'high' : 'auto'} onError={() => setFailed(true)} /> : <><span className="cover-code" aria-hidden="true">{'</>'}</span><span className="cover-title">{project.name}</span><span className="cover-caption">{project.type}</span></>}
   </div>
 }
 

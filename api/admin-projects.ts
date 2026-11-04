@@ -65,7 +65,7 @@ export default async function handler(req: any, res: any) {
       return res.status(400).json({ error: 'Cor inválida.' })
     }
 
-    const imageValid = !project.image_url || /^\/(?!\/)[a-z0-9/_.-]+$/i.test(project.image_url) || safeUrl(project.image_url)
+    const imageValid = !project.image_url || /^\/api\/project-preview\?id=[a-f0-9-]{36}$/i.test(project.image_url) || /^\/(?!\/)[a-z0-9/_.-]+$/i.test(project.image_url) || safeUrl(project.image_url)
     if (!safeUrl(project.github) || !safeUrl(project.demo_url) || !imageValid) {
       return res.status(400).json({ error: 'Use apenas URLs HTTP/HTTPS válidas nos links do projeto.' })
     }
