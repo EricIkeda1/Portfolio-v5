@@ -27,3 +27,7 @@ O formulário de contato prepara e-mail no aplicativo do visitante; não é um s
 - Armazenamento de imagem e bloqueio de acesso a prévias não publicadas testados na branch isolada do Neon. O registro temporário de teste foi removido; nenhum registro de produção foi alterado.
 - Navegação e menu flutuante conferidos em grafite com texto claro e item ativo destacado.
 - Geração paga não executada nesta sessão. É necessário configurar o serviço de IA; detalhes em IA-PREVIAS.md.
+
+## Correção 2.1.1 — deploy Hobby
+
+Diagnóstico confirmado no deployment da Vercel: `exceeded_serverless_functions_per_deployment` (13 funções; limite Hobby 12). Unificadas entrega e geração de prévias em um entrypoint, preservando as URLs e verificações de segurança. Testes de roteamento e limite adicionados. Sem deploy ou alterações no Neon de produção.

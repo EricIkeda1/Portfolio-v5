@@ -19,7 +19,7 @@ try{
  const id=randomUUID(), url=`/api/project-preview?id=${id}`
  const data='iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/l8sAAAAASUVORK5CYII='
  await sql`INSERT INTO portfolio_project_previews (id,project_id,image_base64,media_type,source_url,model) VALUES (${id},${projectId},${data},'image/png','https://github.com/EricIkeda1/webshop','test-fixture-not-ai')`
- const {default:serve}=await server.ssrLoadModule('/api/project-preview.ts')
+ const {default:serve}=await server.ssrLoadModule('/api/_lib/public-preview-handler.ts')
  let res=response();await serve({method:'GET',query:{id},headers:{}},res);assert.equal(res.statusCode,404)
  const auth=await server.ssrLoadModule('/api/_lib/auth.ts');const token=auth.createSessionToken({id:1,email:'qa@example.invalid'})
  res=response();await serve({method:'GET',query:{id},headers:{cookie:`portfolio_admin_session=${token}`}},res);assert.equal(res.statusCode,200);assert.equal(res.headers['Content-Type'],'image/png')

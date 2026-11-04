@@ -1,6 +1,6 @@
-import { getSessionFromRequest } from './_lib/auth.js'
-import { getSql } from './_lib/db.js'
-import { allowMethods, noStore } from './_lib/http.js'
+import { getSessionFromRequest } from './auth.js'
+import { getSql } from './db.js'
+import { allowMethods, noStore } from './http.js'
 
 export default async function handler(req: any, res: any) {
   noStore(res)

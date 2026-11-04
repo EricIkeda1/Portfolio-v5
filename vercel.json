@@ -68,6 +68,10 @@
   ],
   "rewrites": [
     {
+      "source": "/api/project-preview",
+      "destination": "/api/admin-project-preview?preview_route=image"
+    },
+    {
       "source": "/admin",
       "destination": "/admin/index.html"
     },

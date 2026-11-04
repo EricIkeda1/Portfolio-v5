@@ -39,3 +39,24 @@ test('Geração é restrita ao admin e não chama a IA sem configuração',async
 test('Requisição cruzada não inicia leitura do GitHub ou geração',async()=>{
  const res=response();await handler({method:'POST',headers:{...signedHeaders(),'sec-fetch-site':'cross-site',origin:'https://evil.example'},body:{project_id:7,action:'inspect'}},res);assert.equal(res.statusCode,403)
 })
+
+test('A rota reescrita de imagem mantém validação pública sem liberar geração anônima',async()=>{
+ let res=response()
+ await handler({method:'GET',headers:{},query:{preview_route:'image',id:'invalid'}},res)
+ assert.equal(res.statusCode,400)
+ res=response()
+ await handler({method:'POST',headers:{},query:{preview_route:'image'},body:{project_id:7,action:'generate'}},res)
+ assert.equal(res.statusCode,405)
+ res=response()
+ await handler({method:'POST',headers:{},query:{},body:{project_id:7,action:'generate'}},res)
+ assert.equal(res.statusCode,401)
+})
+
+test('O pacote respeita o limite de funções Hobby e preserva a URL das imagens',async()=>{
+ const {readdir,readFile}=await import('node:fs/promises')
+ const entries=(await readdir(new URL('../api/',import.meta.url),{withFileTypes:true})).filter(f=>f.isFile() && /\.(ts|js)$/.test(f.name) && !f.name.startsWith('_'))
+ assert.ok(entries.length<=12,`${entries.length} funções excedem o plano Hobby`)
+ const config=JSON.parse(await readFile(new URL('../vercel.json',import.meta.url),'utf8'))
+ assert.deepEqual(config.rewrites.find(r=>r.source==='/api/project-preview'),{source:'/api/project-preview',destination:'/api/admin-project-preview?preview_route=image'})
+ assert.equal(config.functions['api/admin-project-preview.ts'].maxDuration,300)
+})

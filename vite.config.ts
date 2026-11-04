@@ -14,7 +14,7 @@ const apiRoutes: Record<string, string> = {
   '/api/admin-credentials': '/api/admin-credentials.ts',
   '/api/health': '/api/health.ts',
   '/api/admin-project-preview': '/api/admin-project-preview.ts',
-  '/api/project-preview': '/api/project-preview.ts',
+  '/api/project-preview': '/api/_lib/public-preview-handler.ts',
   '/api/mobile-data': '/api/mobile-data.ts',
   '/api/profile-image': '/api/profile-image.ts',
   '/api/logo-image': '/api/logo-image.ts',

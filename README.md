@@ -114,3 +114,7 @@ Nenhuma credencial de Neon ou senha está incluída no ZIP.
 ## Novo: prévias por IA e navegação grafite
 
 A navegação e o menu flutuante agora têm fundo grafite independente do plano de fundo, com texto claro e item ativo destacado. O painel de projetos recebeu um assistente para buscar capturas do GitHub e gerar imagens de interface a partir dos arquivos do repositório. A geração precisa de `AI_GATEWAY_API_KEY` no servidor e usa o saldo do serviço configurado. Veja `IA-PREVIAS.md` para ativação, revisão das imagens e limites. Sua capa só muda após escolher a imagem e salvar o projeto.
+
+### Correção de deploy 2.1.1
+
+O pacote agora possui 12 funções, compatíveis com o limite Hobby. Ao atualizar, **exclua o antigo `api/project-preview.ts`** e use o `vercel.json` atualizado. Veja `CORRECAO-DEPLOY.md`.
