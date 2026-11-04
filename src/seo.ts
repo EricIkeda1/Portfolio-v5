@@ -4,9 +4,9 @@ const websiteId = `${origin}/#website`
 
 export function seoHead(pathname: string) {
   const portfolio = pathname === '/' || pathname.replace(/\/+$/, '') === '/portfolio'
-  const privatePage = pathname === '/admin' || pathname === '/404'
+  const privatePage = pathname === '/admin' || pathname === '/404' || pathname === '/arena'
   const title = privatePage
-    ? `${pathname === '/admin' ? 'Administração' : 'Página não encontrada'} | Eric Y. Ikeda`
+    ? `${pathname === '/admin' ? 'Administração' : pathname === '/arena' ? 'Last Circle — Minigame' : 'Página não encontrada'} | Eric Y. Ikeda`
     : 'Eric Yuji Ikeda | Portfólio de desenvolvimento web e mobile'
   const description = 'Conheça os projetos de Eric Yuji Ikeda: desenvolvimento web e mobile com React, Flutter, TypeScript, APIs REST e PostgreSQL.'
   const url = `${origin}/`

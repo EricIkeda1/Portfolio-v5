@@ -9,7 +9,7 @@ try {
   const { renderPage, seoHead } = await import(new URL('entry-server.js', temporary).href)
   const template = await readFile('dist/index.html', 'utf8')
   if (!template.includes('<!-- seo:start -->')) throw new Error('Marcador SEO ausente no HTML.')
-  for (const [pathname, output] of [['/', 'index.html'], ['/portfolio', 'portfolio/index.html'], ['/admin', 'admin/index.html'], ['/404', '404.html']]) {
+  for (const [pathname, output] of [['/', 'index.html'], ['/portfolio', 'portfolio/index.html'], ['/arena', 'arena/index.html'], ['/admin', 'admin/index.html'], ['/404', '404.html']]) {
     const content = pathname === '/' || pathname === '/portfolio' ? renderPage(pathname) : ''
     const pageTemplate = pathname === '/admin' ? template.replace('</head>', '<link rel="manifest" href="/admin.webmanifest"><link rel="apple-touch-icon" href="/notification-icon.png"></head>') : template
     const html = pageTemplate

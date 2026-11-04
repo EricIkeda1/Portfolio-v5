@@ -94,3 +94,13 @@ No Android, use um navegador compatível, como Chrome. No iPhone (iOS 16.4+), ad
 O servidor envia um aviso genérico, sem nome, e-mail ou conteúdo do visitante, e o toque abre `/admin#mensagens`. As chaves VAPID são geradas uma única vez e armazenadas no Neon; apenas a chave pública chega ao navegador. As inscrições são restritas ao administrador, persistem entre sessões e podem ser desativadas. O worker não faz cache de páginas privadas. Uma falha no push preserva a mensagem recebida na caixa de entrada.
 
 A nova integração reutiliza `/api/admin-messages` para configuração, inscrição, status, teste e desativação. `api/_lib/push.ts` cria as tabelas adicionais de forma idempotente. Não é necessário configurar uma conta de envio de e-mail, Firebase ou WhatsApp. Para validar em uma branch isolada: `CONTACT_TEST_DATABASE=1 node --env-file=/caminho/ambiente-de-teste.env scripts/test-push.mjs`. O teste valida a assinatura/criptografia real, com o transporte de push substituído para não enviar avisos externos.
+
+### Last Circle — minigame
+
+Abra `/arena` ou use “Jogar minigame” no rodapé. É um battle royale original em Canvas 2D, solo contra 15 bots, com três armas, equipamentos coletáveis, cura, colete e uma zona que encolhe. Os bots também combatem entre si.
+
+- Desktop: WASD/setas para mover, mouse para mirar e clique segurado para atirar; R recarrega, F usa kit, 1/2/3 troca entre armas coletadas e Esc pausa.
+- Celular: controle esquerdo move; controle direito mira e atira. Botões de arma, recarga e cura ficam na tela.
+- A partida pausa ao trocar de aba ou sair da janela. O recorde é um número salvo no localStorage deste navegador; não há conta, multiplayer, envio de dados de jogo ou integração com Neon.
+- O jogo carrega sob demanda em um chunk separado. A simulação e a renderização usam Canvas; o HUD atualiza até dez vezes por segundo, o DPR é limitado e partículas respeitam movimento reduzido.
+- Validação da simulação: `node scripts/test-arena.mjs`.

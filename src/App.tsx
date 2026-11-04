@@ -1,4 +1,4 @@
-import { useState, type CSSProperties, type PointerEvent } from 'react'
+import { lazy, Suspense, useState, type CSSProperties, type PointerEvent } from 'react'
 import Nav from '@/components/Nav'
 import Hero from '@/sections/Hero'
 import About from '@/sections/About'
@@ -10,6 +10,8 @@ import Contact from '@/sections/Contact'
 import { PortfolioContentProvider } from '@/context/PortfolioContentContext'
 import AdminPage from '@/admin/AdminPage'
 import NotFoundPage from '@/NotFoundPage'
+
+const ArenaPage = lazy(() => import('./game/ArenaPage'))
 
 function PortfolioPage() {
   const [hovering, setHovering] = useState(false)
@@ -70,6 +72,7 @@ function PortfolioPage() {
           </main>
           <footer className="site-footer">
             <div className="site-footer-inner">
+              <a href="/arena" style={{ color: 'var(--blue)', fontSize: '0.85rem' }}>Jogar minigame ↗</a>
               <div className="site-footer-signature">
                 <span className="site-footer-monogram" aria-hidden="true">EI</span>
                 <div>
@@ -105,6 +108,8 @@ function PortfolioPage() {
 
 export default function App({ pathname = window.location.pathname }: { pathname?: string } = {}) {
   const normalizedPath = pathname.replace(/\/+$/, '') || '/'
+
+  if (normalizedPath === '/arena') return <Suspense fallback={<main style={{ padding: 32 }}>Preparando a arena…</main>}><ArenaPage /></Suspense>
 
   if (normalizedPath === '/admin') {
     return <AdminPage />
