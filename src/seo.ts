@@ -21,7 +21,7 @@ export function seoHead(pathname: string) {
     `<title>${escape(title)}</title>`,
     meta('description', description), meta('author', 'Eric Yuji Ikeda'),
     meta('robots', privatePage ? 'noindex, nofollow, noarchive' : 'index, follow, max-image-preview:large'),
-    meta('theme-color', '#f5f5f2'),
+    meta('theme-color', '#101017'),
     ...(!privatePage ? [`<link rel="canonical" href="${url}" />`, meta('og:type', 'website', true), meta('og:locale', 'pt_BR', true), meta('og:site_name', 'Eric Y. Ikeda', true), meta('og:url', url, true), meta('og:title', title, true), meta('og:description', description, true), meta('og:image', `${origin}/api/logo-image`, true), meta('og:image:alt', 'Eric Y. Ikeda — Portfólio', true), meta('twitter:card', 'summary_large_image'), meta('twitter:title', title), meta('twitter:description', description), meta('twitter:image', `${origin}/api/logo-image`), `<script type="application/ld+json">${JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }).replace(/</g, '\\u003c')}</script>`] : []),
   ].join('\n    ')
 }

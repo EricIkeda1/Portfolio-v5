@@ -1,10 +1,13 @@
-import { Reveal } from '@/components/Reveal'
-const categories = [
-  { category: 'Interfaces & experiências', symbol: '↗', items: ['React', 'TypeScript', 'JavaScript', 'HTML', 'CSS', 'Figma'] },
-  { category: 'Aplicações mobile', symbol: '◈', items: ['Flutter', 'Dart', 'Multiplataforma', 'UI responsiva'] },
-  { category: 'Dados & integrações', symbol: '⌘', items: ['PostgreSQL', 'Neon', 'Supabase', 'SQLite', 'APIs REST', 'Django'] },
-  { category: 'Ferramentas & processos', symbol: '✳', items: ['Git', 'GitHub', 'Vercel', 'Python', 'VS Code'] },
+import reactLogo from '@/assets/react.svg'
+const technologies = [
+  { label: 'React', mark: 'react', color: '#61dafb' },
+  { label: 'Flutter', mark: 'F', color: '#5bcaff' },
+  { label: 'TypeScript', mark: 'TS', color: '#55a5fb' },
+  { label: 'Django', mark: 'dj', color: '#58bb8b' },
+  { label: 'PostgreSQL', mark: 'PG', color: '#8ab5e9' },
+  { label: 'Figma', mark: 'Fi', color: '#f08b9d' },
+  { label: 'GitHub', mark: 'git', color: '#dad2eb' },
 ]
 export default function Skills() {
-  return <section id="habilidades" className="section-pad skills-section"><div className="container"><div className="section-heading"><div><span className="eyebrow">03 / Ferramentas para construir</span><h2>Tecnologia com propósito.</h2></div><p>Uma base técnica que conecta a experiência visual aos dados e às integrações.</p></div><div className="skills-grid">{categories.map((group, index) => <Reveal key={group.category} delay={index * 50}><article className="skill-card"><span className="skill-symbol" aria-hidden="true">{group.symbol}</span><h3>{group.category}</h3><div className="chips">{group.items.map(item => <span key={item}>{item}</span>)}</div></article></Reveal>)}</div></div></section>
+  return <section id="habilidades" className="section-pad skills-section"><div className="container technology-row"><div><span className="eyebrow">Tecnologias</span><h2>Principais ferramentas<br />que utilizo.</h2></div><ul className="technology-list" aria-label="Tecnologias">{technologies.map(tech => <li key={tech.label}><span className="technology-mark" style={{ color: tech.color }}>{tech.mark === 'react' ? <img src={reactLogo} width="32" height="32" alt="" loading="lazy" /> : tech.mark}</span><span>{tech.label}</span></li>)}</ul></div></section>
 }

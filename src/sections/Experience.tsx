@@ -1,6 +1,6 @@
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { usePortfolioContent } from '@/context/PortfolioContentContext'
-import { ProjectCover } from '@/components/ProjectCover'
+import { DeviceShowcase } from '@/components/DeviceShowcase'
 import { ArrowIcon } from '@/components/Icons'
 import type { PortfolioProject } from '@/lib/portfolio'
 
@@ -20,8 +20,8 @@ function projectLink(value: string) {
 const ProjectCard = memo(function ProjectCard({ project, index, total }: { project: PortfolioProject; index: number; total: number }) {
   const link = projectLink(project.github)
   return <article className="project-card" role="group" aria-roledescription="slide" aria-label={`${index + 1} de ${total}: ${project.name}`}>
-    <ProjectCover project={project} index={index} />
-    <div className="project-details"><span className="eyebrow">{project.type}</span><h3>{project.name}</h3><p>{project.description}</p>{project.tags.length > 0 && <ul className="chips" aria-label="Tecnologias">{project.tags.map(tag => <li key={tag}>{tag}</li>)}</ul>}{project.highlights.length > 0 && <ul className="project-highlights">{project.highlights.map(highlight => <li key={highlight}>{highlight}</li>)}</ul>}{link && <a className="project-link" href={link.href} target="_blank" rel="noopener noreferrer">{link.label}<ArrowIcon diagonal /></a>}</div>
+    <div className="project-art"><span className="project-kind">{category(project)}</span><DeviceShowcase project={project} compact /></div>
+    <div className="project-details"><span className="eyebrow">{project.type}</span><h3>{project.name}</h3><p className="project-summary">{project.description}</p><details className="project-more"><summary>Mais sobre o projeto</summary><p>{project.description}</p></details>{project.tags.length > 0 && <ul className="chips" aria-label="Tecnologias">{project.tags.map(tag => <li key={tag}>{tag}</li>)}</ul>}{project.highlights.length > 0 && <ul className="project-highlights">{project.highlights.map(highlight => <li key={highlight}>{highlight}</li>)}</ul>}{link && <a className="project-link" href={link.href} target="_blank" rel="noopener noreferrer">{link.label}<ArrowIcon diagonal /></a>}</div>
   </article>
 })
 export default function Experience() {
@@ -62,7 +62,7 @@ export default function Experience() {
     })
   }
   return <section id="experiencia" className="section-pad projects-section"><div className="container">
-    <div className="section-heading"><div><span className="eyebrow">01 / Projetos selecionados</span><h2>Construído para<br /><span className="soft-text">sair da ideia.</span></h2></div><p>Aplicações, interfaces e soluções.<br />Conheça os projetos e o que está por trás de cada um.</p></div>
+    <div className="section-heading"><div><span className="eyebrow section-pill">Projetos em destaque</span><h2>Conheça meus principais projetos.</h2></div><p>Uma seleção de trabalhos que unem design, tecnologia e resultado real.</p></div>
     <div className="project-toolbar"><div className="project-filters" aria-label="Filtrar projetos">{categories.map(item => <button key={item} type="button" aria-pressed={filter === item} onClick={() => setFilter(item)}>{item}{item === 'Todos' && <span>{allProjects.length}</span>}</button>)}</div><span className="carousel-hint">Deslize para explorar</span></div>
     {loading ? <div className="project-loading" role="status"><span className="loading-mark">EYI<span>.</span></span><p>Preparando os projetos…</p></div> : error ? <div className="project-empty" role="status"><h3>Os projetos estão temporariamente indisponíveis.</h3><p>Tente carregar novamente em instantes.</p><button type="button" className="button button-outline" onClick={() => void refresh()}>Tentar novamente</button></div> : !projects.length ? <div className="project-empty">Nenhum projeto publicado nesta categoria.</div> : <>
       <div className="project-track" ref={track} onScroll={onScroll} role="region" aria-roledescription="carrossel" aria-label="Projetos do portfólio" tabIndex={0} onKeyDown={event => { if (event.target !== event.currentTarget) return; if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') { event.preventDefault(); goTo(Math.max(0, Math.min(projects.length - 1, active + (event.key === 'ArrowRight' ? 1 : -1)))) } }}>{projects.map((project, index) => <ProjectCard key={project.id} project={project} index={index} total={projects.length} />)}</div>

@@ -147,3 +147,6 @@
 
 # Imagens das demonstrações: SVG com foto embutida, versionado sem Git LFS.
 src/assets/demo-images/*.svg -filter -diff -merge -text
+
+# Keep lightweight portfolio previews available in Git-based deployments.
+public/previews/*.webp -filter -diff -merge -text

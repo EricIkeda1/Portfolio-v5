@@ -1,23 +1,27 @@
+import { useMemo } from 'react'
 import { usePortfolioContent } from '@/context/PortfolioContentContext'
 import { ArrowIcon } from '@/components/Icons'
-import { ProfileImage } from '@/components/ProfileImage'
+import { DeviceShowcase } from '@/components/DeviceShowcase'
+import { PortfolioIcon } from '@/components/PortfolioIcon'
 
 export default function Hero() {
-  const { content } = usePortfolioContent()
+  const { content, loading, error } = usePortfolioContent()
+  const projects = useMemo(() => content.projects.filter(p => p.published !== false).sort((a, b) => a.sort_order - b.sort_order || a.id - b.id), [content.projects])
+  const technologies = new Set(projects.flatMap(p => p.tags)).size
   return <section id="inicio" className="hero-section container">
-    <div className="hero-intro"><span className="eyebrow"><span className="status-dot" /> Desenvolvimento web & mobile</span><span className="hero-location">Ibiporã, PR · Brasil</span></div>
     <div className="hero-grid">
-      <div className="hero-copy">
-        <h1>Ideias que viram<br /><span>experiências.</span></h1>
-        <p>Sou Eric Ikeda, desenvolvedor de software. Transformo ideias em interfaces e aplicações que conectam pessoas à tecnologia.</p>
-        <div className="hero-actions"><a className="button button-primary" href="#experiencia">Conheça meus projetos <ArrowIcon /></a><a className="text-link" href="#sobre">Um pouco sobre mim <ArrowIcon diagonal /></a></div>
+      <div className="hero-copy"><span className="hero-badge"><PortfolioIcon name="code" /> Desenvolvedor de Software</span>
+        <h1><span className="hero-title-intro">Transformo <span>ideias em</span></span><br /><span className="hero-title-accent">produtos digitais.</span></h1>
+        <p>Desenvolvimento web, mobile e soluções completas com foco em performance, experiência e resultado.</p>
+        <div className="hero-actions"><a className="button button-primary" href="#experiencia">Ver projetos <ArrowIcon diagonal /></a><a className="button button-outline" href="#sobre">Sobre mim</a></div>
       </div>
-      <div className="hero-identity">
-        <div className="identity-top"><span>CRIATIVIDADE + ENGENHARIA</span><span aria-hidden="true">✳</span></div>
-        <div className="identity-portrait"><ProfileImage eager /><span className="portrait-caption">Eric Yuji Ikeda</span></div>
-        <div className="identity-bottom"><div><span className="identity-label">Da interface à solução.</span><strong>Web. Mobile. Possibilidades.</strong></div><a href={content.github} target="_blank" rel="noopener noreferrer" aria-label="Visitar meu GitHub"><ArrowIcon diagonal /></a></div>
-      </div>
+      <DeviceShowcase project={projects[0]} />
     </div>
-    <div className="hero-bottom"><span>Engenharia de Software · UniSenai PR</span><div><span>React</span><span>TypeScript</span><span>Flutter</span></div><a href="#experiencia">Explore abaixo ↓</a></div>
+    <div className="hero-metrics" aria-label="Sobre meu trabalho">
+      <div><PortfolioIcon name="code" /><p><strong>{loading || error ? '—' : projects.length}</strong><span>Projetos publicados</span></p></div>
+      <div><PortfolioIcon name="layers" /><p><strong>{loading || error ? '—' : technologies}</strong><span>Tecnologias e temas</span></p></div>
+      <div><PortfolioIcon name="mobile" /><p><strong>Web + Mobile</strong><span>Experiências conectadas</span></p></div>
+      <div><PortfolioIcon name="check" /><p><strong>Design & código</strong><span>Cuidado em cada detalhe</span></p></div>
+    </div>
   </section>
 }
