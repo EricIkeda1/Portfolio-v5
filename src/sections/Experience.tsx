@@ -1,72 +1,230 @@
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { Reveal } from '@/components/Reveal'
 import { usePortfolioContent } from '@/context/PortfolioContentContext'
-import { DeviceShowcase } from '@/components/DeviceShowcase'
-import { ArrowIcon } from '@/components/Icons'
-import type { PortfolioProject } from '@/lib/portfolio'
 
-function category(project: PortfolioProject) {
-  const label = `${project.type} ${project.tags.join(' ')}`.toLowerCase()
-  if (/mobile|flutter|dart/.test(label)) return 'Mobile'
-  if (/web|react|ecommerce|full stack/.test(label)) return 'Web'
-  return 'Outros'
-}
-function projectLink(value: string) {
-  try {
-    const url = new URL(value)
-    if (!['http:', 'https:'].includes(url.protocol)) return null
-    return { href: url.href, label: url.hostname === 'github.com' ? 'Ver repositório' : /vercel\.app$/.test(url.hostname) ? 'Explorar projeto' : 'Abrir projeto' }
-  } catch { return null }
-}
-const ProjectCard = memo(function ProjectCard({ project, index, total }: { project: PortfolioProject; index: number; total: number }) {
-  const link = projectLink(project.github)
-  return <article className="project-card" role="group" aria-roledescription="slide" aria-label={`${index + 1} de ${total}: ${project.name}`}>
-    <div className="project-art"><span className="project-kind">{category(project)}</span><DeviceShowcase project={project} compact /></div>
-    <div className="project-details"><span className="eyebrow">{project.type}</span><h3>{project.name}</h3><p className="project-summary">{project.description}</p><details className="project-more"><summary>Mais sobre o projeto</summary><p>{project.description}</p></details>{project.tags.length > 0 && <ul className="chips" aria-label="Tecnologias">{project.tags.map(tag => <li key={tag}>{tag}</li>)}</ul>}{project.highlights.length > 0 && <ul className="project-highlights">{project.highlights.map(highlight => <li key={highlight}>{highlight}</li>)}</ul>}{link && <a className="project-link" href={link.href} target="_blank" rel="noopener noreferrer">{link.label}<ArrowIcon diagonal /></a>}</div>
-  </article>
-})
+const GithubIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12" />
+  </svg>
+)
+
 export default function Experience() {
-  const { content, loading, error, refresh } = usePortfolioContent()
-  const [filter, setFilter] = useState('Todos')
+  const { content } = usePortfolioContent()
+  const projects = useMemo(
+    () => [...content.projects].sort((a, b) => a.sort_order - b.sort_order),
+    [content.projects],
+  )
   const [active, setActive] = useState(0)
-  const track = useRef<HTMLDivElement>(null)
-  const frame = useRef(0)
-  const allProjects = useMemo(() => content.projects.filter(p => p.published !== false).sort((a, b) => a.sort_order - b.sort_order || a.id - b.id), [content.projects])
-  const categories = useMemo(() => ['Todos', ...['Web', 'Mobile', 'Outros'].filter(c => allProjects.some(p => category(p) === c))], [allProjects])
-  const projects = useMemo(() => filter === 'Todos' ? allProjects : allProjects.filter(p => category(p) === filter), [allProjects, filter])
-  const goTo = useCallback((index: number) => {
-    const container = track.current
-    const slide = container?.children[index] as HTMLElement | undefined
-    if (!container || !slide) return
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    container.scrollTo({ left: slide.offsetLeft - (container.firstElementChild as HTMLElement).offsetLeft, behavior: reduced ? 'instant' : 'smooth' })
-  }, [])
+
   useEffect(() => {
-    setActive(0)
-    if (track.current) track.current.scrollLeft = 0
-    return () => { cancelAnimationFrame(frame.current); frame.current = 0 }
-  }, [filter, projects.length])
-  const onScroll = () => {
-    if (frame.current) return
-    frame.current = requestAnimationFrame(() => {
-      frame.current = 0
-      const container = track.current
-      if (!container) return
-      const origin = (container.firstElementChild as HTMLElement)?.offsetLeft || 0
-      let closest = 0
-      let distance = Infinity
-      Array.from(container.children).forEach((slide, index) => {
-        const next = Math.abs((slide as HTMLElement).offsetLeft - origin - container.scrollLeft)
-        if (next < distance) { distance = next; closest = index }
-      })
-      setActive(value => value === closest ? value : closest)
-    })
-  }
-  return <section id="experiencia" className="section-pad projects-section"><div className="container">
-    <div className="section-heading"><div><h2>Mais projetos. Novas possibilidades.</h2></div></div>
-    <div className="project-toolbar"><div className="project-filters" aria-label="Filtrar projetos">{categories.map(item => <button key={item} type="button" aria-pressed={filter === item} onClick={() => setFilter(item)}>{item}{item === 'Todos' && <span>{allProjects.length}</span>}</button>)}</div><span className="carousel-hint">Deslize para explorar</span></div>
-    {loading ? <div className="project-loading" role="status"><span className="loading-mark">EYI<span>.</span></span><p>Preparando os projetos…</p></div> : error ? <div className="project-empty" role="status"><h3>Os projetos estão temporariamente indisponíveis.</h3><p>Tente carregar novamente em instantes.</p><button type="button" className="button button-outline" onClick={() => void refresh()}>Tentar novamente</button></div> : !projects.length ? <div className="project-empty">Nenhum projeto publicado nesta categoria.</div> : <>
-      <div className="project-track" ref={track} onScroll={onScroll} role="region" aria-roledescription="carrossel" aria-label="Projetos do portfólio" tabIndex={0} onKeyDown={event => { if (event.target !== event.currentTarget) return; if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') { event.preventDefault(); goTo(Math.max(0, Math.min(projects.length - 1, active + (event.key === 'ArrowRight' ? 1 : -1)))) } }}>{projects.map((project, index) => <ProjectCard key={project.id} project={project} index={index} total={projects.length} />)}</div>
-      <div className="carousel-footer"><p><strong>{String(active + 1).padStart(2, '0')}</strong><span> / {String(projects.length).padStart(2, '0')}</span></p><div className="carousel-dots" aria-label="Selecionar projeto">{projects.map((project, index) => <button key={project.id} type="button" aria-label={`Ver ${project.name}`} aria-current={active === index ? 'true' : undefined} onClick={() => goTo(index)}><span /></button>)}</div></div>
-    </>}
-  </div></section>
+    if (active >= projects.length) setActive(0)
+  }, [active, projects.length])
+
+  const proj = projects[active]
+
+  return (
+    <section
+      id="experiencia"
+      style={{
+        background: 'var(--surface)',
+        borderTop: '1px solid var(--border)',
+        borderBottom: '1px solid var(--border)',
+        padding: '7rem 2rem',
+      }}
+    >
+      <div className="container">
+        <div style={{ marginBottom: '3.5rem' }}>
+          <Reveal from="bottom">
+            <div className="section-label">03 — Projetos</div>
+          </Reveal>
+          <Reveal delay={80} from="bottom">
+            <h2 className="display-heading">
+              Projetos <span className="accent">em destaque</span>
+            </h2>
+          </Reveal>
+        </div>
+
+        {!proj ? (
+          <div className="portfolio-empty-state">Nenhum projeto cadastrado.</div>
+        ) : (
+          <Reveal from="bottom" delay={120} threshold={0.06}>
+            <div
+              className="exp-layout"
+              style={{
+                background: 'var(--border)',
+                gap: '1px',
+                border: '1px solid var(--border)',
+                borderRadius: 4,
+                overflow: 'hidden',
+              }}
+            >
+              <div style={{ background: 'var(--card)', display: 'flex', flexDirection: 'column' }}>
+                {projects.map((project, index) => (
+                  <button
+                    key={project.id}
+                    onClick={() => setActive(index)}
+                    style={{
+                      display: 'block',
+                      width: '100%',
+                      textAlign: 'left',
+                      padding: '1.2rem 1.25rem',
+                      background: active === index ? 'var(--bg)' : 'transparent',
+                      border: 'none',
+                      borderLeft: active === index ? `3px solid ${project.color}` : '3px solid transparent',
+                      borderBottom: '1px solid var(--border)',
+                      cursor: 'pointer',
+                      transition: 'background 0.2s',
+                    }}
+                    onMouseEnter={(event) => {
+                      if (active !== index) event.currentTarget.style.background = 'var(--surface)'
+                    }}
+                    onMouseLeave={(event) => {
+                      if (active !== index) event.currentTarget.style.background = 'transparent'
+                    }}
+                  >
+                    <div
+                      className="font-mono"
+                      style={{
+                        fontSize: '0.76rem',
+                        letterSpacing: '0.14em',
+                        color: active === index ? project.color : 'var(--muted)',
+                        textTransform: 'uppercase',
+                        marginBottom: 3,
+                      }}
+                    >
+                      {project.type}
+                    </div>
+                    <div
+                      className="font-display"
+                      style={{
+                        fontSize: '1.2rem',
+                        fontWeight: 700,
+                        color: active === index ? 'var(--text)' : 'var(--muted)',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.03em',
+                      }}
+                    >
+                      {project.name}
+                    </div>
+                  </button>
+                ))}
+              </div>
+
+              <div
+                key={proj.id}
+                style={{
+                  background: 'var(--bg)',
+                  padding: '2.25rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  animation: 'detailIn 0.35s cubic-bezier(0.22,1,0.36,1)',
+                }}
+              >
+                <div>
+                  {proj.image_url && (
+                    <div className="project-featured-image-wrap">
+                      <img className="project-featured-image" src={proj.image_url} alt={`Imagem do projeto ${proj.name}`} />
+                    </div>
+                  )}
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
+                    <h3
+                      className="font-display"
+                      style={{
+                        fontSize: 'clamp(1.6rem, 3vw, 2.4rem)',
+                        fontWeight: 800,
+                        textTransform: 'uppercase',
+                        color: 'var(--text)',
+                        letterSpacing: '-0.01em',
+                      }}
+                    >
+                      {proj.name}
+                    </h3>
+                    <span
+                      className="font-mono"
+                      style={{
+                        fontSize: '0.70rem',
+                        letterSpacing: '0.1em',
+                        color: proj.color,
+                        background: `${proj.color}12`,
+                        border: `1px solid ${proj.color}38`,
+                        padding: '0.26rem 0.6rem',
+                        borderRadius: 2,
+                        textTransform: 'uppercase',
+                      }}
+                    >
+                      {proj.type}
+                    </span>
+                  </div>
+
+                  <p style={{ fontSize: '0.95rem', lineHeight: 1.8, color: 'var(--muted)', maxWidth: 620, fontWeight: 400, marginBottom: '1.75rem' }}>
+                    {proj.description}
+                  </p>
+                </div>
+
+                <div>
+                  {proj.highlights.length > 0 && (
+                    <>
+                      <div className="font-mono" style={{ fontSize: '0.70rem', letterSpacing: '0.12em', color: 'var(--muted)', textTransform: 'uppercase', marginBottom: '0.7rem' }}>
+                        Destaques
+                      </div>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '1.5rem' }}>
+                        {proj.highlights.map((highlight) => (
+                          <span key={highlight} style={{ fontSize: '0.84rem', color: 'var(--text)', background: 'var(--card)', border: '1px solid var(--border)', padding: '0.28rem 0.65rem', borderRadius: 2 }}>
+                            {highlight}
+                          </span>
+                        ))}
+                      </div>
+                    </>
+                  )}
+
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
+                    <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                      {proj.tags.map((tag) => (
+                        <span key={tag} className="font-mono" style={{ fontSize: '0.70rem', letterSpacing: '0.1em', color: proj.color, textTransform: 'uppercase' }}>
+                          #{tag}
+                        </span>
+                      ))}
+                    </div>
+
+                    <a
+                      href={proj.github}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-mono"
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 6,
+                        fontSize: '0.74rem',
+                        letterSpacing: '0.1em',
+                        textTransform: 'uppercase',
+                        color: 'var(--muted)',
+                        textDecoration: 'none',
+                        padding: '0.4rem 0.85rem',
+                        border: '1px solid var(--border)',
+                        borderRadius: 2,
+                        transition: 'color 0.2s, border-color 0.2s',
+                      }}
+                    >
+                      <GithubIcon />
+                      Ver projeto
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Reveal>
+        )}
+      </div>
+
+      <style>{`
+        @keyframes detailIn {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
+    </section>
+  )
 }

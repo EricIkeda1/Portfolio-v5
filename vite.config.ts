@@ -115,12 +115,10 @@ export default defineConfig(({ mode }) => {
     },
     server: {
       host: '0.0.0.0',
-      allowedHosts: ['terminal.local'],
       port: parseInt(process.env.PORT || '5173'),
     },
     preview: {
       host: '0.0.0.0',
-      allowedHosts: ['terminal.local'],
       port: parseInt(process.env.PORT || '4173'),
     },
   }

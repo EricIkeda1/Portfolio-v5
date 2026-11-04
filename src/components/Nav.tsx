@@ -1,42 +1,252 @@
-import { useEffect, useRef } from 'react'
-import { ArrowIcon } from './Icons'
-import { PortfolioIcon } from './PortfolioIcon'
+import { useEffect, useState } from 'react'
+import ProtectedLogo from '@/components/ProtectedLogo'
 
 const links = [
-  { label: 'Início', href: '#inicio' },
-  { label: 'Projetos', href: '#experiencia' },
+  { label: 'Início', href: '#' },
   { label: 'Sobre', href: '#sobre' },
-  { label: 'Tecnologias', href: '#habilidades' },
+  { label: 'Habilidades', href: '#habilidades' },
+  { label: 'Projetos', href: '#experiencia' },
   { label: 'Contato', href: '#contato' },
 ]
 
 export default function Nav() {
-  const dialog = useRef<HTMLDialogElement>(null)
-  const trigger = useRef<HTMLButtonElement>(null)
-  const close = () => dialog.current?.close()
+  const [scrolled, setScrolled] = useState(false)
+  const [open, setOpen] = useState(false)
+
   useEffect(() => {
-    const query = window.matchMedia('(min-width: 769px)')
-    const onChange = () => { if (query.matches) close() }
-    query.addEventListener('change', onChange)
-    return () => query.removeEventListener('change', onChange)
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 40)
+    }
+
+    handleScroll()
+
+    window.addEventListener('scroll', handleScroll, {
+      passive: true,
+    })
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
   }, [])
-  return <>
-    <header className="portfolio-header">
-      <div className="container nav-inner">
-        <a href="#inicio" className="wordmark" aria-label="Eric Ikeda, início"><span className="brand-initials">EYI</span></a>
-        <nav className="desktop-nav" aria-label="Navegação principal">{links.filter(link => link.href !== '#habilidades').map(link => <a key={link.href} href={link.href}>{link.label}</a>)}</nav>
-        <a className="nav-contact" href="#contato">Vamos conversar <ArrowIcon diagonal /></a>
-        <button ref={trigger} type="button" className="menu-trigger" onClick={() => dialog.current?.showModal()} aria-label="Abrir menu" aria-haspopup="dialog" aria-controls="mobile-menu"><PortfolioIcon name="menu" /></button>
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 768) {
+        setOpen(false)
+      }
+    }
+
+    window.addEventListener('resize', handleResize)
+
+    return () => {
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [])
+
+  const close = () => {
+    setOpen(false)
+  }
+
+  return (
+    <header
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 100,
+        transition:
+          'background 0.4s, border-color 0.4s, backdrop-filter 0.4s',
+        backgroundColor: scrolled
+          ? 'rgba(7,7,15,0.88)'
+          : 'transparent',
+        backdropFilter: scrolled ? 'blur(18px)' : 'none',
+        WebkitBackdropFilter: scrolled ? 'blur(18px)' : 'none',
+        borderBottom: scrolled
+          ? '1px solid var(--border)'
+          : '1px solid transparent',
+      }}
+    >
+      <div
+        className="container"
+        style={{
+          height: 68,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '0 2rem',
+        }}
+      >
+        {/* Logo */}
+        <a
+          href="#"
+          onClick={close}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+            textDecoration: 'none',
+          }}
+        >
+          <ProtectedLogo
+            style={{
+              height: 38,
+              width: 38,
+              objectFit: 'contain',
+              display: 'block',
+            }}
+          />
+
+          <span
+            className="font-display"
+            style={{
+              color: 'var(--text)',
+              fontSize: '0.95rem',
+              fontWeight: 700,
+              letterSpacing: '0.15em',
+              textTransform: 'uppercase',
+            }}
+          >
+            Eric Y. Ikeda
+          </span>
+        </a>
+
+        {/* Desktop */}
+        <nav
+          className="nav-links"
+          aria-label="Navegação principal"
+        >
+          {links.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              className="font-mono"
+              style={{
+                color: 'var(--muted)',
+                textDecoration: 'none',
+                fontSize: '0.76rem',
+                letterSpacing: '0.1em',
+                textTransform: 'uppercase',
+                transition: 'color 0.2s',
+              }}
+              onMouseEnter={(e) => {
+                ;(e.currentTarget as HTMLElement).style.color =
+                  'var(--text)'
+              }}
+              onMouseLeave={(e) => {
+                ;(e.currentTarget as HTMLElement).style.color =
+                  'var(--muted)'
+              }}
+            >
+              {link.label}
+            </a>
+          ))}
+
+        </nav>
+
+        {/* Hamburger */}
+        <button
+          type="button"
+          className="nav-hamburger"
+          onClick={() => setOpen((value) => !value)}
+          aria-label={open ? 'Fechar menu' : 'Abrir menu'}
+          aria-expanded={open}
+          style={{
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            padding: 6,
+          }}
+        >
+          <span
+            style={{
+              display: 'block',
+              width: 22,
+              height: 2,
+              background: 'var(--text)',
+              borderRadius: 1,
+              transition:
+                'transform 0.25s, width 0.25s',
+              transform: open
+                ? 'translateY(6px) rotate(45deg)'
+                : 'none',
+            }}
+          />
+
+          <span
+            style={{
+              display: 'block',
+              width: 22,
+              height: 2,
+              background: 'var(--text)',
+              borderRadius: 1,
+              marginTop: 4,
+              transition:
+                'opacity 0.25s, transform 0.25s',
+              opacity: open ? 0 : 1,
+            }}
+          />
+
+          <span
+            style={{
+              display: 'block',
+              width: open ? 22 : 14,
+              height: 2,
+              background: 'var(--text)',
+              borderRadius: 1,
+              marginTop: 4,
+              transition:
+                'transform 0.25s, width 0.25s',
+              transform: open
+                ? 'translateY(-6px) rotate(-45deg)'
+                : 'none',
+            }}
+          />
+        </button>
+      </div>
+
+      {/* Mobile drawer */}
+      <div
+        style={{
+          overflow: 'hidden',
+          maxHeight: open ? '400px' : 0,
+          transition:
+            'max-height 0.35s cubic-bezier(0.22, 1, 0.36, 1)',
+          backgroundColor: 'rgba(7,7,15,0.98)',
+          borderTop: open
+            ? '1px solid var(--border)'
+            : 'none',
+        }}
+      >
+        <nav
+          aria-label="Navegação mobile"
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '1.25rem',
+            padding: '1.5rem 1.5rem 2rem',
+          }}
+        >
+          {links.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              onClick={close}
+              className="font-mono"
+              style={{
+                color: 'var(--text)',
+                textDecoration: 'none',
+                fontSize: '0.85rem',
+                letterSpacing: '0.1em',
+                textTransform: 'uppercase',
+              }}
+            >
+              {link.label}
+            </a>
+          ))}
+
+        </nav>
       </div>
     </header>
-    <dialog id="mobile-menu" ref={dialog} className="mobile-menu" aria-labelledby="menu-title" onClick={event => { if (event.target === event.currentTarget) close() }} onClose={() => trigger.current?.focus()}>
-      <div className="menu-sheet">
-        <div className="sheet-handle" />
-        <div className="menu-heading"><h2 id="menu-title">Explore o portfólio</h2><button type="button" aria-label="Fechar menu" onClick={close}>×</button></div>
-        <nav aria-label="Navegação mobile">{links.map((link, index) => <a key={link.href} href={link.href} onClick={close}><span className="menu-number">0{index + 1}</span>{link.label}<ArrowIcon diagonal /></a>)}</nav>
-        <p>Design, código e um pouco de mim.</p>
-      </div>
-    </dialog>
-
-  </>
+  )
 }

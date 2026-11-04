@@ -32,16 +32,9 @@ async function request<T>(url: string, options: RequestInit = {}): Promise<T> {
   return body as T
 }
 
-let publicRequest: Promise<PortfolioContent> | null = null
-export function getPublicContent() {
-  if (!publicRequest) {
-    const controller = new AbortController()
-    const timer = setTimeout(() => controller.abort(), 15_000)
-    publicRequest = request<unknown>('/api/content', { method: 'GET', cache: 'no-store', signal: controller.signal })
-      .then(normalizePortfolioContent)
-      .finally(() => { clearTimeout(timer); publicRequest = null })
-  }
-  return publicRequest
+export async function getPublicContent() {
+  const body = await request<unknown>('/api/content', { method: 'GET', cache: 'no-store' })
+  return normalizePortfolioContent(body)
 }
 
 export function adminLogin(email: string, password: string) {

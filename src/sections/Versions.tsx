@@ -1,4 +1,5 @@
-import { ArrowIcon } from '@/components/Icons'
+import { Reveal } from '@/components/Reveal'
+import { useRef, useEffect, useState } from 'react'
 
 const versions = [
   {
@@ -36,14 +37,212 @@ const versions = [
   {
     version: 'v5',
     title: 'Portfólio atual',
-    description: 'Uma nova experiência: visual refinado, navegação responsiva e projetos integrados ao banco de dados.',
+    description: 'Dark tech, animações de scroll, typewriter effect e foco em qualidade visual.',
     tech: ['React', 'TypeScript', 'Tailwind v4'],
     url: null,
-    year: '2026',
+    year: '2025',
     current: true,
   },
 ]
 
+
+function VersionCard({ v, index }: { v: (typeof versions)[0]; index: number }) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [visible, setVisible] = useState(false)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) { setVisible(true); observer.unobserve(el) }
+      },
+      { threshold: 0.08 },
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
+  return (
+    <div
+      ref={ref}
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? 'translateY(0)' : 'translateY(24px)',
+        transition: `opacity 0.55s cubic-bezier(0.22,1,0.36,1) ${index * 80}ms, transform 0.55s cubic-bezier(0.22,1,0.36,1) ${index * 80}ms`,
+        background: v.current ? 'var(--surface)' : 'var(--card)',
+        padding: '1.6rem',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '0.75rem',
+        position: 'relative',
+        transition2: 'background 0.2s',
+        borderRight: '1px solid var(--border)',
+        borderBottom: '1px solid var(--border)',
+      } as React.CSSProperties}
+      onMouseEnter={(e) => {
+        if (!v.current) (e.currentTarget as HTMLElement).style.background = 'var(--surface)'
+      }}
+      onMouseLeave={(e) => {
+        if (!v.current) (e.currentTarget as HTMLElement).style.background = 'var(--card)'
+      }}
+    >
+      {/* Blue top bar on current */}
+      {v.current && (
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'var(--blue)' }} />
+      )}
+
+      {/* Version number + year */}
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+        <span
+          className="font-display"
+          style={{
+            fontSize: '2.2rem',
+            fontWeight: 800,
+            lineHeight: 1,
+            color: v.current ? 'var(--blue)' : 'var(--muted-2)',
+            letterSpacing: '-0.02em',
+          }}
+        >
+          {v.version}
+        </span>
+        <span
+          className="font-mono"
+          style={{ fontSize: '0.70rem', letterSpacing: '0.1em', color: 'var(--muted-2)', textTransform: 'uppercase', marginTop: 4 }}
+        >
+          {v.year}
+        </span>
+      </div>
+
+      {/* Title */}
+      <div style={{ fontWeight: 600, color: 'var(--text)', fontSize: '0.88rem', lineHeight: 1.3 }}>
+        {v.title}
+      </div>
+
+      {/* Description — fixed height so cards align */}
+      <p
+        style={{
+          fontSize: '0.84rem',
+          lineHeight: 1.65,
+          color: 'var(--muted)',
+          fontWeight: 400,
+          flex: 1,
+          minHeight: '3.3em',
+        }}
+      >
+        {v.description}
+      </p>
+
+      {/* Tech chips */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem' }}>
+        {v.tech.map((t) => (
+          <span
+            key={t}
+            className="font-mono"
+            style={{
+              fontSize: '0.76rem',
+              letterSpacing: '0.08em',
+              color: v.current ? 'var(--blue)' : 'var(--muted)',
+              background: v.current ? 'var(--blue-dim)' : 'transparent',
+              border: `1px solid ${v.current ? 'rgba(66,133,255,0.2)' : 'var(--border)'}`,
+              padding: '0.2rem 0.5rem',
+              borderRadius: 2,
+              textTransform: 'uppercase',
+            }}
+          >
+            {t}
+          </span>
+        ))}
+      </div>
+
+      {/* Footer link / current indicator */}
+      <div style={{ marginTop: 2 }}>
+        {v.url ? (
+          <a
+            href={v.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-mono"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 5,
+              fontSize: '0.72rem',
+              letterSpacing: '0.1em',
+              color: 'var(--muted)',
+              textDecoration: 'none',
+              textTransform: 'uppercase',
+              transition: 'color 0.2s',
+            }}
+            onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = 'var(--blue)')}
+            onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = 'var(--muted)')}
+          >
+            Visitar 
+          </a>
+        ) : (
+          <div className="font-mono" style={{ fontSize: '0.72rem', letterSpacing: '0.1em', color: 'var(--blue)', textTransform: 'uppercase' }}>
+            ● Você está aqui
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
 export default function Versions() {
-  return <section className="section-pad versions-section"><div className="container"><div className="section-heading"><div><span className="eyebrow">05 / Sempre em construção</span><h2>Cada versão, um novo olhar.</h2></div><p>O portfólio também conta uma história. Explore os caminhos até aqui.</p></div><div className="versions-track">{versions.map(v => <article key={v.version} className={`version-card ${v.current ? 'is-current' : ''}`}><div className="version-top"><span>{v.version}</span><span>{v.year}</span></div><h3>{v.title}</h3><p>{v.description}</p>{v.url ? <a className="text-link" href={v.url} target="_blank" rel="noopener noreferrer">Visitar versão <ArrowIcon diagonal /></a> : <span className="current-label">Você está aqui</span>}</article>)}</div></div></section>
+  return (
+    <section style={{ maxWidth: 1200, margin: '0 auto', padding: '7rem 2rem' }}>
+      <div style={{ marginBottom: '3.5rem' }}>
+        <Reveal from="bottom">
+          <div className="section-label">04 — Versões anteriores</div>
+        </Reveal>
+        <Reveal delay={80} from="bottom">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '1rem' }}>
+            <h2 className="display-heading">
+              Evolução do <span className="accent">portfólio</span>
+            </h2>
+            <p className="font-mono" style={{ fontSize: '0.76rem', color: 'var(--muted)', letterSpacing: '0.05em', maxWidth: 260, lineHeight: 1.7 }}>
+              Cada versão representa um passo na jornada como desenvolvedor.
+            </p>
+          </div>
+        </Reveal>
+      </div>
+
+      {/* 5-column grid — all cards same height, no empty space */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(5, 1fr)',
+          border: '1px solid var(--border)',
+          borderRight: 'none',
+          borderBottom: 'none',
+          borderRadius: 4,
+          overflow: 'hidden',
+        }}
+        className="versions-grid"
+      >
+        {versions.map((v, i) => (
+          <VersionCard key={v.version} v={v} index={i} />
+        ))}
+      </div>
+
+      <style>{`
+        @media (max-width: 900px) {
+          .versions-grid {
+            grid-template-columns: repeat(3, 1fr) !important;
+          }
+        }
+        @media (max-width: 580px) {
+          .versions-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+          }
+        }
+        @media (max-width: 380px) {
+          .versions-grid {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
+    </section>
+  )
 }
