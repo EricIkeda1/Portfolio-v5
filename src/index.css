@@ -43,3 +43,6 @@ html{scroll-padding-top:84px}.portfolio-shell{background:radial-gradient(ellipse
 .wordmark .brand-initials{color:var(--text)}
 @media(min-width:1101px){.project-track{padding-inline:8%}.project-card{flex-basis:100%}.project-card:last-child{margin-right:0}}
 @media(max-width:768px){.hero-title-intro>span{display:block}.hero-copy h1>br{display:none}.hero-title-accent{display:block}.hero-copy h1{font-size:clamp(2rem,9.2vw,3.2rem)}}
+
+.device-project-label{display:none}
+@media(min-width:1101px){.project-art .device-showcase{height:300px}.is-compact .laptop-device{width:76%;top:26px}}
