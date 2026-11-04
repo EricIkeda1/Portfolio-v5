@@ -11,7 +11,8 @@ try {
   if (!template.includes('<!-- seo:start -->')) throw new Error('Marcador SEO ausente no HTML.')
   for (const [pathname, output] of [['/', 'index.html'], ['/portfolio', 'portfolio/index.html'], ['/admin', 'admin/index.html'], ['/404', '404.html']]) {
     const content = pathname === '/' || pathname === '/portfolio' ? renderPage(pathname) : ''
-    const html = template
+    const pageTemplate = pathname === '/admin' ? template.replace('</head>', '<link rel="manifest" href="/admin.webmanifest"><link rel="apple-touch-icon" href="/notification-icon.png"></head>') : template
+    const html = pageTemplate
       .replace(/<!-- seo:start -->[\s\S]*?<!-- seo:end -->/, `<!-- seo:start -->\n${seoHead(pathname)}\n<!-- seo:end -->`)
       .replace('<div id="root"></div>', `<div id="root">${content}</div>`)
     // Detecta referências erradas antes de publicar imagens quebradas.

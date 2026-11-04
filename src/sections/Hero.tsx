@@ -463,41 +463,6 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Floating WhatsApp button */}
-      <a
-        href={`https://wa.me/${whatsappNumber}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        title="Falar no WhatsApp"
-        style={{
-          position: 'fixed',
-          bottom: '2rem',
-          right: '2rem',
-          width: 52,
-          height: 52,
-          borderRadius: '50%',
-          background: '#25D366',
-          color: '#fff',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 200,
-          textDecoration: 'none',
-          boxShadow: '0 4px 20px rgba(37,211,102,0.4)',
-          animation: 'waFloat 3s ease-in-out infinite',
-          transition: 'box-shadow 0.2s',
-        }}
-        onMouseEnter={(e) => {
-          ;(e.currentTarget as HTMLElement).style.boxShadow =
-            '0 6px 30px rgba(37,211,102,0.65)'
-        }}
-        onMouseLeave={(e) => {
-          ;(e.currentTarget as HTMLElement).style.boxShadow =
-            '0 4px 20px rgba(37,211,102,0.4)'
-        }}
-      >
-        <WhatsAppIcon size={26} />
-      </a>
     </section>
   )
 }

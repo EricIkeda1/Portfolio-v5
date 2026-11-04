@@ -408,12 +408,21 @@ function SettingsPanel({ user, onUserUpdated }: { user: AdminUser; onUserUpdated
 }
 
 function Dashboard({ user, onUserUpdated, onLogout }: { user: AdminUser; onUserUpdated: (user: AdminUser) => void; onLogout: () => void }) {
-  const [active, setActive] = useState('overview')
+  const [active, setActive] = useState(() => typeof window !== 'undefined' && window.location.hash === '#mensagens' ? 'messages' : 'overview')
   const [mobileMenu, setMobileMenu] = useState(false)
   const [content, setContent] = useState<PortfolioContent>(DEFAULT_CONTENT)
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState('')
   const currentLabel = useMemo(() => navigation.find((item) => item.id === active)?.label ?? 'Visão geral', [active])
+
+  useEffect(() => {
+    if (!('serviceWorker' in navigator)) return
+    const openMessages = (event: MessageEvent) => {
+      if (event.data?.type === 'OPEN_PORTFOLIO_MESSAGES') { setActive('messages'); setMobileMenu(false) }
+    }
+    navigator.serviceWorker.addEventListener('message', openMessages)
+    return () => navigator.serviceWorker.removeEventListener('message', openMessages)
+  }, [])
 
   useEffect(() => {
     void getAdminContent().then(setContent).catch((error) => setLoadError(error instanceof Error ? error.message : 'Erro ao carregar dados.')).finally(() => setLoading(false))
@@ -449,6 +458,14 @@ function Dashboard({ user, onUserUpdated, onLogout }: { user: AdminUser; onUserU
 }
 
 export default function AdminPage() {
+  useEffect(() => {
+    if (document.querySelector('link[rel=manifest]')) return
+    const link = document.createElement('link')
+    link.rel = 'manifest'
+    link.href = '/admin.webmanifest'
+    document.head.appendChild(link)
+    return () => { link.remove() }
+  }, [])
   const [checking, setChecking] = useState(true)
   const [user, setUser] = useState<AdminUser | null>(null)
 

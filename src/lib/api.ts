@@ -5,6 +5,26 @@ type ApiErrorBody = { error?: string }
 export type AdminUser = { id: number; email: string }
 export type ContactMessage = { id: number; name: string; email: string; message: string; created_at: string; read_at: string | null }
 
+export function getNotificationKey() {
+  return request<{ publicKey: string }>('/api/admin-messages?notifications=1', { cache: 'no-store' })
+}
+
+export function savePushSubscription(subscription: PushSubscriptionJSON) {
+  return request<{ ok: true }>('/api/admin-messages', { method: 'POST', body: JSON.stringify({ action: 'subscribe', subscription }) })
+}
+
+export function getPushStatus(endpoint: string) {
+  return request<{ enabled: boolean; lastError: string | null }>('/api/admin-messages', { method: 'POST', body: JSON.stringify({ action: 'status', endpoint }) })
+}
+
+export function testPushNotification(endpoint: string) {
+  return request<{ ok: true }>('/api/admin-messages', { method: 'POST', body: JSON.stringify({ action: 'test', endpoint }) })
+}
+
+export function disablePushSubscription(endpoint: string) {
+  return request<{ ok: true }>('/api/admin-messages', { method: 'DELETE', body: JSON.stringify({ endpoint }) })
+}
+
 export function sendContactMessage(input: { name: string; email: string; message: string; website: string }) {
   return request<{ ok: true }>('/api/contact', { method: 'POST', body: JSON.stringify(input) })
 }

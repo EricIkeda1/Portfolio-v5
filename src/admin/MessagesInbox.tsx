@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import PushNotifications from './PushNotifications'
 import { getAdminMessages, markMessageRead, type ContactMessage } from '@/lib/api'
 
 export default function MessagesInbox() {
@@ -35,6 +36,7 @@ export default function MessagesInbox() {
 
   return <>
     <div className="admin-dashboard-heading"><div><span className="admin-eyebrow">Administrador</span><h1>Mensagens</h1><p>Contatos enviados pelo formulário do portfólio. {unread} não lida(s).</p></div><button className="admin-ghost-action" onClick={() => void load()} disabled={loading || updating !== null}>Atualizar</button></div>
+    <PushNotifications />
     {error && <p className="admin-toast-demo admin-toast-error" role="alert">{error}</p>}
     {loading && <p role="status">Carregando mensagens…</p>}
     {!loading && !error && !messages.length && <section className="admin-panel-card"><h2>Sua caixa de entrada está vazia</h2><p className="admin-setting-description">Os novos contatos enviados pelo site aparecerão aqui.</p></section>}

@@ -1060,3 +1060,8 @@ a {
 .contact-message-form button[type=submit]:hover:not(:disabled){background:#256be6}
 .contact-message-form button[type=submit]:focus-visible{outline:2px solid var(--text);outline-offset:3px}
 @media(max-width:640px){.contact-message-form button[type=submit]{border-radius:24px}}
+.admin-push-panel{margin-bottom:1.25rem}
+.admin-push-panel h2{font-size:1.1rem;margin-bottom:.6rem}
+.admin-push-panel>p,.admin-push-panel>small{color:var(--muted);font-size:.85rem;line-height:1.7;display:block;margin:.6rem 0}
+.admin-push-panel>small{font-size:.75rem;margin-top:1rem}
+.admin-push-panel .admin-form-row{flex-wrap:wrap}
