@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Reveal, RevealGroup } from '@/components/Reveal'
 import { usePortfolioContent } from '@/context/PortfolioContentContext'
 import type { ReactNode } from 'react'
+import ContactForm from '@/components/ContactForm'
 
 function BrasiliaTime() {
   const [time, setTime] = useState('')
@@ -33,8 +34,12 @@ type ContactItem = {
   extra?: ReactNode
 }
 
-function getContactItems(email: string, github: string, linkedin: string): ContactItem[] {
+function getContactItems(email: string, github: string, linkedin: string, whatsapp: string): ContactItem[] {
+  const digits = whatsapp.replace(/\D/g, '')
+  const number = digits.length === 11 ? `55${digits}` : digits
+  const formatted = number.replace(/^55(\d{2})(\d{5})(\d{4})$/, '+55 ($1) $2-$3')
   return [
+    ...(number ? [{ label: 'WhatsApp', value: formatted, href: `https://wa.me/${number}`, icon: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.6 7.4L3 21l1.8-5.2A8.5 8.5 0 1 1 21 11.5Z"/><path d="M8 8c1 4 3 6 7 7"/></svg> }] : []),
     {
       label: 'Email',
       value: email,
@@ -132,7 +137,7 @@ function ContactCard({ item }: { item: ContactItem }) {
 
 export default function Contact() {
   const { content } = usePortfolioContent()
-  const contactItems = getContactItems(content.email, content.github, content.linkedin)
+  const contactItems = getContactItems(content.email, content.github, content.linkedin, content.whatsapp)
 
   return (
     <section id="contato" className="section-pad">
@@ -159,6 +164,7 @@ export default function Contact() {
           {/* Right */}
           <Reveal from="left" delay={100} threshold={0.08}>
             <div>
+              <ContactForm />
               <div
                 style={{
                   padding: '2.25rem',

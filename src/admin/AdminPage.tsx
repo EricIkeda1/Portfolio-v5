@@ -14,6 +14,7 @@ import {
 } from '@/lib/api'
 import { DEFAULT_CONTENT, type PortfolioContent, type PortfolioProject } from '@/lib/portfolio'
 import ProtectedLogo from '@/components/ProtectedLogo'
+import MessagesInbox from './MessagesInbox'
 
 type IconName =
   | 'dashboard'
@@ -127,6 +128,7 @@ const navigation = [
   { id: 'profile', label: 'Quem sou eu', icon: 'profile' as IconName },
   { id: 'projects', label: 'Projetos', icon: 'projects' as IconName },
   { id: 'contact', label: 'Contato', icon: 'contact' as IconName },
+  { id: 'messages', label: 'Mensagens', icon: 'contact' as IconName },
   { id: 'settings', label: 'Configurações', icon: 'settings' as IconName },
 ]
 
@@ -438,6 +440,7 @@ function Dashboard({ user, onUserUpdated, onLogout }: { user: AdminUser; onUserU
           {!loading && !loadError && active === 'profile' && <ProfileEditor content={content} onUpdated={setContent} />}
           {!loading && !loadError && active === 'projects' && <ProjectsEditor projects={content.projects} onProjectsChange={updateProjects} />}
           {!loading && !loadError && active === 'contact' && <ContactEditor content={content} onUpdated={setContent} />}
+          {!loading && !loadError && active === 'messages' && <MessagesInbox />}
           {!loading && !loadError && active === 'settings' && <SettingsPanel user={user} onUserUpdated={onUserUpdated} />}
         </main>
       </div>

@@ -5,6 +5,8 @@ import path from 'node:path'
 
 
 const apiRoutes: Record<string, string> = {
+  '/api/contact': '/api/contact.ts',
+  '/api/admin-messages': '/api/admin-messages.ts',
   '/api/content': '/api/content.ts',
   '/api/admin-login': '/api/admin-login.ts',
   '/api/admin-content': '/api/admin-content.ts',
@@ -115,6 +117,7 @@ export default defineConfig(({ mode }) => {
     },
     server: {
       host: '0.0.0.0',
+      allowedHosts: ['terminal.local'],
       port: parseInt(process.env.PORT || '5173'),
     },
     preview: {

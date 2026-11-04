@@ -74,3 +74,13 @@ https://www.ericyikeda.com.br/
 ## Autor
 
 **EricIkeda1**
+
+### Mensagens de contato
+
+A seção Contato oferece um formulário de nome, e-mail e mensagem, sem redirecionar o visitante. O número do WhatsApp é exibido a partir das configurações existentes.
+
+- `POST /api/contact` grava no Neon, valida tamanho e formato e limita a cinco envios por origem a cada 15 minutos, com controle atômico no banco e campo antispam.
+- `/admin` → **Mensagens** lista os contatos com paginação e permite marcar como lidos/não lidos e abrir uma resposta por e-mail. Não há notificação automática no WhatsApp ou por e-mail.
+- `GET/PUT /api/admin-messages` exigem a sessão administrativa existente. As mensagens nunca são incluídas na API pública de conteúdo.
+- `api/_lib/contact.ts` cria de forma idempotente as duas tabelas adicionais no primeiro acesso, sem alterar os projetos e contatos já cadastrados.
+- Para testar o fluxo completo em uma **branch isolada** do Neon: `CONTACT_TEST_DATABASE=1 node --env-file=/caminho/ambiente-de-teste.env scripts/test-contact.mjs`. O arquivo de ambiente deve conter `DATABASE_URL` da branch de teste e uma `SESSION_SECRET` exclusiva de testes. Esse teste cria mensagens fictícias apenas nessa branch.

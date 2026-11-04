@@ -3,6 +3,19 @@ import { normalizePortfolioContent, type PortfolioContent, type PortfolioProject
 type ApiErrorBody = { error?: string }
 
 export type AdminUser = { id: number; email: string }
+export type ContactMessage = { id: number; name: string; email: string; message: string; created_at: string; read_at: string | null }
+
+export function sendContactMessage(input: { name: string; email: string; message: string; website: string }) {
+  return request<{ ok: true }>('/api/contact', { method: 'POST', body: JSON.stringify(input) })
+}
+
+export function getAdminMessages(before?: number) {
+  return request<{ messages: ContactMessage[]; next: number | null; unread: number }>(`/api/admin-messages${before ? `?before=${before}` : ''}`, { cache: 'no-store' })
+}
+
+export function markMessageRead(id: number, read: boolean) {
+  return request<{ id: number; read_at: string | null }>('/api/admin-messages', { method: 'PUT', body: JSON.stringify({ id, read }) })
+}
 
 async function request<T>(url: string, options: RequestInit = {}): Promise<T> {
   const response = await fetch(url, {

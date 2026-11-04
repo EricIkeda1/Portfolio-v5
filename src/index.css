@@ -1031,3 +1031,32 @@ a {
   }
 }
 
+
+/* Contato direto e caixa de entrada administrativa. */
+.contact-message-form{padding:2rem;background:var(--card);border:1px solid var(--border);border-radius:6px;margin-bottom:1rem;position:relative}
+.contact-message-form h3{font-size:1.4rem;color:var(--text);margin-bottom:.6rem}
+.contact-message-form>p{color:var(--muted);font-size:.9rem;line-height:1.6;margin-bottom:1.2rem}
+.contact-message-form fieldset{border:0;padding:0;margin:0;min-width:0;display:flex;flex-direction:column;gap:.65rem}
+.contact-message-form label{font-size:.85rem;color:var(--text);margin-top:.35rem}
+.contact-message-form input,.contact-message-form textarea{box-sizing:border-box;width:100%;min-height:46px;padding:.8rem 1rem;border:1px solid var(--border);border-radius:5px;background:var(--bg);color:var(--text);font:inherit;font-size:16px}
+.contact-message-form textarea{resize:vertical;min-height:140px}
+.contact-message-form input:focus-visible,.contact-message-form textarea:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+.contact-message-form small{color:var(--muted);font-size:.75rem;line-height:1.6;margin:.35rem 0 .6rem}
+.contact-message-form button{justify-content:center;min-height:46px;cursor:pointer}
+.contact-message-form button:disabled{opacity:.65;cursor:wait}
+.contact-honeypot{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+.contact-message-form .contact-form-notice{padding:.85rem;background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.3);border-radius:5px;color:#a3efc0;margin:1rem 0 0;overflow-wrap:anywhere}
+.contact-message-form .contact-form-notice.is-error{background:rgba(255,100,100,.08);border-color:rgba(255,100,100,.35);color:#ffb6b6}
+.admin-message-list{display:grid;gap:1rem;margin-bottom:1rem}
+.admin-message-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem}
+.admin-message-heading h2{font-size:1.05rem;overflow-wrap:anywhere}
+.admin-message-heading a{display:inline-block;color:var(--blue);font-size:.85rem;margin-top:.4rem;overflow-wrap:anywhere}
+.admin-message-heading>span{background:var(--blue-dim);color:var(--blue);padding:.3rem .6rem;border-radius:20px;font-size:.75rem;flex-shrink:0}
+.admin-message time{display:block;color:var(--muted);font-size:.75rem;margin-top:.7rem}
+.admin-message-body{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.75;color:var(--text);margin:1.2rem 0}
+.admin-message .admin-form-row{flex-wrap:wrap}
+@media(max-width:640px){.contact-message-form{padding:1.25rem}.contact-message-form button{border-radius:24px}.admin-message-heading{flex-wrap:wrap}}
+.contact-message-form button[type=submit]{background:var(--blue);border:1px solid var(--blue);color:#fff;font-weight:600;padding:.85rem 1.25rem;border-radius:5px;transition:background .2s}
+.contact-message-form button[type=submit]:hover:not(:disabled){background:#256be6}
+.contact-message-form button[type=submit]:focus-visible{outline:2px solid var(--text);outline-offset:3px}
+@media(max-width:640px){.contact-message-form button[type=submit]{border-radius:24px}}
