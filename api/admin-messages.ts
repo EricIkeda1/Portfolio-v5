@@ -4,6 +4,7 @@ import { getSql } from './_lib/db.js'
 import { allowMethods, noStore } from './_lib/http.js'
 import { enforceSameOrigin, requireJson } from './_lib/security.js'
 import { cleanPushSubscription, ensurePushSchema, getPushKeys, sendDevicePush, validPushEndpoint } from './_lib/push.js'
+import { decryptContactData } from './_lib/contact-encryption.js'
 
 export default async function handler(req: any, res: any) {
   noStore(res)
@@ -70,10 +71,13 @@ export default async function handler(req: any, res: any) {
     const before = req.query?.before === undefined ? 2147483647 : Number(req.query.before)
     if (!Number.isSafeInteger(before) || before <= 0) return res.status(400).json({ error: 'Página inválida.' })
     const [messages, count] = await Promise.all([
-      sql`SELECT id, name, email, message, created_at, read_at FROM contact_messages WHERE id < ${before} ORDER BY id DESC LIMIT 51`,
+      sql`SELECT id, name, email, name_encrypted, email_encrypted, message_encrypted, encryption_id, message, created_at, read_at FROM contact_messages WHERE id < ${before} ORDER BY id DESC LIMIT 51`,
       sql`SELECT count(*)::integer AS unread FROM contact_messages WHERE read_at IS NULL`,
     ])
-    return res.status(200).json({ messages: messages.slice(0, 50), next: messages.length > 50 ? Number(messages[49].id) : null, unread: Number(count[0].unread) })
+    const decrypted = messages.slice(0, 50).map(row => ({
+      id: row.id, ...decryptContactData(row), created_at: row.created_at, read_at: row.read_at,
+    }))
+    return res.status(200).json({ messages: decrypted, next: messages.length > 50 ? Number(messages[49].id) : null, unread: Number(count[0].unread) })
   } catch {
     return res.status(503).json({ error: 'Não foi possível acessar as mensagens. Tente novamente.' })
   }

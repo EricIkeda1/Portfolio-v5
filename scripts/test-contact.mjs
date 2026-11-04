@@ -2,14 +2,14 @@
 import assert from 'node:assert/strict'
 import { createServer } from 'vite'
 
-if (process.env.CONTACT_TEST_DATABASE !== '1' || !process.env.DATABASE_URL) {
-  throw new Error('Configure uma branch Neon de teste e CONTACT_TEST_DATABASE=1 antes de executar.')
+if (process.env.CONTACT_TEST_DATABASE !== '1' || !process.env.DATABASE_URL || !process.env.CONTACT_ENCRYPTION_KEY) {
+  throw new Error('Configure uma branch Neon isolada, CONTACT_ENCRYPTION_KEY de testes e CONTACT_TEST_DATABASE=1 antes de executar.')
 }
 
 const timeout = setTimeout(() => {
-  console.error('O teste excedeu 180 segundos. Verifique o acesso à branch isolada do Neon.')
+  console.error('O teste excedeu 360 segundos. Verifique o acesso à branch isolada do Neon.')
   process.exit(1)
-}, 180000)
+}, 360000)
 timeout.unref()
 
 const server = await createServer({ server: { middlewareMode: true }, appType: 'custom' })
@@ -41,13 +41,18 @@ try {
   const result = await call(contact, 'POST', valid)
   assert.equal(result.statusCode, 201)
   const sql = getSql()
-  const saved = await sql`SELECT id, name, email, message FROM contact_messages WHERE email = 'visitor@example.test' ORDER BY id DESC LIMIT 1`
-  assert.equal(saved[0].message, valid.message)
-  assert.equal(saved[0].name, valid.name)
+  const saved = await sql`SELECT id, name, email, name_encrypted, email_encrypted, encryption_id, message, message_encrypted FROM contact_messages ORDER BY id DESC LIMIT 1`
+  assert.equal(saved[0].message, '[criptografado]')
+  assert.ok(saved[0].message_encrypted.startsWith('v1.'))
+  assert.equal(saved[0].name, '[criptografado]')
+  assert.equal(saved[0].email, '[criptografado]')
+  assert.ok(saved[0].name_encrypted.startsWith('v1.'))
+  assert.ok(saved[0].email_encrypted.startsWith('v1.'))
   const admin = { headers: { cookie } }
   let list = await call(inbox, 'GET', undefined, admin)
   assert.equal(list.statusCode, 200)
-  assert.ok(list.body.messages.some(message => message.id === saved[0].id))
+  assert.ok(list.body.messages.some(message => message.id === saved[0].id && message.name === valid.name && message.email === valid.email && message.message === valid.message))
+  assert.ok(!JSON.stringify(list.body).includes('name_encrypted'))
   const marked = await call(inbox, 'PUT', { id: saved[0].id, read: true }, admin)
   assert.equal(marked.statusCode, 200)
   assert.ok(marked.body.read_at)
@@ -58,7 +63,18 @@ try {
   assert.equal(burst.filter(result => result.statusCode === 201).length, 4)
   assert.equal(burst.filter(result => result.statusCode === 429).length, 2)
   assert.equal((await call(contact, 'POST', valid)).headers['Retry-After'], '900')
-  await sql`INSERT INTO contact_messages (name, email, message) SELECT 'Teste de paginação', 'pagination@example.test', 'Somente teste de paginação da caixa de entrada.' FROM generate_series(1, 51)`
+  const { encryptContactData, encryptContactIdentity } = await server.ssrLoadModule('/api/_lib/contact-encryption.ts')
+  await sql.transaction(Array.from({ length: 51 }, () => {
+    const identity = encryptContactData('Teste de paginação', 'pagination@example.test', 'Somente teste de paginação da caixa de entrada.')
+    return sql`INSERT INTO contact_messages (name, email, message, name_encrypted, email_encrypted, message_encrypted, encryption_id) VALUES ('[criptografado]', '[criptografado]', '[criptografado]', ${identity.name}, ${identity.email}, ${identity.message}, ${identity.recordId}::uuid)`
+  }))
+  const protectedSchema = await sql`SELECT 1 FROM pg_constraint WHERE conname = 'contact_identity_protected' AND conrelid = 'contact_messages'::regclass`
+  if (!protectedSchema.length) await sql`INSERT INTO contact_messages (name, email, message) VALUES ('Contato legado', 'migration@example.test', 'Registro antigo para teste da migração.')`
+  const protectedPayload = await sql`SELECT 1 FROM pg_constraint WHERE conname = 'contact_payload_protected' AND conrelid = 'contact_messages'::regclass`
+  if (!protectedPayload.length) {
+    const oldIdentity = encryptContactIdentity('Identidade já protegida', 'partial@example.test')
+    await sql`INSERT INTO contact_messages (name, email, message, name_encrypted, email_encrypted, encryption_id) VALUES ('[criptografado]', '[criptografado]', 'Mensagem da versão que criptografava apenas a identidade.', ${oldIdentity.name}, ${oldIdentity.email}, ${oldIdentity.recordId}::uuid)`
+  }
   list = await call(inbox, 'GET', undefined, admin)
   assert.equal(list.body.messages.length, 50)
   assert.ok(list.body.next)
@@ -66,7 +82,17 @@ try {
   assert.ok(secondPage.body.messages.length > 0)
   assert.ok(secondPage.body.messages.every(message => message.id < list.body.next))
   assert.equal((await call(inbox, 'GET', undefined, { ...admin, query: { before: 'invalid' } })).statusCode, 400)
-  console.log('Contato: validação, origem, autenticação, persistência, leitura, paginação e limite concorrente verificados.')
+  const { migrateContactIdentities } = await server.ssrLoadModule('/api/_lib/contact-migration.ts')
+  const pending = await sql`SELECT count(*)::integer AS total FROM contact_messages WHERE name_encrypted IS NULL OR message_encrypted IS NULL`
+  assert.equal(await migrateContactIdentities(), Number(pending[0].total))
+  assert.equal(await migrateContactIdentities(), 0)
+  const raw = await sql`SELECT count(*)::integer AS count FROM contact_messages WHERE name <> '[criptografado]' OR email <> '[criptografado]' OR message <> '[criptografado]' OR name_encrypted IS NULL OR email_encrypted IS NULL OR message_encrypted IS NULL`
+  assert.equal(Number(raw[0].count), 0)
+  await assert.rejects(sql`INSERT INTO contact_messages (name, email, message) VALUES ('Texto puro', 'blocked@example.test', 'O banco deve bloquear esta gravação.')`)
+  list = await call(inbox, 'GET', undefined, admin)
+  assert.equal(list.statusCode, 200)
+  assert.ok(list.body.messages.some(message => message.email === 'pagination@example.test'))
+  console.log('Contato: validação, origem, autenticação, persistência, leitura, paginação limite concorrente, dados criptografados e migração idempotente verificados.')
 } catch (error) {
   console.error(error)
   process.exitCode = 1

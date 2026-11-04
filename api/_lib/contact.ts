@@ -21,6 +21,11 @@ async function createContactSchema() {
       window_started_at TIMESTAMPTZ NOT NULL DEFAULT now()
     )
   `
+  await sql`ALTER TABLE contact_messages
+    ADD COLUMN IF NOT EXISTS name_encrypted TEXT,
+    ADD COLUMN IF NOT EXISTS email_encrypted TEXT,
+    ADD COLUMN IF NOT EXISTS message_encrypted TEXT,
+    ADD COLUMN IF NOT EXISTS encryption_id UUID`
 }
 
 export async function ensureContactSchema() {
