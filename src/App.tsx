@@ -1,7 +1,8 @@
 import { lazy, Suspense } from 'react'
 import Nav from '@/components/Nav'
 import Hero from '@/sections/Hero'
-import About from '@/sections/About'
+import Purpose from '@/sections/Purpose'
+import ProjectSpotlights from '@/sections/ProjectSpotlights'
 import Skills from '@/sections/Skills'
 import Highlights from '@/sections/Highlights'
 import Experience from '@/sections/Experience'
@@ -19,17 +20,13 @@ function PortfolioPage() {
         <Nav />
         <main id="conteudo">
           <Hero />
+          <ProjectSpotlights />
           <Experience />
-          <About />
-          <Skills />
-          <Highlights />
-          <Versions />
+          <Purpose><Skills /><Highlights /><Versions /></Purpose>
           <Contact />
         </main>
         <footer className="portfolio-footer container">
-          <a href="#inicio" className="wordmark">Eric Ikeda<span>.</span></a>
-          <p>© {new Date().getFullYear()} · Desenvolvido por EYI</p>
-          <a href="#inicio">Voltar ao início ↑</a>
+          <p>© {new Date().getFullYear()} Eric Ikeda · Desenvolvido por EYI</p>
         </footer>
       </div>
     </PortfolioContentProvider>

@@ -1,27 +1,15 @@
 import { useMemo } from 'react'
 import { usePortfolioContent } from '@/context/PortfolioContentContext'
-import { ArrowIcon } from '@/components/Icons'
 import { DeviceShowcase } from '@/components/DeviceShowcase'
-import { PortfolioIcon } from '@/components/PortfolioIcon'
+import { publicProjects, isMobileProject } from '@/lib/projectPresentation'
 
 export default function Hero() {
-  const { content, loading, error } = usePortfolioContent()
-  const projects = useMemo(() => content.projects.filter(p => p.published !== false).sort((a, b) => a.sort_order - b.sort_order || a.id - b.id), [content.projects])
-  const technologies = new Set(projects.flatMap(p => p.tags)).size
-  return <section id="inicio" className="hero-section container">
-    <div className="hero-grid">
-      <div className="hero-copy"><span className="hero-badge"><PortfolioIcon name="code" /> Desenvolvedor de Software</span>
-        <h1><span className="hero-title-intro">Transformo <span>ideias em</span></span><br /><span className="hero-title-accent">produtos digitais.</span></h1>
-        <p>Desenvolvimento web, mobile e soluções completas com foco em performance, experiência e resultado.</p>
-        <div className="hero-actions"><a className="button button-primary" href="#experiencia">Ver projetos <ArrowIcon diagonal /></a><a className="button button-outline" href="#sobre">Sobre mim</a></div>
-      </div>
-      <DeviceShowcase project={projects[0]} />
-    </div>
-    <div className="hero-metrics" aria-label="Sobre meu trabalho">
-      <div><PortfolioIcon name="code" /><p><strong>{loading || error ? '—' : projects.length}</strong><span>Projetos publicados</span></p></div>
-      <div><PortfolioIcon name="layers" /><p><strong>{loading || error ? '—' : technologies}</strong><span>Tecnologias e temas</span></p></div>
-      <div><PortfolioIcon name="mobile" /><p><strong>Web + Mobile</strong><span>Experiências conectadas</span></p></div>
-      <div><PortfolioIcon name="check" /><p><strong>Design & código</strong><span>Cuidado em cada detalhe</span></p></div>
-    </div>
+  const { content } = usePortfolioContent()
+  const projects = useMemo(() => publicProjects(content.projects), [content.projects])
+  const primary = projects.find(project => /webshop/i.test(project.name)) || projects.find(project => !isMobileProject(project)) || projects[0]
+  const secondary = projects.find(project => project.id !== primary?.id && !isMobileProject(project))
+  return <section id="inicio" className="hero-section">
+    <div className="hero-copy container"><span className="hero-name">Eric Ikeda</span><h1>Ideias que<br />ganham vida.</h1><p>Desenvolvimento web e mobile. Design em cada detalhe.</p><div className="hero-actions"><a className="hero-link primary-action" href="#experiencia">Explore os projetos <span aria-hidden="true">›</span></a><a className="hero-link secondary-action" href="#sobre">Conheça meu trabalho <span aria-hidden="true">›</span></a></div></div>
+    <div className="hero-scene" aria-label="Prévias dos projetos em desktop e celular">{secondary && <div className="hero-back-device"><DeviceShowcase project={secondary} /></div>}<div className="hero-main-device"><DeviceShowcase project={primary} /></div><div className="hero-stage" aria-hidden="true" /></div>
   </section>
 }

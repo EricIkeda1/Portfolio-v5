@@ -30,9 +30,9 @@ O projeto foi pensado para funcionar bem tanto no **desktop quanto no mobile**, 
 
 ## Interface e desempenho
 
-- Desktop escuro com tipografia do sistema, superfícies discretas e detalhes em violeta, seguindo a referência visual.
-- Mobile claro em lavanda, com botões amplos, navegação flutuante em quatro destinos e menu modal inspirado no Material Design 3 Expressive.
-- Projetos publicados carregados de `/api/content`, com filtros, carrossel por toque e teclado, tecnologias e links cadastrados.
+- Interface clara inspirada na referência: abertura centralizada, tipografia preta, detalhes azuis e composições com dispositivos em CSS.
+- Mobile claro com ações amplas, projetos em sequência e menu modal adaptado ao toque.
+- Destaques amplos selecionados entre os projetos publicados, seguidos de um carrossel com todos os trabalhos. Dados carregados de `/api/content`, com filtros, carrossel por toque e teclado, tecnologias e links cadastrados.
 - O campo de link existente aceita demonstrações, repositórios e publicações. O rótulo acompanha o destino.
 - Imagens cadastradas em `image_url` são carregadas sob demanda e têm prioridade sobre as capturas locais reais do WebShop e da galeria. As prévias são apresentadas em molduras CSS de notebook e celular. Imagens do Drive recebem tamanhos responsivos; outras URLs mantêm o arquivo de origem. Na ausência de imagem, o projeto usa uma capa tipográfica.
 - Painel administrativo e seu CSS carregados separadamente, sem downloads de fontes externas ou efeitos de cursor na página pública.

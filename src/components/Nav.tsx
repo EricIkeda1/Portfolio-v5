@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
-import { ArrowIcon, GridIcon } from './Icons'
+import { useEffect, useRef } from 'react'
+import { ArrowIcon } from './Icons'
 import { PortfolioIcon } from './PortfolioIcon'
 
 const links = [
@@ -11,16 +11,6 @@ const links = [
 ]
 
 export default function Nav() {
-  const [active, setActive] = useState('#inicio')
-  useEffect(() => {
-    const targets = links.map(link => document.querySelector(link.href)).filter((el): el is HTMLElement => el instanceof HTMLElement)
-    const observer = new IntersectionObserver(entries => {
-      const visible = entries.filter(entry => entry.isIntersecting).sort((a,b) => b.intersectionRatio - a.intersectionRatio)[0]
-      if (visible) setActive(`#${visible.target.id}`)
-    }, { rootMargin: '-15% 0px -45% 0px', threshold: [0, .2, .5] })
-    targets.forEach(target => observer.observe(target))
-    return () => observer.disconnect()
-  }, [])
   const dialog = useRef<HTMLDialogElement>(null)
   const trigger = useRef<HTMLButtonElement>(null)
   const close = () => dialog.current?.close()
@@ -33,8 +23,8 @@ export default function Nav() {
   return <>
     <header className="portfolio-header">
       <div className="container nav-inner">
-        <a href="#inicio" className="wordmark" aria-label="Eric Ikeda, início"><span className="brand-initials">EYI</span><span className="brand-name">Eric Ikeda</span></a>
-        <nav className="desktop-nav" aria-label="Navegação principal">{links.map(link => <a key={link.href} href={link.href}>{link.label}</a>)}</nav>
+        <a href="#inicio" className="wordmark" aria-label="Eric Ikeda, início"><span className="brand-initials">EYI</span></a>
+        <nav className="desktop-nav" aria-label="Navegação principal">{links.filter(link => link.href !== '#habilidades').map(link => <a key={link.href} href={link.href}>{link.label}</a>)}</nav>
         <a className="nav-contact" href="#contato">Vamos conversar <ArrowIcon diagonal /></a>
         <button ref={trigger} type="button" className="menu-trigger" onClick={() => dialog.current?.showModal()} aria-label="Abrir menu" aria-haspopup="dialog" aria-controls="mobile-menu"><PortfolioIcon name="menu" /></button>
       </div>
@@ -47,11 +37,6 @@ export default function Nav() {
         <p>Design, código e um pouco de mim.</p>
       </div>
     </dialog>
-    <nav className="mobile-dock" aria-label="Atalhos do portfólio">{[
-      { href: '#inicio', label: 'Início', icon: 'home' as const },
-      { href: '#experiencia', label: 'Projetos', icon: null },
-      { href: '#sobre', label: 'Sobre', icon: 'user' as const },
-      { href: '#contato', label: 'Contato', icon: 'mail' as const },
-    ].map(item => <a key={item.href} href={item.href} aria-current={active === item.href ? 'location' : undefined} onClick={() => setActive(item.href)}>{item.icon ? <PortfolioIcon name={item.icon} /> : <GridIcon />}<span>{item.label}</span></a>)}</nav>
+
   </>
 }
