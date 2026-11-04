@@ -9,8 +9,7 @@
     "preview": "vite preview",
     "format": "oxfmt",
     "dev:vercel": "npx vercel dev",
-    "admin:hash": "node scripts/hash-admin-password.mjs",
-    "prebuild": "node scripts/check-demo-assets.mjs"
+    "admin:hash": "node scripts/hash-admin-password.mjs"
   },
   "dependencies": {
     "react": "^19.0.0",

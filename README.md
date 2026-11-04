@@ -7,6 +7,8 @@ A ideia foi criar algo **simples, moderno e com a minha identidade**, onde eu pu
 **Acesse o portfólio:**  
 https://www.ericyikeda.com.br/
 
+A página inicial abre diretamente o portfólio. O endereço `/portfolio` também permanece disponível e exibe a mesma página, incluindo links diretos às seções.
+
 ## Sobre o projeto
 
 No portfólio você encontra:
