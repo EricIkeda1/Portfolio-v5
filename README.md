@@ -77,7 +77,7 @@ https://www.ericyikeda.com.br/
 
 ### Mensagens de contato
 
-A seção Contato oferece um formulário de nome, e-mail e mensagem, sem redirecionar o visitante. O número do WhatsApp é exibido a partir das configurações existentes.
+A seção Contato apresenta apenas o formulário de nome, e-mail e mensagem, sem redirecionar o visitante e sem cartões de WhatsApp ou outros contatos.
 
 - `POST /api/contact` grava no Neon, valida tamanho e formato e limita a cinco envios por origem a cada 15 minutos, com controle atômico no banco e campo antispam.
 - `/admin` → **Mensagens** lista os contatos com paginação e permite marcar como lidos/não lidos e abrir uma resposta por e-mail. As notificações push podem ser ativadas em cada aparelho pelo painel. Não há notificação automática no WhatsApp ou por e-mail.
