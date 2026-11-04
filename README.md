@@ -104,3 +104,11 @@ Abra `/arena` ou use “Jogar minigame” no rodapé. É um battle royale origin
 - A partida pausa ao trocar de aba ou sair da janela. O recorde é um número salvo no localStorage deste navegador; não há conta, multiplayer, envio de dados de jogo ou integração com Neon.
 - O jogo carrega sob demanda em um chunk separado. A simulação e a renderização usam Canvas; o HUD atualiza até dez vezes por segundo, o DPR é limitado e partículas respeitam movimento reduzido.
 - Validação da simulação: `node scripts/test-arena.mjs`.
+
+### Foco e atalhos do minigame
+
+Ao iniciar ou continuar pelo botão, o jogo solicita tela cheia e, quando disponível, Keyboard Lock para as teclas usadas na arena e atalhos comuns. Durante a partida com o canvas focado, os eventos são capturados antes da verificação de Ctrl/Alt/Meta para evitar ações padrão do navegador, como abrir um arquivo ou recarregar a página. As teclas físicas são usadas para movimentação.
+
+Esc pausa; Tab pausa e preserva a navegação por teclado; F11 mantém a saída nativa. Ao pausar, perder o foco, sair da tela cheia ou desmontar a página, a captura é liberada. A partida funciona também quando o navegador não oferece ou não autoriza a captura. Atalhos reservados pelo Windows, como algumas combinações com Win, não podem ser bloqueados com garantia por uma página web. Não há alteração de configurações do sistema operacional.
+
+Regressão de teclado: `node scripts/test-arena-keyboard.mjs`.

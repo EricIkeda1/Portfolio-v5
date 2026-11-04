@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState, type PointerEvent as ReactPoi
 import { createGame, freshInput, step, WEAPONS, type Game, type Input } from './engine'
 import { camera, render } from './render'
 import './arena.css'
+import { GAME_KEY_CODES, captureGameKey, gameKey, keyboardApi, releaseGameKeyboard, reservedExit } from './keyboard'
 
 type Phase = 'ready' | 'playing' | 'paused' | 'over'
 function snapshot(game: Game) {
@@ -23,9 +24,30 @@ function Stick({ label, onMove }: { label: string; onMove: (x: number, y: number
   return <div className="arena-stick-wrap"><div className="arena-stick" role="group" aria-label={label} onPointerDown={event => { active.current = event.pointerId; event.currentTarget.setPointerCapture(event.pointerId); move(event) }} onPointerMove={move} onPointerUp={stop} onPointerCancel={stop} onLostPointerCapture={stop}><span style={{ transform: `translate(${position.x}px, ${position.y}px)` }} /></div><small>{label}</small></div>
 }
 export default function ArenaPage() {
+  const app = useRef<HTMLDivElement>(null)
+  const [fullscreen, setFullscreen] = useState(false)
   const canvas = useRef<HTMLCanvasElement>(null), gameRef = useRef<Game | null>(null), input = useRef<Input>(freshInput()), keys = useRef(new Set<string>()), phaseRef = useRef<Phase>('ready'), dirty = useRef(true), dimensions = useRef({ width: 800, height: 600 })
   const [phase, setPhase] = useState<Phase>('ready'), [hud, setHud] = useState<Hud>(initialHud), [best, setBest] = useState(0)
-  const setMode = useCallback((mode: Phase) => { phaseRef.current = mode; input.current.fire = false; keys.current.clear(); input.current.x = 0; input.current.y = 0; dirty.current = true; setPhase(mode) }, [])
+  const setMode = useCallback((mode: Phase) => { if (mode !== 'playing') releaseGameKeyboard(); phaseRef.current = mode; input.current.fire = false; keys.current.clear(); input.current.x = 0; input.current.y = 0; dirty.current = true; setPhase(mode) }, [])
+  const immersive = useCallback(async () => {
+    canvas.current?.focus({ preventScroll: true })
+    try {
+      if (!document.fullscreenElement && app.current?.requestFullscreen) await app.current.requestFullscreen()
+      if (app.current && document.fullscreenElement === app.current && phaseRef.current === 'playing') await keyboardApi()?.lock?.(GAME_KEY_CODES)
+    } catch { /* A partida continua se tela cheia/captura não for permitida. */ }
+    if (phaseRef.current === 'playing' && app.current) canvas.current?.focus({ preventScroll: true })
+    else releaseGameKeyboard()
+  }, [])
+  const resume = () => { setMode('playing'); void immersive() }
+  useEffect(() => {
+    const onFullscreen = () => {
+      const active = document.fullscreenElement === app.current
+      setFullscreen(active)
+      if (!active) { releaseGameKeyboard(); if (phaseRef.current === 'playing') setMode('paused') }
+    }
+    document.addEventListener('fullscreenchange', onFullscreen)
+    return () => { document.removeEventListener('fullscreenchange', onFullscreen); releaseGameKeyboard() }
+  }, [setMode])
   useEffect(() => {
     const element = canvas.current, context = element?.getContext('2d', { alpha: false })
     if (!element || !context) return
@@ -57,32 +79,52 @@ export default function ArenaPage() {
     }
     frameId = requestAnimationFrame(frame)
     const down = (event: KeyboardEvent) => {
-      if (event.ctrlKey || event.metaKey || event.altKey) return
-      const key = event.key.toLowerCase()
-      if (key === 'escape') { if (phaseRef.current === 'playing') setMode('paused'); else if (phaseRef.current === 'paused') setMode('playing'); return }
+      if (event.key === 'Escape') {
+        if (event.repeat) return
+        if (phaseRef.current === 'playing') { event.preventDefault(); setMode('paused') }
+        else if (phaseRef.current === 'paused' && document.activeElement === element) { event.preventDefault(); setMode('playing'); element.focus({ preventScroll: true }) }
+        return
+      }
       if (phaseRef.current !== 'playing') return
-      if (['w','a','s','d','arrowup','arrowdown','arrowleft','arrowright','r','f','1','2','3'].includes(key)) event.preventDefault()
+      if (reservedExit(event)) {
+        if (event.key === 'Tab') setMode('paused')
+        return
+      }
+      // Cancela antes de verificar modificadores: Ctrl+O/R/W não são ações da partida.
+      if (!captureGameKey(event, true, document.activeElement === element)) return
+      if (event.ctrlKey || event.metaKey || event.altKey || ['Control', 'Meta', 'Alt'].includes(event.key)) {
+        keys.current.clear(); input.current.x = 0; input.current.y = 0; input.current.fire = false
+        return
+      }
+      const key = gameKey(event)
+      if (!key) return
       keys.current.add(key)
-      if (key === 'r') input.current.reload = true
-      if (key === 'f') input.current.heal = true
-      if (['1','2','3'].includes(key)) input.current.weapon = Number(key) - 1
+      if (!event.repeat) {
+        if (key === 'r') input.current.reload = true
+        if (key === 'f') input.current.heal = true
+        if (['1','2','3'].includes(key)) input.current.weapon = Number(key) - 1
+      }
     }
-    const up = (event: KeyboardEvent) => { keys.current.delete(event.key.toLowerCase()); if (!keys.current.size) { input.current.x = 0; input.current.y = 0 } }
+    const up = (event: KeyboardEvent) => {
+      captureGameKey(event, phaseRef.current === 'playing', document.activeElement === element)
+      keys.current.delete(gameKey(event))
+      if (!keys.current.size) { input.current.x = 0; input.current.y = 0 }
+    }
     const pause = () => { if (phaseRef.current === 'playing') setMode('paused') }
     const visibility = () => { if (document.hidden) pause() }
     const release = (event: PointerEvent) => { if (event.pointerType !== 'touch') input.current.fire = false }
-    window.addEventListener('keydown', down); window.addEventListener('keyup', up); window.addEventListener('blur', pause); window.addEventListener('pointerup', release); document.addEventListener('visibilitychange', visibility)
-    return () => { cancelAnimationFrame(frameId); observer.disconnect(); window.removeEventListener('keydown', down); window.removeEventListener('keyup', up); window.removeEventListener('blur', pause); window.removeEventListener('pointerup', release); document.removeEventListener('visibilitychange', visibility) }
+    window.addEventListener('keydown', down, true); window.addEventListener('keyup', up, true); window.addEventListener('blur', pause); window.addEventListener('pointerup', release); document.addEventListener('visibilitychange', visibility)
+    return () => { cancelAnimationFrame(frameId); observer.disconnect(); window.removeEventListener('keydown', down, true); window.removeEventListener('keyup', up, true); window.removeEventListener('blur', pause); window.removeEventListener('pointerup', release); document.removeEventListener('visibilitychange', visibility) }
   }, [setMode])
-  const start = () => { gameRef.current = createGame(); input.current = freshInput(); setHud(snapshot(gameRef.current)); setMode('playing'); canvas.current?.focus() }
+  const start = () => { gameRef.current = createGame(); input.current = freshInput(); setHud(snapshot(gameRef.current)); setMode('playing'); void immersive() }
   const aim = (event: ReactPointerEvent<HTMLCanvasElement>) => {
     if (!gameRef.current || event.pointerType === 'touch') return
     const rect = event.currentTarget.getBoundingClientRect(), cam = camera(gameRef.current, rect.width, rect.height), player = gameRef.current.actors[0]
     input.current.aim = Math.atan2(cam.y + (event.clientY - rect.top - rect.height / 2) / cam.scale - player.y, cam.x + (event.clientX - rect.left - rect.width / 2) / cam.scale - player.x)
   }
   const time = `${Math.floor(hud.elapsed / 60)}:${String(hud.elapsed % 60).padStart(2, '0')}`
-  return <div className="arena-app">
-    <header className="arena-header"><a href="/" aria-label="Voltar ao portfólio">EYI <span>PLAYGROUND</span></a><div>LAST <b>CIRCLE</b><span className="arena-version">SOLO · CONTRA BOTS</span></div><button onClick={() => { if (phase === 'playing') setMode('paused'); else if (phase === 'paused') { setMode('playing'); canvas.current?.focus() } }} disabled={phase === 'ready' || phase === 'over'} aria-label={phase === 'paused' ? 'Continuar partida' : 'Pausar partida'}>{phase === 'paused' ? 'Continuar' : 'Pausar'} <kbd>Esc</kbd></button></header>
+  return <div ref={app} className="arena-app" onClick={event => { if (phaseRef.current === 'playing' && event.target instanceof Element && event.target.closest('button')) canvas.current?.focus({ preventScroll: true }) }}>
+    <header className="arena-header"><a href="/" aria-label="Voltar ao portfólio">EYI <span>PLAYGROUND</span></a><div>LAST <b>CIRCLE</b><span className="arena-version">SOLO · CONTRA BOTS</span></div><div className="arena-header-actions"><button onClick={() => { if (fullscreen) void document.exitFullscreen().catch(() => {}); else void immersive() }}>{fullscreen ? 'Sair da tela cheia' : 'Tela cheia'}</button><button onClick={() => { if (phase === 'playing') setMode('paused'); else if (phase === 'paused') resume() }} disabled={phase === 'ready' || phase === 'over'} aria-label={phase === 'paused' ? 'Continuar partida' : 'Pausar partida'}>{phase === 'paused' ? 'Continuar' : 'Pausar'} <kbd>Esc</kbd></button></div></header>
     <main className="arena-stage">
       <canvas ref={canvas} tabIndex={0} aria-label="Arena de sobrevivência. Use WASD ou setas para mover, mouse para mirar, clique para atirar, R para recarregar e F para curar." onPointerMove={aim} onPointerDown={event => { if (phaseRef.current !== 'playing') return; event.currentTarget.focus(); aim(event); if (event.pointerType !== 'touch') { input.current.fire = true; event.currentTarget.setPointerCapture(event.pointerId) } }} onPointerUp={() => { input.current.fire = false }} onPointerCancel={() => { input.current.fire = false }} />
       <div className="arena-hud" aria-label="Estado da partida"><div><span className="arena-live-dot" /> <strong>{hud.alive}</strong><small>vivos</small></div><div><strong>{hud.kills}</strong><small>eliminações</small></div><div><strong>{time}</strong><small>tempo</small></div></div>
@@ -93,7 +135,7 @@ export default function ArenaPage() {
         <div className="arena-inventory">{WEAPONS.map((weapon, index) => <button key={weapon.short} className={hud.weapon === index ? 'active' : ''} disabled={!hud.unlocked.includes(index)} onClick={() => { input.current.weapon = index }}><kbd>{index + 1}</kbd>{weapon.short}{!hud.unlocked.includes(index) && <span>coletar</span>}</button>)}<button onClick={() => { input.current.reload = true }} aria-label="Recarregar arma"><kbd>R</kbd>Recarregar</button><button onClick={() => { input.current.heal = true }} disabled={!hud.kits || hud.hp >= 100 || hud.heal > 0}><kbd>F</kbd>+ Kit ({hud.kits})</button></div>
         <div className="arena-touch"><Stick label="Mover" onMove={(x, y) => { input.current.x = x; input.current.y = y }} /><Stick label="Mirar / atirar" onMove={(x, y) => { if (Math.hypot(x, y) > .15) input.current.aim = Math.atan2(y, x); input.current.fire = Math.hypot(x, y) > .2 }} /></div>
       </>}
-      {phase !== 'playing' && <div className="arena-overlay"><section className="arena-menu" aria-labelledby="arena-title"><span className="arena-eyebrow">EYI ORIGINAL · MINI BATTLE ROYALE</span><h1 id="arena-title">{phase === 'ready' ? <>LAST<br /><em>CIRCLE.</em></> : phase === 'paused' ? <>Respira.<br /><em>Tá pausado.</em></> : hud.victory ? <>O último<br /><em>sobrevivente.</em></> : <>Mais uma<br /><em>tentativa?</em></>}</h1><p>{phase === 'ready' ? 'Você, 15 bots e um círculo cada vez menor. Colete armas, proteja-se e fique por último.' : phase === 'paused' ? 'A partida fica congelada enquanto você estiver por aqui.' : `Posição #${hud.rank} · ${hud.kills} eliminações · ${time} de sobrevivência.`}</p><button className="arena-start" onClick={phase === 'paused' ? () => { setMode('playing'); canvas.current?.focus() } : start}>{phase === 'ready' ? 'Entrar na arena' : phase === 'paused' ? 'Voltar para a partida' : 'Jogar de novo'} <span>↗</span></button><div className="arena-instructions"><span><kbd>W A S D</kbd> mover</span><span><kbd>Mouse</kbd> mirar / atirar</span><span><kbd>R</kbd> recarregar</span><span><kbd>F</kbd> kit médico</span></div><p className="arena-mobile-help">No celular: controle esquerdo para mover e direito para mirar e atirar.</p><div className="arena-menu-footer"><span>Recorde local <strong>{best}</strong></span><a href="/">Voltar ao portfólio</a></div></section></div>}
+      {phase !== 'playing' && <div className="arena-overlay"><section className="arena-menu" aria-labelledby="arena-title"><span className="arena-eyebrow">EYI ORIGINAL · MINI BATTLE ROYALE</span><h1 id="arena-title">{phase === 'ready' ? <>LAST<br /><em>CIRCLE.</em></> : phase === 'paused' ? <>Respira.<br /><em>Tá pausado.</em></> : hud.victory ? <>O último<br /><em>sobrevivente.</em></> : <>Mais uma<br /><em>tentativa?</em></>}</h1><p>{phase === 'ready' ? 'Você, 15 bots e um círculo cada vez menor. Colete armas, proteja-se e fique por último.' : phase === 'paused' ? 'A partida fica congelada enquanto você estiver por aqui.' : `Posição #${hud.rank} · ${hud.kills} eliminações · ${time} de sobrevivência.`}</p><button className="arena-start" onClick={phase === 'paused' ? resume : start}>{phase === 'ready' ? 'Jogar em tela cheia' : phase === 'paused' ? 'Voltar para a partida' : 'Jogar de novo'} <span>↗</span></button><div className="arena-instructions"><span><kbd>W A S D</kbd> mover</span><span><kbd>Mouse</kbd> mirar / atirar</span><span><kbd>R</kbd> recarregar</span><span><kbd>F</kbd> kit médico</span></div><p className="arena-mobile-help">No celular: controle esquerdo para mover e direito para mirar e atirar.</p><p className="arena-focus-help">Clique na arena para focar o teclado. Esc pausa; Tab libera a navegação. Alguns atalhos do sistema não podem ser bloqueados pelo navegador.</p><div className="arena-menu-footer"><span>Recorde local <strong>{best}</strong></span><a href="/">Voltar ao portfólio</a></div></section></div>}
     </main>
   </div>
 }
