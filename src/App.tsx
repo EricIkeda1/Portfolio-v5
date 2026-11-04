@@ -10,6 +10,7 @@ import Contact from '@/sections/Contact'
 import { PortfolioContentProvider } from '@/context/PortfolioContentContext'
 import AdminPage from '@/admin/AdminPage'
 import NotFoundPage from '@/NotFoundPage'
+import PrivacyPage from './PrivacyPage'
 
 function PortfolioPage() {
   const [hovering, setHovering] = useState(false)
@@ -70,6 +71,7 @@ function PortfolioPage() {
           </main>
           <footer className="site-footer">
             <div className="site-footer-inner">
+              <a href="/privacidade" className="privacy-link">Política de Privacidade</a>
               <div className="site-footer-signature">
                 <span className="site-footer-monogram" aria-hidden="true">EI</span>
                 <div>
@@ -109,6 +111,8 @@ export default function App({ pathname = window.location.pathname }: { pathname?
   if (normalizedPath === '/admin') {
     return <AdminPage />
   }
+
+  if (normalizedPath === '/privacidade') return <PrivacyPage />
 
   if (normalizedPath !== '/' && normalizedPath !== '/portfolio') {
     return <NotFoundPage />

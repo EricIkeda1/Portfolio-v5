@@ -1,6 +1,6 @@
 import { createCipheriv, createDecipheriv, createHash, randomBytes, randomUUID } from 'node:crypto'
 
-type Field = 'name' | 'email'
+type Field = 'name' | 'email' | 'message'
 
 function encryptionKey() {
   const value = process.env.CONTACT_ENCRYPTION_KEY ?? ''
@@ -34,7 +34,7 @@ export function decryptContactField(value: string, field: Field, recordId: strin
   return Buffer.concat([decipher.update(Buffer.from(content, 'base64url')), decipher.final()]).toString('utf8')
 }
 
-export function encryptContactIdentity(name: string, email: string, recordId = randomUUID()) {
+export function encryptContactIdentity(name: string, email: string, recordId: string = randomUUID()) {
   return { recordId, name: encryptContactField(name, 'name', recordId), email: encryptContactField(email, 'email', recordId) }
 }
 
@@ -46,4 +46,15 @@ export function decryptContactIdentity(row: Record<string, unknown>) {
   }
   if (typeof name_encrypted !== 'string' || typeof email_encrypted !== 'string' || typeof encryption_id !== 'string') throw new Error('Contato criptografado incompleto.')
   return { name: decryptContactField(name_encrypted, 'name', encryption_id), email: decryptContactField(email_encrypted, 'email', encryption_id) }
+}
+
+export function encryptContactData(name: string, email: string, message: string, recordId: string = randomUUID()) {
+  return { ...encryptContactIdentity(name, email, recordId), message: encryptContactField(message, 'message', recordId) }
+}
+
+export function decryptContactData(row: Record<string, unknown>) {
+  const identity = decryptContactIdentity(row)
+  if (row.message_encrypted === null) return { ...identity, message: String(row.message) }
+  if (typeof row.message_encrypted !== 'string' || typeof row.encryption_id !== 'string') throw new Error('Mensagem criptografada incompleta.')
+  return { ...identity, message: decryptContactField(row.message_encrypted, 'message', row.encryption_id) }
 }

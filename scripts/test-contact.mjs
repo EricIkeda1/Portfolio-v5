@@ -41,8 +41,9 @@ try {
   const result = await call(contact, 'POST', valid)
   assert.equal(result.statusCode, 201)
   const sql = getSql()
-  const saved = await sql`SELECT id, name, email, name_encrypted, email_encrypted, encryption_id, message FROM contact_messages WHERE message = ${valid.message} ORDER BY id DESC LIMIT 1`
-  assert.equal(saved[0].message, valid.message)
+  const saved = await sql`SELECT id, name, email, name_encrypted, email_encrypted, encryption_id, message, message_encrypted FROM contact_messages ORDER BY id DESC LIMIT 1`
+  assert.equal(saved[0].message, '[criptografado]')
+  assert.ok(saved[0].message_encrypted.startsWith('v1.'))
   assert.equal(saved[0].name, '[criptografado]')
   assert.equal(saved[0].email, '[criptografado]')
   assert.ok(saved[0].name_encrypted.startsWith('v1.'))
@@ -50,7 +51,7 @@ try {
   const admin = { headers: { cookie } }
   let list = await call(inbox, 'GET', undefined, admin)
   assert.equal(list.statusCode, 200)
-  assert.ok(list.body.messages.some(message => message.id === saved[0].id && message.name === valid.name && message.email === valid.email))
+  assert.ok(list.body.messages.some(message => message.id === saved[0].id && message.name === valid.name && message.email === valid.email && message.message === valid.message))
   assert.ok(!JSON.stringify(list.body).includes('name_encrypted'))
   const marked = await call(inbox, 'PUT', { id: saved[0].id, read: true }, admin)
   assert.equal(marked.statusCode, 200)
@@ -62,13 +63,18 @@ try {
   assert.equal(burst.filter(result => result.statusCode === 201).length, 4)
   assert.equal(burst.filter(result => result.statusCode === 429).length, 2)
   assert.equal((await call(contact, 'POST', valid)).headers['Retry-After'], '900')
-  const { encryptContactIdentity } = await server.ssrLoadModule('/api/_lib/contact-encryption.ts')
+  const { encryptContactData, encryptContactIdentity } = await server.ssrLoadModule('/api/_lib/contact-encryption.ts')
   await sql.transaction(Array.from({ length: 51 }, () => {
-    const identity = encryptContactIdentity('Teste de paginação', 'pagination@example.test')
-    return sql`INSERT INTO contact_messages (name, email, message, name_encrypted, email_encrypted, encryption_id) VALUES ('[criptografado]', '[criptografado]', 'Somente teste de paginação da caixa de entrada.', ${identity.name}, ${identity.email}, ${identity.recordId}::uuid)`
+    const identity = encryptContactData('Teste de paginação', 'pagination@example.test', 'Somente teste de paginação da caixa de entrada.')
+    return sql`INSERT INTO contact_messages (name, email, message, name_encrypted, email_encrypted, message_encrypted, encryption_id) VALUES ('[criptografado]', '[criptografado]', '[criptografado]', ${identity.name}, ${identity.email}, ${identity.message}, ${identity.recordId}::uuid)`
   }))
   const protectedSchema = await sql`SELECT 1 FROM pg_constraint WHERE conname = 'contact_identity_protected' AND conrelid = 'contact_messages'::regclass`
   if (!protectedSchema.length) await sql`INSERT INTO contact_messages (name, email, message) VALUES ('Contato legado', 'migration@example.test', 'Registro antigo para teste da migração.')`
+  const protectedPayload = await sql`SELECT 1 FROM pg_constraint WHERE conname = 'contact_payload_protected' AND conrelid = 'contact_messages'::regclass`
+  if (!protectedPayload.length) {
+    const oldIdentity = encryptContactIdentity('Identidade já protegida', 'partial@example.test')
+    await sql`INSERT INTO contact_messages (name, email, message, name_encrypted, email_encrypted, encryption_id) VALUES ('[criptografado]', '[criptografado]', 'Mensagem da versão que criptografava apenas a identidade.', ${oldIdentity.name}, ${oldIdentity.email}, ${oldIdentity.recordId}::uuid)`
+  }
   list = await call(inbox, 'GET', undefined, admin)
   assert.equal(list.body.messages.length, 50)
   assert.ok(list.body.next)
@@ -77,10 +83,10 @@ try {
   assert.ok(secondPage.body.messages.every(message => message.id < list.body.next))
   assert.equal((await call(inbox, 'GET', undefined, { ...admin, query: { before: 'invalid' } })).statusCode, 400)
   const { migrateContactIdentities } = await server.ssrLoadModule('/api/_lib/contact-migration.ts')
-  const pending = await sql`SELECT count(*)::integer AS total FROM contact_messages WHERE name_encrypted IS NULL`
+  const pending = await sql`SELECT count(*)::integer AS total FROM contact_messages WHERE name_encrypted IS NULL OR message_encrypted IS NULL`
   assert.equal(await migrateContactIdentities(), Number(pending[0].total))
   assert.equal(await migrateContactIdentities(), 0)
-  const raw = await sql`SELECT count(*)::integer AS count FROM contact_messages WHERE name <> '[criptografado]' OR email <> '[criptografado]' OR name_encrypted IS NULL OR email_encrypted IS NULL`
+  const raw = await sql`SELECT count(*)::integer AS count FROM contact_messages WHERE name <> '[criptografado]' OR email <> '[criptografado]' OR message <> '[criptografado]' OR name_encrypted IS NULL OR email_encrypted IS NULL OR message_encrypted IS NULL`
   assert.equal(Number(raw[0].count), 0)
   await assert.rejects(sql`INSERT INTO contact_messages (name, email, message) VALUES ('Texto puro', 'blocked@example.test', 'O banco deve bloquear esta gravação.')`)
   list = await call(inbox, 'GET', undefined, admin)

@@ -12,7 +12,7 @@ try {
   await migrateContactIdentities()
   assert.equal(await migrateContactIdentities(), 0)
   const sql = getSql()
-  const rows = await sql`SELECT count(*)::integer AS total, count(*) FILTER (WHERE name <> '[criptografado]' OR email <> '[criptografado]' OR name_encrypted IS NULL OR email_encrypted IS NULL)::integer AS pending FROM contact_messages`
+  const rows = await sql`SELECT count(*)::integer AS total, count(*) FILTER (WHERE name <> '[criptografado]' OR email <> '[criptografado]' OR message <> '[criptografado]' OR name_encrypted IS NULL OR email_encrypted IS NULL OR message_encrypted IS NULL)::integer AS pending FROM contact_messages`
   assert.ok(rows[0].total > 0); assert.equal(rows[0].pending, 0)
   await assert.rejects(sql`INSERT INTO contact_messages (name, email, message) VALUES ('Texto puro', 'blocked@example.test', 'O banco deve bloquear esta gravação.')`)
   const cookie = `portfolio_admin_session=${createSessionToken({ id: 1, email: 'admin@example.test' })}`
@@ -25,7 +25,7 @@ try {
   let result = await read()
   assert.equal(result.statusCode, 200)
   assert.ok(result.body.messages.length > 0)
-  assert.ok(result.body.messages.every(item => item.name !== '[criptografado]' && item.email.includes('@')))
+  assert.ok(result.body.messages.every(item => item.name !== '[criptografado]' && item.email.includes('@') && item.message !== '[criptografado]'))
   assert.ok(!JSON.stringify(result.body).includes('name_encrypted'))
   process.env.CONTACT_ENCRYPTION_KEY = randomBytes(32).toString('hex')
   result = await read()

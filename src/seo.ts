@@ -3,13 +3,14 @@ const personId = `${origin}/#person`
 const websiteId = `${origin}/#website`
 
 export function seoHead(pathname: string) {
+  const privacy = pathname.replace(/\/+$/, '') === '/privacidade'
   const portfolio = pathname === '/' || pathname.replace(/\/+$/, '') === '/portfolio'
   const privatePage = pathname === '/admin' || pathname === '/404'
   const title = privatePage
     ? `${pathname === '/admin' ? 'Administração' : 'Página não encontrada'} | Eric Y. Ikeda`
-    : 'Eric Yuji Ikeda | Portfólio de desenvolvimento web e mobile'
-  const description = 'Conheça os projetos de Eric Yuji Ikeda: desenvolvimento web e mobile com React, Flutter, TypeScript, APIs REST e PostgreSQL.'
-  const url = `${origin}/`
+    : privacy ? 'Política de Privacidade | Eric Ikeda' : 'Eric Yuji Ikeda | Portfólio de desenvolvimento web e mobile'
+  const description = privacy ? 'Saiba como os dados do formulário são tratados e como exercer seus direitos de privacidade.' : 'Conheça os projetos de Eric Yuji Ikeda: desenvolvimento web e mobile com React, Flutter, TypeScript, APIs REST e PostgreSQL.'
+  const url = privacy ? `${origin}/privacidade` : `${origin}/`
   const escape = (value: string) => value.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;')
   const meta = (name: string, content: string, property = false) => `<meta ${property ? 'property' : 'name'}="${name}" content="${escape(content)}" />`
   const graph: Record<string, unknown>[] = [

@@ -3,7 +3,7 @@ import { getSessionSecret } from './_lib/auth.js'
 import { ensureContactSchema } from './_lib/contact.js'
 import { getSql } from './_lib/db.js'
 import { notifyNewContact } from './_lib/push.js'
-import { encryptContactIdentity } from './_lib/contact-encryption.js'
+import { encryptContactData } from './_lib/contact-encryption.js'
 import { allowMethods, noStore } from './_lib/http.js'
 import { enforceSameOrigin, getClientIp, requireJson } from './_lib/security.js'
 
@@ -30,7 +30,7 @@ export default async function handler(req: any, res: any) {
 
   try {
     // Falha antes de gravar caso a chave esteja ausente; nunca usa texto puro como fallback.
-    const identity = encryptContactIdentity(clean.name, clean.email)
+    const identity = encryptContactData(clean.name, clean.email, clean.message)
     const key = createHmac('sha256', getSessionSecret()).update(`contact:${getClientIp(req)}`).digest('hex')
     await ensureContactSchema()
     const sql = getSql()
@@ -48,8 +48,8 @@ export default async function handler(req: any, res: any) {
           OR contact_submission_limits.window_started_at <= now() - interval '15 minutes'
         RETURNING key
       )
-      INSERT INTO contact_messages (name, email, message, name_encrypted, email_encrypted, encryption_id)
-      SELECT '[criptografado]', '[criptografado]', ${clean.message}, ${identity.name}, ${identity.email}, ${identity.recordId}::uuid FROM allowed
+      INSERT INTO contact_messages (name, email, message, name_encrypted, email_encrypted, message_encrypted, encryption_id)
+      SELECT '[criptografado]', '[criptografado]', '[criptografado]', ${identity.name}, ${identity.email}, ${identity.message}, ${identity.recordId}::uuid FROM allowed
       RETURNING id
     `
     if (!rows.length) {
