@@ -413,6 +413,8 @@ function Dashboard({ user, onUserUpdated, onLogout }: { user: AdminUser; onUserU
   const [content, setContent] = useState<PortfolioContent>(DEFAULT_CONTENT)
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState('')
+  const [logoutError, setLogoutError] = useState('')
+  const [loggingOut, setLoggingOut] = useState(false)
   const currentLabel = useMemo(() => navigation.find((item) => item.id === active)?.label ?? 'Visão geral', [active])
 
   useEffect(() => {
@@ -429,7 +431,19 @@ function Dashboard({ user, onUserUpdated, onLogout }: { user: AdminUser; onUserU
   }, [])
 
   const navigate = (tab: string) => { setActive(tab); setMobileMenu(false); window.scrollTo({ top: 0, behavior: 'smooth' }) }
-  const logout = async () => { try { await adminLogout() } finally { onLogout() } }
+  const logout = async () => {
+    if (loggingOut) return
+    setLoggingOut(true)
+    setLogoutError('')
+    try {
+      await adminLogout()
+      onLogout()
+    } catch (error) {
+      setLogoutError(error instanceof Error ? error.message : 'Não foi possível encerrar a sessão. Tente novamente.')
+    } finally {
+      setLoggingOut(false)
+    }
+  }
   const updateProjects = (projects: PortfolioProject[]) => setContent((current) => ({ ...current, projects }))
 
   return (
@@ -437,12 +451,13 @@ function Dashboard({ user, onUserUpdated, onLogout }: { user: AdminUser; onUserU
       <aside className={`admin-sidebar ${mobileMenu ? 'open' : ''}`}>
         <div className="admin-sidebar-brand"><ProtectedLogo alt="Eric Y. Ikeda" /><div><strong>ERIC Y. IKEDA</strong><span>ADMIN PANEL</span></div><button className="admin-sidebar-close" onClick={() => setMobileMenu(false)}><Icon name="close"/></button></div>
         <nav className="admin-sidebar-nav" aria-label="Menu administrativo"><span className="admin-nav-caption">MENU PRINCIPAL</span>{navigation.map((item) => <button key={item.id} className={active === item.id ? 'active' : ''} onClick={() => navigate(item.id)}><Icon name={item.icon} size={18}/><span>{item.label}</span>{active === item.id && <i/>}</button>)}</nav>
-        <div className="admin-sidebar-footer"><a href="/" target="_blank" rel="noreferrer"><Icon name="external" size={17}/><span>Ver portfólio</span></a><button onClick={() => void logout()}><Icon name="logout" size={17}/><span>Sair</span></button><div className="admin-user-chip"><span>EI</span><div><strong>Eric Ikeda</strong><small>Administrador</small></div></div></div>
+        <div className="admin-sidebar-footer"><a href="/" target="_blank" rel="noreferrer"><Icon name="external" size={17}/><span>Ver portfólio</span></a><button onClick={() => void logout()} disabled={loggingOut} aria-busy={loggingOut}><Icon name="logout" size={17}/><span>{loggingOut ? 'Saindo...' : 'Sair'}</span></button><div className="admin-user-chip"><span>EI</span><div><strong>Eric Ikeda</strong><small>Administrador</small></div></div></div>
       </aside>
       {mobileMenu && <button className="admin-sidebar-overlay" aria-label="Fechar menu" onClick={() => setMobileMenu(false)} />}
       <div className="admin-main-area">
         <header className="admin-topbar"><button className="admin-mobile-menu" onClick={() => setMobileMenu(true)}><Icon name="menu"/></button><div><span>Painel administrativo</span><strong>{currentLabel}</strong></div><div className="admin-topbar-status"><span/><em>Neon conectado</em></div></header>
         <main className="admin-dashboard-content">
+          {logoutError && <div role="alert" className="admin-toast-demo admin-toast-error">{logoutError}</div>}
           {loading && <div className="admin-panel-card"><p className="admin-setting-description">Carregando conteúdo do Neon...</p></div>}
           {!loading && loadError && <div className="admin-toast-demo admin-toast-error">{loadError}</div>}
           {!loading && !loadError && active === 'overview' && <Overview content={content} onNavigate={navigate} />}
