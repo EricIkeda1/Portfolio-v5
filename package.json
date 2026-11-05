@@ -5,11 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
-    "build": "vite build && node scripts/prerender.mjs",
+    "build": "vite build && node scripts/prerender.mjs && node scripts/test-csp.mjs",
     "preview": "vite preview",
     "format": "oxfmt",
     "dev:vercel": "npx vercel dev",
-    "admin:hash": "node scripts/hash-admin-password.mjs"
+    "admin:hash": "node scripts/hash-admin-password.mjs",
+    "test:security": "node scripts/test-security.mjs",
+    "contacts:encrypt": "node scripts/encrypt-existing-contacts.mjs --apply"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.1.0",

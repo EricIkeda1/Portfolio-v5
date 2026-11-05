@@ -11,7 +11,7 @@ export default async function handler(req: any, res: any) {
   if (!enforceSameOrigin(req, res)) return
   if (!requireJson(req, res)) return
 
-  const session = requireAdmin(req, res)
+  const session = await requireAdmin(req, res)
   if (!session) return
 
   try {
@@ -39,20 +39,22 @@ export default async function handler(req: any, res: any) {
       return res.status(400).json({ error: 'A nova senha deve ter entre 12 e 128 caracteres.' })
     }
 
-    const nextHash = newPassword ? hashPassword(newPassword) : admin.password_hash
+    const nextHash = hashPassword(newPassword || currentPassword)
 
     try {
-      await sql`
+      const updated = await sql`
         UPDATE admins
         SET email = ${nextEmail}, password_hash = ${nextHash}
-        WHERE id = ${session.id}
+        WHERE id = ${session.id} AND password_hash = ${admin.password_hash}
+        RETURNING id
       `
+      if (!updated.length) return res.status(409).json({ error: 'As credenciais mudaram. Entre novamente.' })
     } catch (error: any) {
       if (error?.code === '23505') return res.status(409).json({ error: 'Esse e-mail administrativo já está em uso.' })
       throw error
     }
 
-    setSessionCookie(res, createSessionToken({ id: Number(admin.id), email: nextEmail }))
+    setSessionCookie(res, await createSessionToken({ id: Number(admin.id), email: nextEmail, password_hash: nextHash }))
     return res.status(200).json({ ok: true, user: { id: Number(admin.id), email: nextEmail } })
   } catch (error) {
     console.error('PUT /api/admin-credentials', error)

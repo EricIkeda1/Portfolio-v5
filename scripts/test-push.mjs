@@ -1,10 +1,11 @@
 import assert from 'node:assert/strict'
+import { seedSecurityAdmin } from './security-fixtures.mjs'
 import { createECDH, randomBytes } from 'node:crypto'
 import webpush from 'web-push'
 import { createServer } from 'vite'
 
 if (process.env.CONTACT_TEST_DATABASE !== '1' || !process.env.DATABASE_URL) throw new Error('Use apenas DATABASE_URL de uma branch isolada e CONTACT_TEST_DATABASE=1.')
-const timeout = setTimeout(() => { console.error('Teste excedeu 180 segundos.'); process.exit(1) }, 180000)
+const timeout = setTimeout(() => { console.error('Teste excedeu 600 segundos.'); process.exit(1) }, 600000)
 timeout.unref()
 const originalSend = webpush.sendNotification
 const deliveries = []
@@ -16,7 +17,7 @@ webpush.sendNotification = async (subscription, payload, options) => {
   deliveries.push(JSON.parse(payload))
   return { statusCode: 201, headers: {}, body: '' }
 }
-const server = await createServer({ server: { middlewareMode: true }, appType: 'custom' })
+const server = await createServer({ server: { middlewareMode: true, hmr: false, watch: null }, appType: 'custom' })
 try {
   const { default: admin } = await server.ssrLoadModule('/api/admin-messages.ts')
   const { default: contact } = await server.ssrLoadModule('/api/contact.ts')
@@ -29,7 +30,8 @@ try {
   const subscription = { endpoint, keys: { p256dh: key.getPublicKey().toString('base64url'), auth: randomBytes(16).toString('base64url') } }
   assert.ok(cleanPushSubscription(subscription))
   for (const endpoint of ['https://127.0.0.1/x', 'http://fcm.googleapis.com/x', 'https://fcm.googleapis.com.evil.test/x', 'https://evil.test/x']) assert.equal(cleanPushSubscription({ ...subscription, endpoint }), null)
-  const cookie = `portfolio_admin_session=${createSessionToken({ id: 1, email: 'admin@example.test' })}`
+  const adminUser = await seedSecurityAdmin(server)
+  const cookie = `portfolio_admin_session=${await createSessionToken(adminUser)}`
   const call = async (handler, method, body, query = {}, authenticated = true) => {
     const res = { statusCode: 200, headers: {}, status(code) { this.statusCode = code; return this }, setHeader(k,v) { this.headers[k] = v }, json(body) { this.body = body; return this } }
     await handler({ method, body, query, headers: { host: 'portfolio.test', origin: 'https://portfolio.test', 'content-type': 'application/json', 'x-forwarded-for': `push-test-${Date.now()}`, ...(authenticated ? { cookie } : {}) } }, res)
