@@ -21,6 +21,7 @@ async function createContactSchema() {
       window_started_at TIMESTAMPTZ NOT NULL DEFAULT now()
     )
   `
+  await sql`ALTER TABLE contact_messages ADD COLUMN IF NOT EXISTS private_payload TEXT`
 }
 
 export async function ensureContactSchema() {

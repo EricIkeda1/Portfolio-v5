@@ -1,10 +1,12 @@
-import { createHmac, randomBytes, scryptSync, timingSafeEqual } from 'node:crypto'
+import { createHash, createHmac, randomBytes, scryptSync, timingSafeEqual } from 'node:crypto'
+import { ensureSchema, getSql } from './db.js'
 
 const COOKIE_NAME = 'portfolio_admin_session'
 const SESSION_SECONDS = 60 * 60 * 8
 const MIN_SESSION_SECRET_LENGTH = 32
 
 type SessionPayload = {
+  sid: string
   id: number
   email: string
   exp: number
@@ -22,18 +24,31 @@ function sign(value: string) {
   return createHmac('sha256', getSessionSecret()).update(value).digest('base64url')
 }
 
-export function createSessionToken(user: { id: number; email: string }) {
+export async function createSessionToken(user: { id: number; email: string; password_hash: string }) {
+  await ensureSchema()
   const payload: SessionPayload = {
+    sid: randomBytes(32).toString('hex'),
     id: user.id,
     email: user.email,
     exp: Math.floor(Date.now() / 1000) + SESSION_SECONDS,
   }
+  const sql = getSql()
+  // The checked password must still be current when the session is issued.
+  const rows = await sql`
+    INSERT INTO admin_sessions (token_hash, admin_id, credential_hash, expires_at)
+    SELECT ${sessionHash(payload.sid)}, id, password_hash, ${new Date(payload.exp * 1000).toISOString()}
+    FROM admins WHERE id = ${user.id} AND email = ${user.email} AND password_hash = ${user.password_hash}
+    RETURNING admin_id
+  `
+  if (!rows.length) throw new Error('Credenciais alteradas durante o login. Tente novamente.')
+  await sql`DELETE FROM admin_sessions WHERE expires_at <= now()`
   const encoded = Buffer.from(JSON.stringify(payload)).toString('base64url')
   return `${encoded}.${sign(encoded)}`
 }
 
 export function verifySessionToken(token: string | undefined): SessionPayload | null {
   if (!token) return null
+  if (token.length > 2048 || token.split('.').length !== 2) return null
   const [encoded, signature] = token.split('.')
   if (!encoded || !signature) return null
 
@@ -44,7 +59,9 @@ export function verifySessionToken(token: string | undefined): SessionPayload | 
 
   try {
     const payload = JSON.parse(Buffer.from(encoded, 'base64url').toString('utf8')) as SessionPayload
-    if (!payload.id || !payload.email || payload.exp <= Math.floor(Date.now() / 1000)) return null
+    if (!Number.isSafeInteger(payload.id) || payload.id <= 0 || typeof payload.email !== 'string' ||
+        !payload.email || !Number.isSafeInteger(payload.exp) || payload.exp <= Math.floor(Date.now() / 1000) ||
+        typeof payload.sid !== 'string' || !/^[a-f0-9]{64}$/.test(payload.sid)) return null
     return payload
   } catch {
     return null
@@ -94,13 +111,35 @@ function parseCookies(header = '') {
   )
 }
 
-export function getSessionFromRequest(req: any) {
+function sessionHash(sid: string) {
+  return createHash('sha256').update(sid).digest('hex')
+}
+
+export async function getSessionFromRequest(req: any) {
   const cookies = parseCookies(req.headers?.cookie || '')
   try {
-    return verifySessionToken(cookies[COOKIE_NAME])
+    const session = verifySessionToken(cookies[COOKIE_NAME])
+    if (!session) return null
+    await ensureSchema()
+    const sql = getSql()
+    const rows = await sql`
+      SELECT a.id FROM admin_sessions s JOIN admins a ON a.id = s.admin_id
+      WHERE s.token_hash = ${sessionHash(session.sid)} AND s.admin_id = ${session.id}
+        AND s.expires_at > now() AND s.credential_hash = a.password_hash AND a.email = ${session.email}
+      LIMIT 1
+    `
+    return rows.length ? session : null
   } catch {
     return null
   }
+}
+
+export async function revokeSessionFromRequest(req: any) {
+  const session = verifySessionToken(parseCookies(req.headers?.cookie || '')[COOKIE_NAME])
+  if (!session) return
+  await ensureSchema()
+  const sql = getSql()
+  await sql`DELETE FROM admin_sessions WHERE token_hash = ${sessionHash(session.sid)}`
 }
 
 export function setSessionCookie(res: any, token: string) {
@@ -119,8 +158,8 @@ export function clearSessionCookie(res: any) {
   )
 }
 
-export function requireAdmin(req: any, res: any) {
-  const session = getSessionFromRequest(req)
+export async function requireAdmin(req: any, res: any) {
+  const session = await getSessionFromRequest(req)
   if (!session) {
     res.status(401).json({ error: 'Sessão inválida ou expirada.' })
     return null

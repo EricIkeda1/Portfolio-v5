@@ -26,6 +26,14 @@ async function createSchema() {
 
   await sql`CREATE UNIQUE INDEX IF NOT EXISTS idx_admins_email_lower ON admins (lower(email))`
 
+  await sql`CREATE TABLE IF NOT EXISTS admin_sessions (
+    token_hash TEXT PRIMARY KEY,
+    admin_id INTEGER NOT NULL REFERENCES admins(id) ON DELETE CASCADE,
+    credential_hash TEXT NOT NULL,
+    expires_at TIMESTAMPTZ NOT NULL
+  )`
+  await sql`CREATE INDEX IF NOT EXISTS idx_admin_sessions_expires ON admin_sessions (expires_at)`
+
   await sql`
     CREATE TABLE IF NOT EXISTS admin_login_attempts (
       key TEXT PRIMARY KEY,
@@ -41,26 +49,13 @@ async function createSchema() {
   const bootstrapEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase()
   const bootstrapHash = process.env.ADMIN_PASSWORD_HASH?.trim()
   if (bootstrapEmail && bootstrapHash && /^scrypt\$[a-f0-9]+\$[a-f0-9]{128}$/i.test(bootstrapHash)) {
-    const updatedAdmin = await sql`
-      UPDATE admins
-      SET email = ${bootstrapEmail}, password_hash = ${bootstrapHash}
-      WHERE lower(email) = ${bootstrapEmail}
-      RETURNING id
+    // Bootstrap is insert-only, only for an empty admin table. Runtime env must
+    // never restore an old password or recreate an account after an email change.
+    await sql`
+      INSERT INTO admins (email, password_hash)
+      SELECT ${bootstrapEmail}, ${bootstrapHash} WHERE NOT EXISTS (SELECT 1 FROM admins)
+      ON CONFLICT DO NOTHING
     `
-
-    if (updatedAdmin.length === 0) {
-      await sql`
-        INSERT INTO admins (email, password_hash)
-        VALUES (${bootstrapEmail}, ${bootstrapHash})
-        ON CONFLICT DO NOTHING
-      `
-    }
-
-    // Migração da conta de demonstração das versões antigas. O e-mail não é segredo,
-    // mas a credencial antiga não deve continuar habilitada depois que um novo admin for configurado.
-    if (bootstrapEmail !== 'admin@portfolio.dev') {
-      await sql`DELETE FROM admins WHERE lower(email) = 'admin@portfolio.dev'`
-    }
   }
 
   await sql`

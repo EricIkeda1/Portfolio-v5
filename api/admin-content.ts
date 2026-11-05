@@ -24,7 +24,7 @@ export default async function handler(req: any, res: any) {
     if (!requireJson(req, res)) return
   }
 
-  if (!requireAdmin(req, res)) return
+  if (!await requireAdmin(req, res)) return
 
   try {
     await ensureSchema()

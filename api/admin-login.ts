@@ -54,7 +54,7 @@ export default async function handler(req: any, res: any) {
     }
 
     await clearLoginFailures(keys)
-    setSessionCookie(res, createSessionToken({ id: Number(admin.id), email: admin.email }))
+    setSessionCookie(res, await createSessionToken({ id: Number(admin.id), email: admin.email, password_hash: admin.password_hash! }))
 
     // Limpeza oportunista para a tabela de tentativas, sem afetar o login caso falhe.
     void cleanupOldLoginAttempts().catch((error) => console.warn('cleanupOldLoginAttempts', error))

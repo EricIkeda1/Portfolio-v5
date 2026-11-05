@@ -9,6 +9,7 @@ No desenvolvimento local, copie `.env.example` para `.env` e configure:
 ```env
 DATABASE_URL=sua_connection_string_do_neon
 SESSION_SECRET=uma_chave_aleatoria_com_pelo_menos_32_caracteres
+CONTACT_ENCRYPTION_KEY=32_bytes_aleatorios_em_64_caracteres_hexadecimais
 ```
 
 Na Vercel, configure as mesmas variáveis em **Project Settings > Environment Variables**.
@@ -24,7 +25,7 @@ node -e "console.log(require('crypto').randomBytes(48).toString('base64url'))"
 
 Não existe mais e-mail ou senha padrão no código.
 
-Antes do primeiro deploy desta versão, é recomendado gerar uma nova senha e configurar `ADMIN_EMAIL` + `ADMIN_PASSWORD_HASH` na Vercel. Assim, a conta antiga de demonstração é migrada automaticamente sem deixar a senha antiga ativa.
+Em um banco novo, configure temporariamente `ADMIN_EMAIL` e `ADMIN_PASSWORD_HASH` para criar a primeira conta. Em um banco já utilizado, altere o acesso pelo painel; o bootstrap nunca sobrescreve contas existentes.
 
 Gere o hash localmente:
 
@@ -33,12 +34,12 @@ $env:ADMIN_NEW_PASSWORD="uma-senha-forte-com-12-ou-mais-caracteres"
 npm run admin:hash
 ```
 
-Copie somente o hash gerado para `ADMIN_PASSWORD_HASH` e configure também `ADMIN_EMAIL` na Vercel. Na primeira execução, o backend cria/atualiza esse administrador e remove a conta de demonstração antiga quando você escolhe outro e-mail. Depois de confirmar que o novo login funciona, essas duas variáveis opcionais podem ser removidas. O texto puro da senha nunca é salvo no projeto.
+Copie somente o hash gerado para `ADMIN_PASSWORD_HASH` e configure também `ADMIN_EMAIL` na Vercel. O backend cria esse administrador somente se ainda não existir nenhuma conta. Contas existentes nunca são alteradas ou recriadas pelo bootstrap. Depois de confirmar que o novo login funciona, essas duas variáveis opcionais podem ser removidas. O texto puro da senha nunca é salvo no projeto.
 
 ## Proteções da área administrativa
 
 - senha com `scrypt` e salt aleatório;
-- sessão assinada por `SESSION_SECRET` independente da `DATABASE_URL`;
+- sessão assinada por `SESSION_SECRET`, com registro revogável no banco e invalidação após logout ou troca de acesso;
 - cookie `HttpOnly`, `SameSite=Strict` e `Secure` em produção;
 - limite de 5 tentativas por IP em 15 minutos e uma proteção adicional por conta;
 - bloqueio temporário persistido no Neon;
@@ -71,3 +72,7 @@ npm run dev:vercel
 - `PUT /api/admin-content`: salva perfil e contatos.
 - `POST/PUT/DELETE /api/admin-projects`: CRUD dos projetos.
 - `/admin`: interface administrativa.
+
+## Contatos cifrados
+
+Configure `CONTACT_ENCRYPTION_KEY` antes do deploy. A chave é independente da sessão e deve ser preservada. Novos contatos usam AES-256-GCM; o painel descriptografa no servidor após autenticação. Consulte `SECURITY.md` para migrar contatos antigos, manter backups da chave e executar os testes.

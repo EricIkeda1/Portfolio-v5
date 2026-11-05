@@ -1,4 +1,5 @@
 import { createHmac } from 'node:crypto'
+import { encryptContact } from './_lib/contact-crypto.js'
 import { getSessionSecret } from './_lib/auth.js'
 import { ensureContactSchema } from './_lib/contact.js'
 import { getSql } from './_lib/db.js'
@@ -28,6 +29,8 @@ export default async function handler(req: any, res: any) {
   }
 
   try {
+    // Fail closed if the key is missing: personal data must never fall back to plaintext.
+    const encrypted = encryptContact(clean)
     const key = createHmac('sha256', getSessionSecret()).update(`contact:${getClientIp(req)}`).digest('hex')
     await ensureContactSchema()
     const sql = getSql()
@@ -45,8 +48,8 @@ export default async function handler(req: any, res: any) {
           OR contact_submission_limits.window_started_at <= now() - interval '15 minutes'
         RETURNING key
       )
-      INSERT INTO contact_messages (name, email, message)
-      SELECT ${clean.name}, ${clean.email}, ${clean.message} FROM allowed
+      INSERT INTO contact_messages (name, email, message, private_payload)
+      SELECT '[protegido]', '[protegido]', '[conteúdo protegido]', ${encrypted} FROM allowed
       RETURNING id
     `
     if (!rows.length) {
