@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
-import proxy from '../proxy.ts'
+import proxy from '../middleware.ts'
 for (const path of ['/', '/index.html']) {
   const response = proxy(new Request(`https://links.ericyikeda.com.br${path}?utm_source=ig`))
   assert.equal(response.headers.get('x-middleware-rewrite'), 'https://links.ericyikeda.com.br/links/index.html?utm_source=ig')

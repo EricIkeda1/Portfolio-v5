@@ -95,12 +95,5 @@
     "deploymentEnabled": {
       "fix/security-session-and-contact": false
     }
-  },
-  "proxy": {
-    "entrypoint": "proxy.ts",
-    "matcher": [
-      "/",
-      "/index.html"
-    ]
   }
 }

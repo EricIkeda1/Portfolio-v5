@@ -150,3 +150,6 @@ src/assets/demo-images/*.svg -filter -diff -merge -text
 
 # Ícones pequenos do painel são servidos diretamente no deploy.
 public/notification-*.png -filter -diff -merge -text
+
+# Capa social pequena servida diretamente, sem Git LFS.
+public/links-preview.png -filter -diff -merge -text
