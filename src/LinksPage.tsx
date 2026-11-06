@@ -54,9 +54,7 @@ export default function LinksPage() {
         <p className="links-eyebrow">PRAZER, ERIC</p>
         <h1>Eric Ikeda<span className="links-blue">.</span></h1>
         <p className="links-bio">Tecnologia, jogos e um pouco de tudo.<br />Por aqui, a gente se conecta além do código.</p>
-        <div className="links-interests" aria-label="Meus interesses">
-          <span>Tecnologia</span><span>Games</span><span>Vida real</span>
-        </div>
+        <ShareLinks />
         <nav className="links-nav" aria-label="Minhas redes sociais">
           {networks.map(network => {
             const card = <a className={`links-social links-social-${network.icon}`} href={network.href} key={network.icon} target="_blank" rel="noopener noreferrer">
@@ -76,7 +74,6 @@ export default function LinksPage() {
             return network.icon === 'spotify' ? <SpotifyPlayer key={network.icon} fallback={card} /> : card
           })}
         </nav>
-        <ShareLinks />
         <VirtualPet />
         <p className="links-note">Do outro lado da tela, sou eu mesmo.</p>
       </main>
