@@ -36,6 +36,16 @@ export default function LinksPage() {
   const [photoError, setPhotoError] = useState(false)
 
   useEffect(() => {
+    const url = new URL(window.location.href)
+    let hasTracking = false
+    for (const key of [...url.searchParams.keys()]) {
+      if (/^utm_/i.test(key) || key.toLowerCase() === 'fbclid') {
+        url.searchParams.delete(key)
+        hasTracking = true
+      }
+    }
+    if (hasTracking) window.history.replaceState(window.history.state, '', url.pathname + url.search + url.hash)
+
     const previousTitle = document.title
     const icon = document.querySelector<HTMLLinkElement>('link[rel="icon"]')
     const previousIcon = icon?.getAttribute('href')
