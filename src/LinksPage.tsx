@@ -1,32 +1,54 @@
 import './links.css'
 
-const portfolio = 'https://www.ericyikeda.com.br/'
-const shortcuts = [
-  { label: 'Meus projetos', detail: 'Ideias que viraram código.', hash: 'experiencia', icon: '01' },
-  { label: 'Sobre mim', detail: 'Conheça quem está por trás.', hash: 'sobre', icon: '02' },
-  { label: 'Vamos conversar', detail: 'Uma ideia começa com um oi.', hash: 'contato', icon: '03' },
+const networks = [
+  {
+    name: 'Instagram',
+    handle: '@yujiikeda_',
+    description: 'Um pouco da vida fora das telas.',
+    href: 'https://www.instagram.com/yujiikeda_/',
+    icon: 'instagram',
+  },
+  {
+    name: 'LinkedIn',
+    handle: 'Eric Ikeda',
+    description: 'Minha trajetória e novas conexões.',
+    href: 'https://www.linkedin.com/in/ericikeda1/',
+    icon: 'linkedin',
+  },
 ]
 
 export default function LinksPage() {
   return (
     <div className="links-page">
-      <header className="links-top"><span>EYI<span className="links-blue">.</span></span><span className="links-top-caption">DESENVOLVIMENTO & CRIATIVIDADE</span></header>
+      <header className="links-top">
+        <span>EYI<span className="links-blue">.</span></span>
+        <span className="links-top-caption">ME ENCONTRE POR AQUI</span>
+      </header>
       <main className="links-main">
         <div className="links-avatar" aria-hidden="true">EI<span /></div>
-        <p className="links-eyebrow">WEB · MOBILE · SOFTWARE</p>
-        <h1>Eric Y. Ikeda<span className="links-blue">.</span></h1>
-        <p className="links-bio">Transformando ideias em experiências digitais.<br />Seu próximo clique começa aqui.</p>
-        <nav className="links-nav" aria-label="Explore meu portfólio">
-          <a className="links-featured" href={portfolio}>
-            <span className="links-featured-top"><span className="links-chip">MEU UNIVERSO DIGITAL</span><span aria-hidden="true">↗</span></span>
-            <span className="links-browser" aria-hidden="true"><span className="links-browser-bar"><i /><i /><i /><span>ericyikeda.com.br</span></span><span className="links-browser-content"><span>IDEIAS EM MOVIMENTO</span><strong>Design.<br />Código.<br /><em>Possibilidades.</em></strong><span className="links-browser-line" /></span><span className="links-code">&lt;/&gt;</span></span>
-            <span className="links-featured-bottom"><span><strong>Explore meu portfólio</strong><small>Projetos, tecnologias e um pouco de mim.</small></span><span className="links-arrow" aria-hidden="true">↗</span></span>
-          </a>
-          {shortcuts.map(link => <a className="links-shortcut" href={`${portfolio}#${link.hash}`} key={link.hash}><span className="links-number" aria-hidden="true">{link.icon}</span><span><strong>{link.label}</strong><small>{link.detail}</small></span><span className="links-shortcut-arrow" aria-hidden="true">↗</span></a>)}
+        <p className="links-eyebrow">PRAZER, ERIC</p>
+        <h1>Eric Ikeda<span className="links-blue">.</span></h1>
+        <p className="links-bio">Tecnologia, jogos e um pouco de tudo.<br />Por aqui, a gente se conecta além do código.</p>
+        <div className="links-interests" aria-label="Meus interesses">
+          <span>Tecnologia</span><span>Games</span><span>Vida real</span>
+        </div>
+        <nav className="links-nav" aria-label="Minhas redes sociais">
+          {networks.map(network => (
+            <a className={`links-social links-social-${network.icon}`} href={network.href} key={network.icon} target="_blank" rel="noopener noreferrer">
+              <span className="links-social-icon" aria-hidden="true">
+                {network.icon === 'instagram' ? (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" /></svg>
+                ) : (
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M5.3 8.5H2V22h3.3V8.5ZM3.65 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4ZM22 14.3c0-4.1-2.2-6-5.1-6-2.4 0-3.5 1.3-4.1 2.2v-2H9.5V22h3.3v-7.5c0-2 1-3.3 2.9-3.3s3 1.3 3 3.3V22H22v-7.7Z" /></svg>
+                )}
+              </span>
+              <span className="links-social-copy"><strong>{network.name}</strong><span className="links-handle">{network.handle}</span><small>{network.description}</small></span>
+            </a>
+          ))}
         </nav>
-        <p className="links-note"><span aria-hidden="true" />Todos os caminhos levam ao meu portfólio.</p>
+        <p className="links-note">Do outro lado da tela, sou eu mesmo.</p>
       </main>
-      <footer className="links-footer">FEITO COM PROPÓSITO <span>© {new Date().getFullYear()} ERIC Y. IKEDA</span></footer>
+      <footer className="links-footer">FEITO POR ERIC Y. IKEDA<span>CONEXÕES DE VERDADE.</span></footer>
     </div>
   )
 }
