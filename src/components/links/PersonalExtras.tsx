@@ -1,10 +1,8 @@
 import { useRef, useState, type FormEvent } from 'react'
 
-import MemoryGame from './MemoryGame'
+import ClockWidget from './ClockWidget'
 
 export default function PersonalExtras() {
-  const gameDialog = useRef<HTMLDialogElement>(null)
-  const [gameOpen, setGameOpen] = useState(false)
   const dialog = useRef<HTMLDialogElement>(null)
   const [sending, setSending] = useState(false)
   const [notice, setNotice] = useState('')
@@ -33,19 +31,11 @@ export default function PersonalExtras() {
 
   return <>
     <section className="links-personal-extras" aria-label="Além dos links">
-      <button className="links-note-open links-game-open" type="button" aria-haspopup="dialog" onClick={() => { setGameOpen(true); gameDialog.current?.showModal() }}>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true"><rect x="2" y="6" width="20" height="13" rx="5"/><path d="M6 12h6m-3-3v6"/><circle cx="17" cy="11" r=".8"/><circle cx="19" cy="14" r=".8"/></svg><span>Jogo rápido<small>Encontre os pares</small></span>
-      </button>
+      <ClockWidget />
       <button className="links-note-open" type="button" aria-haspopup="dialog" onClick={() => { setNotice(''); setSent(false); setFailed(false); dialog.current?.showModal() }}>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="4"/><path d="m4 7 8 6 8-6"/></svg><span>Deixe um recado<small>Privado, do seu jeito</small></span>
       </button>
     </section>
-    <dialog ref={gameDialog} className="links-qr-dialog links-memory-dialog" aria-labelledby="links-memory-title" onClose={() => setGameOpen(false)}>
-      <button className="links-qr-close" type="button" aria-label="Fechar jogo" onClick={() => gameDialog.current?.close()}>×</button>
-      <span className="links-eyebrow">UMA PAUSA PRA JOGAR</span>
-      <h2 id="links-memory-title">Memória em dia?</h2>
-      {gameOpen && <MemoryGame />}
-    </dialog>
     <dialog ref={dialog} className="links-qr-dialog links-note-dialog" aria-labelledby="links-note-title" onCancel={event => { if (sending) event.preventDefault() }}>
       <button className="links-qr-close" type="button" disabled={sending} aria-label="Fechar recadinho" onClick={() => dialog.current?.close()}>×</button>
       <span className="links-eyebrow">UMA MENSAGEM SÓ SUA</span>
