@@ -14,6 +14,17 @@ try {
   assert.ok(parseContactSubmission({ name: 'Visitante', email: 'VISITOR@example.test', message: 'Contato tradicional válido.', website: '' }))
   assert.equal(parseContactSubmission({ name: 'Visitante', email: '', message: 'Contato tradicional inválido.' }), null)
   process.env.CONTACT_ENCRYPTION_KEY = randomBytes(32).toString('hex')
+  const identified = parseContactSubmission({ kind: 'personal', anonymous: false, name: '  Visitante  ', message: note.message, website: '' })
+  assert.deepEqual(identified, { name: 'Visitante', email: '', message: note.message.trim(), anonymous: false })
+  const anonymous = parseContactSubmission({ kind: 'personal', anonymous: true, name: 'Não deve ser salvo', email: 'ignore@example.test', message: note.message })
+  assert.deepEqual(anonymous, { name: 'Recado anônimo', email: '', message: note.message.trim(), anonymous: true })
+  for (const anonymousMode of [true, false]) {
+    const fields = anonymousMode ? anonymous : identified
+    assert.deepEqual(decryptContact(encryptContact(fields)), fields, 'identity choice survives encryption')
+  }
+  for (const patch of [{ anonymous: 'true' }, { anonymous: undefined }, { anonymous: false, name: '' }, { anonymous: false, name: 'a' }, { anonymous: false, name: 'x'.repeat(101) }, { anonymous: false, name: [] }, { message: 'x'.repeat(1001) }, { website: 'bot.test' }]) {
+    assert.equal(parseContactSubmission({ kind: 'personal', anonymous: true, message: note.message, ...patch }), null)
+  }
   const encrypted = encryptContact(clean)
   assert.ok(!encrypted.includes(clean.message)); assert.deepEqual(decryptContact(encrypted), clean)
   assert.notEqual(encryptContact(clean), encrypted, 'fresh nonce for each note')

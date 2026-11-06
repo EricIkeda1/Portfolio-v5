@@ -1,6 +1,6 @@
 import { createCipheriv, createDecipheriv, randomBytes } from 'node:crypto'
 
-export type ContactFields = { name: string; email: string; message: string }
+export type ContactFields = { name: string; email: string; message: string; anonymous?: boolean }
 const PREFIX = 'enc:v1:'
 const AAD = Buffer.from('portfolio-contact:v1')
 
@@ -34,7 +34,7 @@ export function decryptContact(value: string): ContactFields {
   if (!fields || typeof fields.name !== 'string' || typeof fields.email !== 'string' || typeof fields.message !== 'string') {
     throw new Error('Conteúdo do contato inválido.')
   }
-  return { name: fields.name, email: fields.email, message: fields.message }
+  return { name: fields.name, email: fields.email, message: fields.message, ...(typeof fields.anonymous === 'boolean' ? { anonymous: fields.anonymous } : {}) }
 }
 
 export function readContact(row: Record<string, unknown>) {

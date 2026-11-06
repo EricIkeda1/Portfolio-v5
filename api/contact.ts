@@ -20,12 +20,12 @@ export default async function handler(req: any, res: any) {
     return res.status(400).json({ error: 'Mensagem inválida ou muito grande.' })
   }
   const clean = parseContactSubmission(body)
-  if (!clean) return res.status(400).json({ error: body.kind === 'anonymous' ? 'O recadinho deve ter de 10 a 1.000 caracteres.' : 'Use um nome de 2 a 100 caracteres, um e-mail válido e uma mensagem de 10 a 5.000 caracteres.' })
+  if (!clean) return res.status(400).json({ error: ['anonymous', 'personal'].includes(body.kind) ? 'Escreva de 10 a 1.000 caracteres e, ao se identificar, informe um nome de 2 a 100 caracteres.' : 'Use um nome de 2 a 100 caracteres, um e-mail válido e uma mensagem de 10 a 5.000 caracteres.' })
 
   try {
     // Fail closed if the key is missing: personal data must never fall back to plaintext.
     const encrypted = encryptContact(clean)
-    const source = body.kind === 'anonymous' ? 'personal' : 'portfolio'
+    const source = ['anonymous', 'personal'].includes(body.kind) ? 'personal' : 'portfolio'
     const key = createHmac('sha256', getSessionSecret()).update(`contact:${getClientIp(req)}`).digest('hex')
     await ensureContactSchema()
     const sql = getSql()

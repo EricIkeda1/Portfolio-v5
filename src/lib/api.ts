@@ -3,7 +3,7 @@ import { normalizePortfolioContent, type PortfolioContent, type PortfolioProject
 type ApiErrorBody = { error?: string }
 
 export type AdminUser = { id: number; email: string }
-export type ContactMessage = { id: number; name: string; email: string; message: string; created_at: string; read_at: string | null }
+export type ContactMessage = { anonymous?: boolean; id: number; name: string; email: string; message: string; created_at: string; read_at: string | null }
 
 export function getNotificationKey() {
   return request<{ publicKey: string }>('/api/admin-messages?notifications=1', { cache: 'no-store' })
