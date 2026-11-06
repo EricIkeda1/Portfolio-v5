@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import ShareLinks from './components/links/ShareLinks'
+import VirtualPet from './components/links/VirtualPet'
 import SpotifyPlayer from './components/SpotifyPlayer'
 import './links.css'
 
@@ -74,6 +76,8 @@ export default function LinksPage() {
             return network.icon === 'spotify' ? <SpotifyPlayer key={network.icon} fallback={card} /> : card
           })}
         </nav>
+        <ShareLinks />
+        <VirtualPet />
         <p className="links-note">Do outro lado da tela, sou eu mesmo.</p>
       </main>
       <footer className="links-footer">FEITO POR ERIC Y. IKEDA<span>CONEXÕES DE VERDADE.</span></footer>
