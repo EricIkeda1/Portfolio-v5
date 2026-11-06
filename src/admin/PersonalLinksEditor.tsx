@@ -32,7 +32,7 @@ export default function PersonalLinksEditor() {
     void save({ distanceKm: Number(data.get('distance')), durationSeconds: Number(data.get('minutes')) * 60 + Number(data.get('seconds')), date: String(data.get('date')), url: String(data.get('url')).trim() })
   }
   return <>
-    <div className="admin-dashboard-heading"><div><span className="admin-eyebrow">Página pessoal</span><h1>Links pessoais</h1><p>Atualize o cartão da sua última corrida. Os recadinhos aparecem em Mensagens.</p></div></div>
+    <div className="admin-dashboard-heading"><div><span className="admin-eyebrow">Página pessoal</span><h1>Links pessoais</h1><p>Atualize o cartão da sua última corrida. Os recadinhos aparecem na aba Recados pessoais.</p></div></div>
     <section className="admin-panel-card"><h2>Última corrida</h2><p className="admin-setting-description">Preencha os dados da sua corrida diretamente. Não há sincronização automática com a API do Strava. Publique somente informações que deseja tornar públicas.</p>
       {loading ? <p role="status">Carregando…</p> : <form key={revision} onSubmit={submit} className="admin-form-grid">
         <fieldset disabled={saving} className="personal-run-fields">

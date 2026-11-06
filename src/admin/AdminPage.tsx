@@ -130,7 +130,8 @@ const navigation = [
   { id: 'projects', label: 'Projetos', icon: 'projects' as IconName },
   { id: 'contact', label: 'Contato', icon: 'contact' as IconName },
   { id: 'personal-links', label: 'Links pessoais', icon: 'profile' as IconName },
-  { id: 'messages', label: 'Mensagens', icon: 'contact' as IconName },
+  { id: 'personal-messages', label: 'Recados pessoais', icon: 'contact' as IconName },
+  { id: 'messages', label: 'Contatos do portfólio', icon: 'contact' as IconName },
   { id: 'settings', label: 'Configurações', icon: 'settings' as IconName },
 ]
 
@@ -410,7 +411,7 @@ function SettingsPanel({ user, onUserUpdated }: { user: AdminUser; onUserUpdated
 }
 
 function Dashboard({ user, onUserUpdated, onLogout }: { user: AdminUser; onUserUpdated: (user: AdminUser) => void; onLogout: () => void }) {
-  const [active, setActive] = useState(() => typeof window !== 'undefined' && window.location.hash === '#mensagens' ? 'messages' : 'overview')
+  const [active, setActive] = useState(() => typeof window === 'undefined' ? 'overview' : window.location.hash === '#recados' ? 'personal-messages' : window.location.hash === '#mensagens' ? 'messages' : 'overview')
   const [mobileMenu, setMobileMenu] = useState(false)
   const [content, setContent] = useState<PortfolioContent>(DEFAULT_CONTENT)
   const [loading, setLoading] = useState(true)
@@ -422,7 +423,7 @@ function Dashboard({ user, onUserUpdated, onLogout }: { user: AdminUser; onUserU
   useEffect(() => {
     if (!('serviceWorker' in navigator)) return
     const openMessages = (event: MessageEvent) => {
-      if (event.data?.type === 'OPEN_PORTFOLIO_MESSAGES') { setActive('messages'); setMobileMenu(false) }
+      if (event.data?.type === 'OPEN_PORTFOLIO_MESSAGES') { setActive(event.data.source === 'personal' ? 'personal-messages' : 'messages'); setMobileMenu(false) }
     }
     navigator.serviceWorker.addEventListener('message', openMessages)
     return () => navigator.serviceWorker.removeEventListener('message', openMessages)
@@ -467,7 +468,8 @@ function Dashboard({ user, onUserUpdated, onLogout }: { user: AdminUser; onUserU
           {!loading && !loadError && active === 'projects' && <ProjectsEditor projects={content.projects} onProjectsChange={updateProjects} />}
           {!loading && !loadError && active === 'contact' && <ContactEditor content={content} onUpdated={setContent} />}
           {!loading && !loadError && active === 'personal-links' && <PersonalLinksEditor />}
-          {!loading && !loadError && active === 'messages' && <MessagesInbox />}
+          {!loading && !loadError && active === 'messages' && <MessagesInbox key="portfolio" source="portfolio" />}
+          {!loading && !loadError && active === 'personal-messages' && <MessagesInbox key="personal" source="personal" />}
           {!loading && !loadError && active === 'settings' && <SettingsPanel user={user} onUserUpdated={onUserUpdated} />}
         </main>
       </div>

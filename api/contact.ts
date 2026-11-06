@@ -25,6 +25,7 @@ export default async function handler(req: any, res: any) {
   try {
     // Fail closed if the key is missing: personal data must never fall back to plaintext.
     const encrypted = encryptContact(clean)
+    const source = body.kind === 'anonymous' ? 'personal' : 'portfolio'
     const key = createHmac('sha256', getSessionSecret()).update(`contact:${getClientIp(req)}`).digest('hex')
     await ensureContactSchema()
     const sql = getSql()
@@ -42,8 +43,8 @@ export default async function handler(req: any, res: any) {
           OR contact_submission_limits.window_started_at <= now() - interval '15 minutes'
         RETURNING key
       )
-      INSERT INTO contact_messages (name, email, message, private_payload)
-      SELECT '[protegido]', '[protegido]', '[conteúdo protegido]', ${encrypted} FROM allowed
+      INSERT INTO contact_messages (name, email, message, private_payload, source)
+      SELECT '[protegido]', '[protegido]', '[conteúdo protegido]', ${encrypted}, ${source} FROM allowed
       RETURNING id
     `
     if (!rows.length) {
@@ -53,7 +54,7 @@ export default async function handler(req: any, res: any) {
     // A tabela de limites guarda somente um hash temporário por origem.
     await sql`DELETE FROM contact_submission_limits WHERE window_started_at < now() - interval '1 day'`.catch(() => {})
     // Uma falha no push nunca transforma uma mensagem já salva em erro de envio.
-    await notifyNewContact(Number(rows[0].id)).catch(() => {})
+    await notifyNewContact(Number(rows[0].id), source).catch(() => {})
     return res.status(201).json({ ok: true })
   } catch {
     return res.status(503).json({ error: 'Não foi possível enviar agora. Sua mensagem continua no formulário; tente novamente em instantes.' })

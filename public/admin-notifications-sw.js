@@ -7,19 +7,20 @@ self.addEventListener('push', event => {
     tag: data.tag || 'portfolio-contact',
     icon: '/notification-icon.png',
     badge: '/notification-badge.png',
-    data: { url: '/admin#mensagens' },
+    data: { source: data.source === 'personal' ? 'personal' : 'portfolio' },
   }))
 })
 
 self.addEventListener('notificationclick', event => {
   event.notification.close()
   event.waitUntil((async () => {
-    const url = new URL('/admin#mensagens', self.location.origin).href
+    const source = event.notification.data?.source === 'personal' ? 'personal' : 'portfolio'
+    const url = new URL(source === 'personal' ? '/admin#recados' : '/admin#mensagens', self.location.origin).href
     const windows = await self.clients.matchAll({ type: 'window', includeUncontrolled: true })
     for (const client of windows) {
       if (new URL(client.url).pathname === '/admin') {
         await client.navigate(url)
-        client.postMessage({ type: 'OPEN_PORTFOLIO_MESSAGES' })
+        client.postMessage({ type: 'OPEN_PORTFOLIO_MESSAGES', source })
         return client.focus()
       }
     }

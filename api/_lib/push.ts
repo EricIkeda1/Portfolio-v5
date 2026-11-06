@@ -52,16 +52,17 @@ export function cleanPushSubscription(value: unknown): PushSubscription | null {
   return { endpoint: item.endpoint, keys: { p256dh: item.keys.p256dh, auth: item.keys.auth } }
 }
 
-export async function sendDevicePush(subscription: PushSubscription, messageId?: number, keys?: { publicKey: string; privateKey: string }) {
+export async function sendDevicePush(subscription: PushSubscription, messageId?: number, keys?: { publicKey: string; privateKey: string }, source: 'portfolio' | 'personal' = 'portfolio') {
   const resolvedKeys = keys ?? await getPushKeys()
   await webpush.sendNotification(subscription, JSON.stringify({
-    title: messageId ? 'Nova mensagem no portfólio' : 'Notificações ativadas',
-    body: messageId ? 'Você recebeu um novo contato. Toque para abrir sua caixa de entrada.' : 'Este aparelho já pode receber avisos de novos contatos.',
+    title: messageId ? (source === 'personal' ? 'Novo recado pessoal' : 'Novo contato no portfólio') : 'Notificações ativadas',
+    source,
+    body: messageId ? (source === 'personal' ? 'Um recadinho chegou na sua caixa pessoal.' : 'Você recebeu um novo contato no portfólio.') : 'Este aparelho já pode receber avisos de novos contatos.',
     tag: messageId ? `contact-${messageId}` : 'push-test',
   }), { vapidDetails: { subject: 'https://www.ericyikeda.com.br/', ...resolvedKeys }, TTL: 3600, timeout: 3000, urgency: 'high' })
 }
 
-export async function notifyNewContact(messageId: number) {
+export async function notifyNewContact(messageId: number, source: 'portfolio' | 'personal' = 'portfolio') {
   await ensurePushSchema()
   const sql = getSql()
   const devices = await sql`SELECT endpoint, p256dh, auth FROM admin_push_subscriptions WHERE enabled = true ORDER BY updated_at DESC LIMIT 20`
@@ -71,7 +72,7 @@ export async function notifyNewContact(messageId: number) {
     const endpoint = String(device.endpoint)
     if (!validPushEndpoint(endpoint)) return
     try {
-      await sendDevicePush({ endpoint, keys: { p256dh: String(device.p256dh), auth: String(device.auth) } }, messageId, keys)
+      await sendDevicePush({ endpoint, keys: { p256dh: String(device.p256dh), auth: String(device.auth) } }, messageId, keys, source)
       await sql`UPDATE admin_push_subscriptions SET last_sent_at = now(), last_error = NULL WHERE endpoint = ${endpoint}`
     } catch (error) {
       const status = Number((error as { statusCode?: number }).statusCode || 0)

@@ -29,12 +29,14 @@ export function sendContactMessage(input: { name: string; email: string; message
   return request<{ ok: true }>('/api/contact', { method: 'POST', body: JSON.stringify(input) })
 }
 
-export function getAdminMessages(before?: number) {
-  return request<{ messages: ContactMessage[]; next: number | null; unread: number }>(`/api/admin-messages${before ? `?before=${before}` : ''}`, { cache: 'no-store' })
+export type MessageSource = 'portfolio' | 'personal'
+
+export function getAdminMessages(before?: number, source: MessageSource = 'portfolio') {
+  return request<{ messages: ContactMessage[]; next: number | null; unread: number }>(`/api/admin-messages?source=${source}${before ? `&before=${before}` : ''}`, { cache: 'no-store' })
 }
 
-export function markMessageRead(id: number, read: boolean) {
-  return request<{ id: number; read_at: string | null }>('/api/admin-messages', { method: 'PUT', body: JSON.stringify({ id, read }) })
+export function markMessageRead(id: number, read: boolean, source: MessageSource = 'portfolio') {
+  return request<{ id: number; read_at: string | null }>(`/api/admin-messages?source=${source}`, { method: 'PUT', body: JSON.stringify({ id, read }) })
 }
 
 async function request<T>(url: string, options: RequestInit = {}): Promise<T> {
