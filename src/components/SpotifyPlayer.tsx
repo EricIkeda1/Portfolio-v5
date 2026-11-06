@@ -10,7 +10,7 @@ function time(milliseconds: number) {
   return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`
 }
 
-export default function SpotifyPlayer({ fallback }: { fallback: ReactNode }) {
+export default function SpotifyPlayer({ fallback, compact = false }: { fallback: ReactNode; compact?: boolean }) {
   const [track, setTrack] = useState<Track | null>(null)
   const [imageError, setImageError] = useState(false)
 
@@ -55,6 +55,12 @@ export default function SpotifyPlayer({ fallback }: { fallback: ReactNode }) {
   }, [])
 
   if (!track) return fallback
+  if (compact) return (
+    <a className="links-player-compact" href={track.url} target="_blank" rel="noopener noreferrer" aria-label={`${track.isPlaying ? 'Ouvindo agora' : 'Última música ouvida'}: ${track.title}, ${track.artist}. Abrir no Spotify`}>
+      {track.image && !imageError ? <img src={track.image} alt="" width="36" height="36" onError={() => setImageError(true)} /> : <span aria-hidden="true">♫</span>}
+      <span><small>{track.isPlaying ? 'Ouvindo agora' : 'Última música ouvida'}</small><strong>{track.title}</strong><span>{track.artist}</span></span>
+    </a>
+  )
   return (
     <article className="links-player" aria-label="Minha música no Spotify">
       <div className="links-player-top">

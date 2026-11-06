@@ -8,34 +8,26 @@ const networks = [
   {
     name: 'Instagram',
     handle: '@yujiikeda_',
-    description: 'Um pouco da vida fora das telas.',
     href: 'https://www.instagram.com/yujiikeda_/',
     icon: 'instagram',
-    kind: 'Pessoal',
   },
   {
     name: 'LinkedIn',
     handle: 'Eric Yuji Ikeda',
-    description: 'Minha trajetória e novas conexões.',
     href: 'https://www.linkedin.com/in/ericikeda1/',
     icon: 'linkedin',
-    kind: 'Conexões',
   },
   {
     name: 'Spotify',
     handle: 'Meu perfil',
-    description: 'Música pra acompanhar o dia.',
     href: 'https://open.spotify.com/user/zxcc5n3o1k5z5jd478dlcc8e8',
     icon: 'spotify',
-    kind: 'Música',
   },
   {
     name: 'Strava',
     handle: 'Eric Yuji Ikeda',
-    description: 'Corridas, movimento e ar livre.',
     href: 'https://strava.app.link/abHHLSIVP7b',
     icon: 'strava',
-    kind: 'Movimento',
   },
 ]
 
@@ -57,19 +49,19 @@ export default function LinksPage() {
   return (
     <div className="links-page">
       <main className="links-main">
+        <header className="links-profile">
         <div className="links-avatar">
           {photoError ? <span className="links-avatar-fallback" aria-hidden="true"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" strokeWidth="1.4"><circle cx="12" cy="8" r="4" /><path d="M4 22v-2a8 8 0 0 1 16 0v2" /></svg></span> : (
-            <img src="/api/profile-image?size=avatar" alt="Foto de Eric Yuji Ikeda" width="144" height="144" loading="eager" fetchPriority="high" decoding="async" onError={() => setPhotoError(true)} />
+            <img src="/api/profile-image?size=avatar" alt="Foto de Eric Yuji Ikeda" width="104" height="104" loading="eager" fetchPriority="high" decoding="async" onError={() => setPhotoError(true)} />
           )}
         </div>
-        <p className="links-eyebrow">ME ENCONTRE POR AQUI</p>
         <h1>Eric Yuji Ikeda</h1>
-        <p className="links-bio">Tecnologia, jogos e um pouco de tudo.<br />Por aqui, a gente se conecta além do código.</p>
+        <p className="links-bio">Tecnologia, jogos e vida real.</p>
+        </header>
         <ShareLinks />
-        <p className="links-section-label">Minhas redes</p>
         <nav className="links-nav" aria-label="Minhas redes sociais">
-          {networks.map(network => {
-            const card = <a className={`links-social links-social-${network.icon}`} href={network.href} key={network.icon} target="_blank" rel="noopener noreferrer">
+          {networks.map(network => (
+            <a className={`links-social links-social-${network.icon}`} href={network.href} key={network.icon} target="_blank" rel="noopener noreferrer" aria-label={`${network.name} — ${network.handle}`}>
               <span className="links-social-icon" aria-hidden="true">
                 {network.icon === 'instagram' ? (
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" /></svg>
@@ -81,15 +73,14 @@ export default function LinksPage() {
                   <svg viewBox="0 0 24 24" fill="currentColor"><path d="M5.3 8.5H2V22h3.3V8.5ZM3.65 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4ZM22 14.3c0-4.1-2.2-6-5.1-6-2.4 0-3.5 1.3-4.1 2.2v-2H9.5V22h3.3v-7.5c0-2 1-3.3 2.9-3.3s3 1.3 3 3.3V22H22v-7.7Z" /></svg>
                 )}
               </span>
-              <span className="links-social-copy"><span className="links-social-title"><strong>{network.name}</strong><span className="links-social-kind">{network.kind}</span></span><span className="links-handle">{network.handle}</span><small>{network.description}</small></span>
+              <span className="links-social-name">{network.name}</span>
             </a>
-            return network.icon === 'spotify' ? <SpotifyPlayer key={network.icon} fallback={card} /> : card
-          })}
+          ))}
         </nav>
+        <SpotifyPlayer compact fallback={null} />
         <VirtualPet />
-        <p className="links-note">Do outro lado da tela, sou eu mesmo.</p>
       </main>
-      <footer className="links-footer">ERIC YUJI IKEDA<span>CONEXÕES DE VERDADE.</span></footer>
+      <footer className="links-footer">Conexões de verdade.</footer>
     </div>
   )
 }
