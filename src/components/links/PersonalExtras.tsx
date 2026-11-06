@@ -1,28 +1,16 @@
-import { useEffect, useRef, useState, type FormEvent } from 'react'
+import { useRef, useState, type FormEvent } from 'react'
 
-type Run = { distanceKm: number; durationSeconds: number; date: string; url: string }
-function duration(seconds: number) {
-  const hours = Math.floor(seconds / 3600), minutes = Math.floor(seconds % 3600 / 60)
-  return hours ? `${hours}h ${minutes}min` : `${minutes}min ${seconds % 60}s`
-}
+import MemoryGame from './MemoryGame'
 
 export default function PersonalExtras() {
-  const [run, setRun] = useState<Run | null>(null)
+  const gameDialog = useRef<HTMLDialogElement>(null)
+  const [gameOpen, setGameOpen] = useState(false)
   const dialog = useRef<HTMLDialogElement>(null)
   const [sending, setSending] = useState(false)
   const [notice, setNotice] = useState('')
   const [failed, setFailed] = useState(false)
   const [sent, setSent] = useState(false)
   const [anonymous, setAnonymous] = useState(true)
-  useEffect(() => {
-    const controller = new AbortController()
-    void fetch('/api/content?view=run', { signal: controller.signal }).then(async response => {
-      if (!response.ok) return
-      const data = await response.json()
-      if (!controller.signal.aborted && data.run && typeof data.run.distanceKm === 'number' && typeof data.run.durationSeconds === 'number' && /^https:\/\/(?:www\.)?strava\.com\/activities\/[0-9]+$/.test(data.run.url)) setRun(data.run)
-    }).catch(() => {})
-    return () => controller.abort()
-  }, [])
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -45,16 +33,19 @@ export default function PersonalExtras() {
 
   return <>
     <section className="links-personal-extras" aria-label="Além dos links">
-      <a className="links-run" href={run?.url || 'https://strava.app.link/abHHLSIVP7b'} target="_blank" rel="noopener noreferrer">
-        <svg className="links-extra-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="15" cy="4" r="2"/><path d="m12 8-3 5 4 3-2 5m1-13 4 4h4M5 11l4-3h3m-4 9-3 4"/></svg>
-        <span><small>{run ? 'Última corrida · ' + new Date(run.date + 'T12:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }) : 'Fora das telas'}</small>
-          <strong>{run ? `${run.distanceKm.toLocaleString('pt-BR', { maximumFractionDigits: 2 })} km · ${duration(run.durationSeconds)}` : 'Minhas corridas'}</strong>
-          <small>{run ? 'Ver atividade no Strava' : 'Me acompanhe no Strava'}</small></span>
-      </a>
+      <button className="links-note-open links-game-open" type="button" aria-haspopup="dialog" onClick={() => { setGameOpen(true); gameDialog.current?.showModal() }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true"><rect x="2" y="6" width="20" height="13" rx="5"/><path d="M6 12h6m-3-3v6"/><circle cx="17" cy="11" r=".8"/><circle cx="19" cy="14" r=".8"/></svg><span>Jogo rápido<small>Encontre os pares</small></span>
+      </button>
       <button className="links-note-open" type="button" aria-haspopup="dialog" onClick={() => { setNotice(''); setSent(false); setFailed(false); dialog.current?.showModal() }}>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="4"/><path d="m4 7 8 6 8-6"/></svg><span>Deixe um recado<small>Privado, do seu jeito</small></span>
       </button>
     </section>
+    <dialog ref={gameDialog} className="links-qr-dialog links-memory-dialog" aria-labelledby="links-memory-title" onClose={() => setGameOpen(false)}>
+      <button className="links-qr-close" type="button" aria-label="Fechar jogo" onClick={() => gameDialog.current?.close()}>×</button>
+      <span className="links-eyebrow">UMA PAUSA PRA JOGAR</span>
+      <h2 id="links-memory-title">Memória em dia?</h2>
+      {gameOpen && <MemoryGame />}
+    </dialog>
     <dialog ref={dialog} className="links-qr-dialog links-note-dialog" aria-labelledby="links-note-title" onCancel={event => { if (sending) event.preventDefault() }}>
       <button className="links-qr-close" type="button" disabled={sending} aria-label="Fechar recadinho" onClick={() => dialog.current?.close()}>×</button>
       <span className="links-eyebrow">UMA MENSAGEM SÓ SUA</span>

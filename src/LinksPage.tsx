@@ -92,7 +92,6 @@ export default function LinksPage() {
         <PersonalExtras />
         <VirtualPet />
       </main>
-      <footer className="links-footer">Conexões de verdade.</footer>
     </div>
   )
 }
