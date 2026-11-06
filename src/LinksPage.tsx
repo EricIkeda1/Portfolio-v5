@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import './links.css'
 
 const networks = [
@@ -18,6 +19,8 @@ const networks = [
 ]
 
 export default function LinksPage() {
+  const [photoError, setPhotoError] = useState(false)
+
   return (
     <div className="links-page">
       <header className="links-top">
@@ -25,7 +28,12 @@ export default function LinksPage() {
         <span className="links-top-caption">ME ENCONTRE POR AQUI</span>
       </header>
       <main className="links-main">
-        <div className="links-avatar" aria-hidden="true">EI<span /></div>
+        <div className="links-avatar">
+          {photoError ? <span className="links-avatar-fallback" aria-hidden="true">EI</span> : (
+            <img src="/api/profile-image" alt="Foto de Eric Ikeda" width="90" height="90" decoding="async" onError={() => setPhotoError(true)} />
+          )}
+          <span className="links-avatar-dot" aria-hidden="true" />
+        </div>
         <p className="links-eyebrow">PRAZER, ERIC</p>
         <h1>Eric Ikeda<span className="links-blue">.</span></h1>
         <p className="links-bio">Tecnologia, jogos e um pouco de tudo.<br />Por aqui, a gente se conecta além do código.</p>
