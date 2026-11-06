@@ -5,6 +5,7 @@ import { ensureContactSchema } from './_lib/contact.js'
 import { getSql } from './_lib/db.js'
 import { notifyNewContact } from './_lib/push.js'
 import { allowMethods, noStore } from './_lib/http.js'
+import { parseContactSubmission } from './_lib/contact-input.js'
 import { enforceSameOrigin, getClientIp, requireJson } from './_lib/security.js'
 
 export const config = { api: { bodyParser: { sizeLimit: '16kb' } } }
@@ -18,15 +19,8 @@ export default async function handler(req: any, res: any) {
   if (!body || typeof body !== 'object' || Array.isArray(body) || JSON.stringify(body).length > 16000) {
     return res.status(400).json({ error: 'Mensagem inválida ou muito grande.' })
   }
-  const { name, email, message, website } = body
-  if (website || typeof name !== 'string' || typeof email !== 'string' || typeof message !== 'string') {
-    return res.status(400).json({ error: 'Preencha nome, e-mail e mensagem corretamente.' })
-  }
-  const clean = { name: name.trim(), email: email.trim().toLowerCase(), message: message.trim() }
-  if (clean.name.length < 2 || clean.name.length > 100 || clean.email.length > 254 ||
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clean.email) || clean.message.length < 10 || clean.message.length > 5000) {
-    return res.status(400).json({ error: 'Use um nome de 2 a 100 caracteres, um e-mail válido e uma mensagem de 10 a 5.000 caracteres.' })
-  }
+  const clean = parseContactSubmission(body)
+  if (!clean) return res.status(400).json({ error: body.kind === 'anonymous' ? 'O recadinho deve ter de 10 a 1.000 caracteres.' : 'Use um nome de 2 a 100 caracteres, um e-mail válido e uma mensagem de 10 a 5.000 caracteres.' })
 
   try {
     // Fail closed if the key is missing: personal data must never fall back to plaintext.

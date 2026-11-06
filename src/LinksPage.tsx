@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import PersonalExtras from './components/links/PersonalExtras'
 import ShareLinks from './components/links/ShareLinks'
 import VirtualPet from './components/links/VirtualPet'
 import SpotifyPlayer from './components/SpotifyPlayer'
@@ -78,6 +79,7 @@ export default function LinksPage() {
           ))}
         </nav>
         <SpotifyPlayer compact fallback={null} />
+        <PersonalExtras />
         <VirtualPet />
       </main>
       <footer className="links-footer">Conexões de verdade.</footer>

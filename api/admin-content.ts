@@ -1,3 +1,4 @@
+import { parsePersonalRun, readPersonalRun, savePersonalRun } from './_lib/personal-run.js'
 import { requireAdmin } from './_lib/auth.js'
 import { ensureSchema, getSql, readPortfolioContent } from './_lib/db.js'
 import { allowMethods, noStore } from './_lib/http.js'
@@ -27,6 +28,13 @@ export default async function handler(req: any, res: any) {
   if (!await requireAdmin(req, res)) return
 
   try {
+    if (req.query?.personal_run === '1') {
+      if (req.method === 'GET') return res.status(200).json({ run: await readPersonalRun() })
+      const run = req.body?.run === null ? null : parsePersonalRun(req.body?.run)
+      if (req.body?.run !== null && !run) return res.status(400).json({ error: 'Confira distância, duração, data e URL direta da atividade no Strava.' })
+      await savePersonalRun(run)
+      return res.status(200).json({ ok: true })
+    }
     await ensureSchema()
 
     if (req.method === 'GET') {

@@ -1,3 +1,4 @@
+import { readPersonalRun } from './_lib/personal-run.js'
 import { readSpotify } from './_lib/spotify.js'
 import { readPortfolioContent } from './_lib/db.js'
 import { allowMethods, noStore } from './_lib/http.js'
@@ -8,6 +9,10 @@ export default async function handler(req: any, res: any) {
 
   // Reuse this function so the Hobby deployment stays within its function limit.
   const view = new URL(req.url || '/', 'https://portfolio.invalid').searchParams.get('view')
+  if (view === 'run') {
+    try { return res.status(200).json({ run: await readPersonalRun() }) }
+    catch { return res.status(503).json({ error: 'Corrida indisponível.' }) }
+  }
   if (view === 'spotify') {
     res.setHeader('Cache-Control', 'public, max-age=0, s-maxage=30')
     return res.status(200).json(await readSpotify())

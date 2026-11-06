@@ -35,16 +35,16 @@ export default function MessagesInbox() {
   }
 
   return <>
-    <div className="admin-dashboard-heading"><div><span className="admin-eyebrow">Administrador</span><h1>Mensagens</h1><p>Contatos enviados pelo formulário do portfólio. {unread} não lida(s).</p></div><button className="admin-ghost-action" onClick={() => void load()} disabled={loading || updating !== null}>Atualizar</button></div>
+    <div className="admin-dashboard-heading"><div><span className="admin-eyebrow">Administrador</span><h1>Mensagens</h1><p>Contatos e recadinhos privados enviados pelo site. {unread} não lida(s).</p></div><button className="admin-ghost-action" onClick={() => void load()} disabled={loading || updating !== null}>Atualizar</button></div>
     <PushNotifications />
     {error && <p className="admin-toast-demo admin-toast-error" role="alert">{error}</p>}
     {loading && <p role="status">Carregando mensagens…</p>}
     {!loading && !error && !messages.length && <section className="admin-panel-card"><h2>Sua caixa de entrada está vazia</h2><p className="admin-setting-description">Os novos contatos enviados pelo site aparecerão aqui.</p></section>}
     <div className="admin-message-list">{messages.map(message => <article className="admin-panel-card admin-message" key={message.id}>
-      <div className="admin-message-heading"><div><h2>{message.name}</h2><a href={`mailto:${encodeURIComponent(message.email)}`}>{message.email}</a></div><span>{message.read_at ? 'Lida' : 'Nova'}</span></div>
+      <div className="admin-message-heading"><div><h2>{message.name}</h2>{message.email ? <a href={`mailto:${encodeURIComponent(message.email)}`}>{message.email}</a> : <small>Links pessoais · sem nome ou e-mail</small>}</div><span>{message.read_at ? 'Lida' : 'Nova'}</span></div>
       <time dateTime={message.created_at}>{new Date(message.created_at).toLocaleString('pt-BR')}</time>
       <p className="admin-message-body">{message.message}</p>
-      <div className="admin-form-row"><a className="admin-primary-action" href={`mailto:${encodeURIComponent(message.email)}?subject=${encodeURIComponent('Seu contato pelo portfólio — Eric Ikeda')}`}>Responder por e-mail</a><button className="admin-ghost-action" disabled={updating !== null} onClick={() => void toggleRead(message)}>{updating === message.id ? 'Atualizando…' : message.read_at ? 'Marcar como não lida' : 'Marcar como lida'}</button></div>
+      <div className="admin-form-row">{message.email && <a className="admin-primary-action" href={`mailto:${encodeURIComponent(message.email)}?subject=${encodeURIComponent('Seu contato pelo portfólio — Eric Ikeda')}`}>Responder por e-mail</a>}<button className="admin-ghost-action" disabled={updating !== null} onClick={() => void toggleRead(message)}>{updating === message.id ? 'Atualizando…' : message.read_at ? 'Marcar como não lida' : 'Marcar como lida'}</button></div>
     </article>)}</div>
     {next && <button className="admin-ghost-action" disabled={loading || updating !== null} onClick={() => void load(next)}>Carregar mensagens anteriores</button>}
   </>
