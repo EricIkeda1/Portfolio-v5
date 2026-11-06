@@ -47,7 +47,7 @@ export default function LinksPage() {
       <main className="links-main">
         <div className="links-avatar">
           {photoError ? <span className="links-avatar-fallback" aria-hidden="true">EI</span> : (
-            <img src="/api/profile-image" alt="Foto de Eric Ikeda" width="90" height="90" decoding="async" onError={() => setPhotoError(true)} />
+            <img src="/api/profile-image?size=avatar" alt="Foto de Eric Ikeda" width="112" height="112" loading="eager" fetchPriority="high" decoding="async" onError={() => setPhotoError(true)} />
           )}
           <span className="links-avatar-dot" aria-hidden="true" />
         </div>

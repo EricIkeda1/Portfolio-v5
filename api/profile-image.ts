@@ -29,9 +29,17 @@ function isAllowedImageUrl(value: string) {
   }
 }
 
-function getImageCandidates(value: string) {
+function getImageCandidates(value: string, avatar: boolean) {
   const candidates = [value]
   const fileId = getDriveFileId(value)
+
+  if (fileId && avatar) {
+    // Request a thumbnail first: the links avatar needs 320px, not the original photo.
+    return [
+      `https://drive.google.com/thumbnail?id=${encodeURIComponent(fileId)}&sz=w320`,
+      `https://lh3.googleusercontent.com/d/${encodeURIComponent(fileId)}=w320`,
+    ].filter(isAllowedImageUrl)
+  }
 
   if (fileId) {
     candidates.unshift(
@@ -46,6 +54,7 @@ function getImageCandidates(value: string) {
 export default async function handler(req: any, res: any) {
   noStore(res)
   if (!allowMethods(req, res, ['GET'])) return
+  const avatar = new URL(req.url || '/', 'https://portfolio.invalid').searchParams.get('size') === 'avatar'
 
   try {
     await ensureSchema()
@@ -62,7 +71,7 @@ export default async function handler(req: any, res: any) {
       return res.status(404).json({ error: 'Imagem de perfil não encontrada.' })
     }
 
-    const candidates = getImageCandidates(profileImageUrl)
+    const candidates = getImageCandidates(profileImageUrl, avatar)
     if (candidates.length === 0) {
       return res.status(400).json({ error: 'A imagem precisa estar hospedada no Google Drive.' })
     }
@@ -72,6 +81,7 @@ export default async function handler(req: any, res: any) {
         const response = await fetch(imageUrl, {
           method: 'GET',
           redirect: 'follow',
+          signal: AbortSignal.timeout(8000),
           headers: {
             Accept: 'image/avif,image/webp,image/png,image/jpeg,image/*,*/*',
           },
@@ -84,6 +94,10 @@ export default async function handler(req: any, res: any) {
 
         const bytes = Buffer.from(await response.arrayBuffer())
 
+        if (avatar) {
+          // Only successful public thumbnails are cached. Admin/full-size requests stay no-store.
+          res.setHeader('Cache-Control', 'public, max-age=300, s-maxage=300, stale-while-revalidate=60')
+        }
         res.setHeader('Content-Type', contentType)
         res.setHeader('Content-Disposition', 'inline')
         res.setHeader('X-Content-Type-Options', 'nosniff')
