@@ -5,11 +5,12 @@ const websiteId = `${origin}/#website`
 export function seoHead(pathname: string) {
   const portfolio = pathname === '/' || pathname.replace(/\/+$/, '') === '/portfolio'
   const privatePage = pathname === '/admin' || pathname === '/404' || pathname === '/arena'
-  const title = privatePage
+  const links = pathname.replace(/\/+$/, '') === '/links'
+  const title = links ? 'Eric Y. Ikeda | Links do meu portfólio' : privatePage
     ? `${pathname === '/admin' ? 'Administração' : pathname === '/arena' ? 'Last Circle — Minigame' : 'Página não encontrada'} | Eric Y. Ikeda`
     : 'Eric Yuji Ikeda | Portfólio de desenvolvimento web e mobile'
   const description = 'Conheça os projetos de Eric Yuji Ikeda: desenvolvimento web e mobile com React, Flutter, TypeScript, APIs REST e PostgreSQL.'
-  const url = `${origin}/`
+  const url = links ? `${origin}/links` : `${origin}/`
   const escape = (value: string) => value.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;')
   const meta = (name: string, content: string, property = false) => `<meta ${property ? 'property' : 'name'}="${name}" content="${escape(content)}" />`
   const graph: Record<string, unknown>[] = [

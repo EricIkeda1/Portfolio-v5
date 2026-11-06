@@ -10,6 +10,7 @@ import Contact from '@/sections/Contact'
 import { PortfolioContentProvider } from '@/context/PortfolioContentContext'
 import AdminPage from '@/admin/AdminPage'
 import NotFoundPage from '@/NotFoundPage'
+import LinksPage from './LinksPage'
 
 const ArenaPage = lazy(() => import('./game/ArenaPage'))
 
@@ -108,6 +109,8 @@ function PortfolioPage() {
 
 export default function App({ pathname = window.location.pathname }: { pathname?: string } = {}) {
   const normalizedPath = pathname.replace(/\/+$/, '') || '/'
+
+  if (normalizedPath === '/links' || (normalizedPath === '/' && typeof window !== 'undefined' && window.location.hostname === 'links.ericyikeda.com.br')) return <LinksPage />
 
   if (normalizedPath === '/arena') return <Suspense fallback={<main style={{ padding: 32 }}>Preparando a arena…</main>}><ArenaPage /></Suspense>
 

@@ -7,7 +7,7 @@ const policy = config.headers[0].headers.find(header => header.key === 'Content-
 const scripts = policy.match(/(?:^|;)\s*script-src\s+([^;]+)/)[1]
 assert.ok(!scripts.includes('unsafe-inline'))
 assert.ok(!scripts.includes('unsafe-eval'))
-for (const file of ['index.html', 'portfolio/index.html', 'admin/index.html', 'arena/index.html', '404.html']) {
+for (const file of ['index.html', 'portfolio/index.html', 'links/index.html', 'admin/index.html', 'arena/index.html', '404.html']) {
   const html = await readFile(`dist/${file}`, 'utf8')
   assert.ok(!/\son(?:load|error|click)\s*=/i.test(html), `Inline handler in ${file}`)
   for (const [, attrs, body] of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g)) {
@@ -16,4 +16,4 @@ for (const file of ['index.html', 'portfolio/index.html', 'admin/index.html', 'a
     assert.ok(scripts.includes(hash), `Missing CSP hash for ${file}`)
   }
 }
-console.log('CSP: scripts inline bloqueados, handlers removidos e hashes SEO verificados nas cinco páginas.')
+console.log('CSP: scripts inline bloqueados, handlers removidos e hashes SEO verificados em todas as páginas.')
