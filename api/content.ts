@@ -1,9 +1,17 @@
+import { readSpotify } from './_lib/spotify.js'
 import { readPortfolioContent } from './_lib/db.js'
 import { allowMethods, noStore } from './_lib/http.js'
 
 export default async function handler(req: any, res: any) {
   noStore(res)
   if (!allowMethods(req, res, ['GET'])) return
+
+  // Reuse this function so the Hobby deployment stays within its function limit.
+  const view = new URL(req.url || '/', 'https://portfolio.invalid').searchParams.get('view')
+  if (view === 'spotify') {
+    res.setHeader('Cache-Control', 'public, max-age=0, s-maxage=30')
+    return res.status(200).json(await readSpotify())
+  }
 
   try {
     const content = await readPortfolioContent(false)

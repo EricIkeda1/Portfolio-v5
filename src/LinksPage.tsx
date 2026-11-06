@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import SpotifyPlayer from './components/SpotifyPlayer'
 import './links.css'
 
 const networks = [
@@ -55,8 +56,8 @@ export default function LinksPage() {
           <span>Tecnologia</span><span>Games</span><span>Vida real</span>
         </div>
         <nav className="links-nav" aria-label="Minhas redes sociais">
-          {networks.map(network => (
-            <a className={`links-social links-social-${network.icon}`} href={network.href} key={network.icon} target="_blank" rel="noopener noreferrer">
+          {networks.map(network => {
+            const card = <a className={`links-social links-social-${network.icon}`} href={network.href} key={network.icon} target="_blank" rel="noopener noreferrer">
               <span className="links-social-icon" aria-hidden="true">
                 {network.icon === 'instagram' ? (
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" /></svg>
@@ -70,7 +71,8 @@ export default function LinksPage() {
               </span>
               <span className="links-social-copy"><strong>{network.name}</strong><span className="links-handle">{network.handle}</span><small>{network.description}</small></span>
             </a>
-          ))}
+            return network.icon === 'spotify' ? <SpotifyPlayer key={network.icon} fallback={card} /> : card
+          })}
         </nav>
         <p className="links-note">Do outro lado da tela, sou eu mesmo.</p>
       </main>

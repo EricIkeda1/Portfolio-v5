@@ -11,7 +11,9 @@
     "dev:vercel": "npx vercel dev",
     "admin:hash": "node scripts/hash-admin-password.mjs",
     "test:security": "node scripts/test-security.mjs",
-    "contacts:encrypt": "node scripts/encrypt-existing-contacts.mjs --apply"
+    "contacts:encrypt": "node scripts/encrypt-existing-contacts.mjs --apply",
+    "spotify:connect": "node scripts/connect-spotify.mjs",
+    "test:spotify": "node --experimental-strip-types --test scripts/test-spotify.mjs"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.1.0",
