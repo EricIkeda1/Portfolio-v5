@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import ShareLinks from './components/links/ShareLinks'
 import VirtualPet from './components/links/VirtualPet'
 import SpotifyPlayer from './components/SpotifyPlayer'
@@ -14,7 +14,7 @@ const networks = [
   },
   {
     name: 'LinkedIn',
-    handle: 'Eric Ikeda',
+    handle: 'Eric Yuji Ikeda',
     description: 'Minha trajetória e novas conexões.',
     href: 'https://www.linkedin.com/in/ericikeda1/',
     icon: 'linkedin',
@@ -28,7 +28,7 @@ const networks = [
   },
   {
     name: 'Strava',
-    handle: 'Eric Ikeda',
+    handle: 'Eric Yuji Ikeda',
     description: 'Corridas, movimento e ar livre.',
     href: 'https://strava.app.link/abHHLSIVP7b',
     icon: 'strava',
@@ -38,21 +38,32 @@ const networks = [
 export default function LinksPage() {
   const [photoError, setPhotoError] = useState(false)
 
+  useEffect(() => {
+    const previousTitle = document.title
+    const icon = document.querySelector<HTMLLinkElement>('link[rel="icon"]')
+    const previousIcon = icon?.getAttribute('href')
+    document.title = 'Eric Yuji Ikeda | Minhas redes sociais'
+    icon?.setAttribute('href', '/api/profile-image?size=avatar')
+    return () => {
+      document.title = previousTitle
+      if (previousIcon) icon?.setAttribute('href', previousIcon)
+    }
+  }, [])
+
   return (
     <div className="links-page">
       <header className="links-top">
-        <span>EYI<span className="links-blue">.</span></span>
         <span className="links-top-caption">ME ENCONTRE POR AQUI</span>
       </header>
       <main className="links-main">
         <div className="links-avatar">
-          {photoError ? <span className="links-avatar-fallback" aria-hidden="true">EI</span> : (
-            <img src="/api/profile-image?size=avatar" alt="Foto de Eric Ikeda" width="112" height="112" loading="eager" fetchPriority="high" decoding="async" onError={() => setPhotoError(true)} />
+          {photoError ? <span className="links-avatar-fallback" aria-hidden="true"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" strokeWidth="1.4"><circle cx="12" cy="8" r="4" /><path d="M4 22v-2a8 8 0 0 1 16 0v2" /></svg></span> : (
+            <img src="/api/profile-image?size=avatar" alt="Foto de Eric Yuji Ikeda" width="112" height="112" loading="eager" fetchPriority="high" decoding="async" onError={() => setPhotoError(true)} />
           )}
           <span className="links-avatar-dot" aria-hidden="true" />
         </div>
         <p className="links-eyebrow">PRAZER, ERIC</p>
-        <h1>Eric Ikeda<span className="links-blue">.</span></h1>
+        <h1>Eric Yuji Ikeda<span className="links-blue">.</span></h1>
         <p className="links-bio">Tecnologia, jogos e um pouco de tudo.<br />Por aqui, a gente se conecta além do código.</p>
         <ShareLinks />
         <nav className="links-nav" aria-label="Minhas redes sociais">
@@ -77,7 +88,7 @@ export default function LinksPage() {
         <VirtualPet />
         <p className="links-note">Do outro lado da tela, sou eu mesmo.</p>
       </main>
-      <footer className="links-footer">FEITO POR ERIC Y. IKEDA<span>CONEXÕES DE VERDADE.</span></footer>
+      <footer className="links-footer">ERIC YUJI IKEDA<span>CONEXÕES DE VERDADE.</span></footer>
     </div>
   )
 }

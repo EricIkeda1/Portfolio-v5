@@ -25,7 +25,7 @@ export default function ShareLinks() {
   async function share() {
     setNotice(''); setManualUrl('')
     if (navigator.share) {
-      try { await navigator.share({ title: 'Eric Ikeda · Me encontre por aqui', url: getUrl() }); return }
+      try { await navigator.share({ title: 'Eric Yuji Ikeda · Me encontre por aqui', url: getUrl() }); return }
       catch (error) { if (error instanceof Error && error.name === 'AbortError') return }
     }
     await copyLink()
@@ -55,7 +55,7 @@ export default function ShareLinks() {
         <span className="links-eyebrow">LEVE A CONEXÃO COM VOCÊ</span>
         <h2 id="links-qr-title">Me encontre por aqui.</h2>
         <p id="links-qr-description">Aponte a câmera do celular para abrir minha página de redes sociais.</p>
-        <div className="links-qr-image">{qr ? <img src={qr} width="256" height="256" alt="QR Code para a página de redes sociais de Eric Ikeda" /> : <p role="status">{qrError ? 'Não foi possível gerar o QR Code.' : 'Gerando QR Code…'}</p>}</div>
+        <div className="links-qr-image">{qr ? <img src={qr} width="256" height="256" alt="QR Code para a página de redes sociais de Eric Yuji Ikeda" /> : <p role="status">{qrError ? 'Não foi possível gerar o QR Code.' : 'Gerando QR Code…'}</p>}</div>
         {qr ? <a className="links-qr-download" href={qr} download="eric-ikeda-qrcode.png">Baixar QR Code</a> : qrError ? <button className="links-qr-download" type="button" onClick={() => void showQr()}>Tentar novamente</button> : null}
       </dialog>
     </div>
