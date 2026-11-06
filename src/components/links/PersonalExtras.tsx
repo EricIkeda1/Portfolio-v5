@@ -1,8 +1,8 @@
 import { useRef, useState, type FormEvent } from 'react'
 
-import ClockWidget from './ClockWidget'
+import VibeWidget, { type VisitorVibe } from './VibeWidget'
 
-export default function PersonalExtras() {
+export default function PersonalExtras({ vibe, onVibe }: { vibe?: VisitorVibe; onVibe: (vibe: VisitorVibe) => void }) {
   const dialog = useRef<HTMLDialogElement>(null)
   const [sending, setSending] = useState(false)
   const [notice, setNotice] = useState('')
@@ -31,7 +31,7 @@ export default function PersonalExtras() {
 
   return <>
     <section className="links-personal-extras" aria-label="Além dos links">
-      <ClockWidget />
+      <VibeWidget selected={vibe} onSelect={onVibe} />
       <button className="links-note-open" type="button" aria-haspopup="dialog" onClick={() => { setNotice(''); setSent(false); setFailed(false); dialog.current?.showModal() }}>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="4"/><path d="m4 7 8 6 8-6"/></svg><span>Deixe um recado<small>Privado, do seu jeito</small></span>
       </button>

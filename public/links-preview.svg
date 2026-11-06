@@ -1,0 +1,33 @@
+<ns0:svg xmlns:ns0="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+<ns0:defs><ns0:linearGradient id="bg" x2="1" y2="1"><ns0:stop stop-color="#172d40" /><ns0:stop offset=".55" stop-color="#151d2f" /><ns0:stop offset="1" stop-color="#32243f" /></ns0:linearGradient><ns0:radialGradient id="glow"><ns0:stop stop-color="#bba2ed" stop-opacity=".18" /><ns0:stop offset="1" stop-color="#bba2ed" stop-opacity="0" /></ns0:radialGradient></ns0:defs>
+<ns0:rect width="1200" height="630" fill="url(#bg)" /><ns0:circle cx="980" cy="220" r="350" fill="url(#glow)" />
+<ns0:rect x="35" y="35" width="1130" height="560" rx="34" fill="none" stroke="#ffffff" stroke-opacity=".13" />
+<ns0:g font-family="DejaVu Sans,sans-serif"><ns0:text x="82" y="111" font-size="16" letter-spacing="4" fill="#c8b6ed">MEU CANTINHO NA INTERNET</ns0:text>
+<ns0:text x="77" y="230" font-size="72" font-weight="bold" letter-spacing="-3" fill="#f5f7fc">Eric Yuji</ns0:text><ns0:text x="77" y="309" font-size="72" font-weight="bold" letter-spacing="-3" fill="#f5f7fc">Ikeda</ns0:text>
+<ns0:text x="82" y="366" font-size="24" fill="#c3d2e5">Tecnologia, games e vida real.</ns0:text>
+<ns0:rect x="80" y="400" width="399" height="48" rx="24" fill="#e6efff" fill-opacity=".08" stroke="#bccde6" stroke-opacity=".25" /><ns0:text x="103" y="431" font-size="19" fill="#d8e5f6">links.ericyikeda.com.br</ns0:text>
+<ns0:text x="82" y="537" font-size="19" fill="#b8cbe2">Instagram  ·  LinkedIn  ·  Spotify  ·  Strava</ns0:text>
+<ns0:circle cx="902" cy="279" r="161" fill="#d2b9fa" fill-opacity=".06" stroke="#cdb8ee" stroke-opacity=".22" />
+<ns0:text x="902" y="492" font-size="18" fill="#c8b9e4" text-anchor="middle">O Pixel te espera por aqui.</ns0:text></ns0:g>
+<ns0:g transform="translate(738,106) scale(2.8)"><ns0:ellipse cx="59" cy="100" rx="37" ry="5" fill="#000" opacity=".15" />
+          <ns0:g class="links-dog-body">
+            <ns0:path class="links-dog-tail" d="M84 85c20 0 24-18 18-26" stroke="#c89a70" stroke-width="11" stroke-linecap="round" />
+            <ns0:path d="M38 65c-8 7-13 26-8 31h55c5-6-1-25-10-31" fill="#c89a70" stroke="#e8c49d" stroke-width="1.5" />
+            <ns0:ellipse cx="58" cy="83" rx="16" ry="15" fill="#f1d7b6" />
+            <ns0:path d="M32 89q-5 8 1 9h14q4-4-1-9m24 0q-5 7-1 9h15q5-3-1-9" fill="#e3be94" stroke="#edcda9" stroke-width="1.5" stroke-linejoin="round" />
+            <ns0:g class="links-dog-head">
+              <ns0:path class="links-dog-ear links-dog-ear-left" d="M36 28C16 18 13 40 19 60c3 9 13 8 18-4l7-22" fill="#94684b" stroke="#b08563" stroke-width="1.5" />
+              <ns0:path class="links-dog-ear links-dog-ear-right" d="M79 28c20-10 23 12 17 32-3 9-13 8-18-4l-7-22" fill="#94684b" stroke="#b08563" stroke-width="1.5" />
+              <ns0:path d="M29 43c0-18 11-26 29-26s29 8 29 26v12c0 19-12 25-29 25S29 74 29 55V43Z" fill="#dfb98d" stroke="#efcfa9" stroke-width="1.5" />
+              <ns0:path d="M55 18c-4 10-2 22 3 26 5-5 7-17 4-26" fill="#f1d7b6" />
+              <ns0:ellipse cx="58" cy="63" rx="20" ry="13" fill="#f5e1c6" />
+              <ns0:g class="links-dog-eyes-happy" stroke="#544453" stroke-width="2.4" stroke-linecap="round"><ns0:path d="M38 48q5-7 10 0m21 0q5-7 10 0" /></ns0:g>
+              <ns0:g class="links-dog-cheeks" fill="#d69295"><ns0:ellipse cx="35" cy="57" rx="5" ry="2.4" /><ns0:ellipse cx="81" cy="57" rx="5" ry="2.4" /></ns0:g>
+              <ns0:path d="M52 57q6-4 12 0l-2 4q-4 4-8 0l-2-4Z" fill="#51414a" /><ns0:path d="M58 63v4m0 0q-4 5-8 0m8 0q4 5 8 0" stroke="#795d5b" stroke-width="1.7" stroke-linecap="round" />
+              <ns0:g class="links-dog-tongue"><ns0:path d="M54 68h8v6a4 4 0 0 1-8 0v-6Z" fill="#dc929d" /><ns0:path d="M58 69v4" stroke="#b86d82" stroke-linecap="round" /></ns0:g>
+              <ns0:path d="m39 75 19 5 19-5-19 14-19-14Z" fill="#779fe0" stroke="#a2c0ee" stroke-width="1.2" /><ns0:circle cx="58" cy="81" r="2" fill="#dae8ff" />
+            </ns0:g>
+          </ns0:g>
+          <ns0:g class="links-dog-hearts" fill="#efb2ce"><ns0:path d="M17 36c-8-8-14 4 0 11 14-7 8-19 0-11Z" /><ns0:path d="M101 24c-7-7-12 3 0 9 12-6 7-16 0-9Z" /><ns0:path d="M58 8c-5-5-9 2 0 7 9-5 5-12 0-7Z" /></ns0:g>
+        </ns0:g>
+</ns0:svg>

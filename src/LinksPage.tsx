@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import type { VisitorVibe } from './components/links/VibeWidget'
 import PersonalExtras from './components/links/PersonalExtras'
 import ShareLinks from './components/links/ShareLinks'
 import VirtualPet from './components/links/VirtualPet'
@@ -33,6 +34,7 @@ const networks = [
 ]
 
 export default function LinksPage() {
+  const [reaction, setReaction] = useState<{ vibe: VisitorVibe; id: number } | null>(null)
   const [photoError, setPhotoError] = useState(false)
 
   useEffect(() => {
@@ -49,7 +51,7 @@ export default function LinksPage() {
     const previousTitle = document.title
     const icon = document.querySelector<HTMLLinkElement>('link[rel="icon"]')
     const previousIcon = icon?.getAttribute('href')
-    document.title = 'Eric Yuji Ikeda | Minhas redes sociais'
+    document.title = 'Eric Yuji Ikeda · Me encontre por aqui'
     icon?.setAttribute('href', '/social-icon.svg')
     return () => {
       document.title = previousTitle
@@ -89,8 +91,8 @@ export default function LinksPage() {
           ))}
         </nav>
         <SpotifyPlayer compact fallback={null} />
-        <PersonalExtras />
-        <VirtualPet />
+        <PersonalExtras vibe={reaction?.vibe} onVibe={vibe => setReaction(current => ({ vibe, id: (current?.id || 0) + 1 }))} />
+        <VirtualPet reaction={reaction} />
       </main>
     </div>
   )

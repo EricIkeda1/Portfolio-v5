@@ -6,13 +6,13 @@ export function seoHead(pathname: string) {
   const portfolio = pathname === '/' || pathname.replace(/\/+$/, '') === '/portfolio'
   const privatePage = pathname === '/admin' || pathname === '/404' || pathname === '/arena'
   const links = pathname.replace(/\/+$/, '') === '/links'
-  const title = links ? 'Eric Yuji Ikeda | Minhas redes sociais' : privatePage
+  const title = links ? 'Eric Yuji Ikeda · Me encontre por aqui' : privatePage
     ? `${pathname === '/admin' ? 'Administração' : pathname === '/arena' ? 'Last Circle — Minigame' : 'Página não encontrada'} | Eric Y. Ikeda`
     : 'Eric Yuji Ikeda | Portfólio de desenvolvimento web e mobile'
-  const description = links ? 'Tecnologia, jogos e um pouco de tudo. Encontre Eric Yuji Ikeda no Instagram, LinkedIn, Spotify e Strava.' : 'Conheça os projetos de Eric Yuji Ikeda: desenvolvimento web e mobile com React, Flutter, TypeScript, APIs REST e PostgreSQL.'
+  const description = links ? 'Tecnologia, games e vida real. Minhas redes, recadinhos privados e um Pixel esperando seu carinho.' : 'Conheça os projetos de Eric Yuji Ikeda: desenvolvimento web e mobile com React, Flutter, TypeScript, APIs REST e PostgreSQL.'
   const url = links ? 'https://links.ericyikeda.com.br/' : `${origin}/`
-  const image = links ? `${origin}/api/profile-image?size=avatar` : `${origin}/api/logo-image`
-  const imageAlt = links ? 'Foto de Eric Yuji Ikeda' : 'Eric Y. Ikeda — Portfólio'
+  const image = links ? 'https://links.ericyikeda.com.br/links-preview.png' : `${origin}/api/logo-image`
+  const imageAlt = links ? 'Eric Yuji Ikeda: tecnologia, games e vida real, com o cachorrinho Pixel' : 'Eric Y. Ikeda — Portfólio'
   const escape = (value: string) => value.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;')
   const meta = (name: string, content: string, property = false) => `<meta ${property ? 'property' : 'name'}="${name}" content="${escape(content)}" />`
   const graph: Record<string, unknown>[] = [
@@ -25,6 +25,6 @@ export function seoHead(pathname: string) {
     meta('description', description), meta('author', 'Eric Yuji Ikeda'),
     meta('robots', privatePage ? 'noindex, nofollow, noarchive' : 'index, follow, max-image-preview:large'),
     meta('theme-color', '#07070f'),
-    ...(!privatePage ? [`<link rel="canonical" href="${url}" />`, meta('og:type', 'website', true), meta('og:locale', 'pt_BR', true), meta('og:site_name', links ? 'Eric Yuji Ikeda' : 'Eric Y. Ikeda', true), meta('og:url', url, true), meta('og:title', title, true), meta('og:description', description, true), meta('og:image', image, true), meta('og:image:alt', imageAlt, true), meta('twitter:card', 'summary_large_image'), meta('twitter:title', title), meta('twitter:description', description), meta('twitter:image', image), `<script type="application/ld+json">${JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }).replace(/</g, '\\u003c')}</script>`] : []),
+    ...(!privatePage ? [`<link rel="canonical" href="${url}" />`, meta('og:type', 'website', true), meta('og:locale', 'pt_BR', true), meta('og:site_name', links ? 'Eric Yuji Ikeda' : 'Eric Y. Ikeda', true), meta('og:url', url, true), meta('og:title', title, true), meta('og:description', description, true), meta('og:image', image, true), meta('og:image:alt', imageAlt, true), ...(links ? [meta('og:image:type', 'image/png', true), meta('og:image:width', '1200', true), meta('og:image:height', '630', true)] : []), meta('twitter:card', 'summary_large_image'), meta('twitter:title', title), meta('twitter:description', description), meta('twitter:image', image), `<script type="application/ld+json">${JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }).replace(/</g, '\\u003c')}</script>`] : []),
   ].join('\n    ')
 }

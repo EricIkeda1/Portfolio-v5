@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
+import type { VisitorVibe } from './VibeWidget'
 
 type Mood = 'awake' | 'happy' | 'asleep'
 
-export default function VirtualPet() {
+export default function VirtualPet({ reaction }: { reaction?: { vibe: VisitorVibe; id: number } | null }) {
   const [mood, setMood] = useState<Mood>('awake')
   const [pets, setPets] = useState(0)
 
@@ -11,6 +12,17 @@ export default function VirtualPet() {
     const timer = setTimeout(() => setMood(mood === 'happy' ? 'awake' : 'asleep'), mood === 'happy' ? 4000 : 20000)
     return () => clearTimeout(timer)
   }, [mood, pets])
+
+  useEffect(() => {
+    if (!reaction) return
+    setMood('happy')
+    setPets(count => count + 1)
+  }, [reaction?.id])
+  const replies: Record<VisitorVibe, string> = {
+    calm: 'De boa com você. Fica mais um pouquinho. 🐾',
+    focused: 'Vai com tudo! Eu cuido do cantinho. 🚀',
+    busy: 'Respira. Uma coisa de cada vez. Toma um carinho. 💙',
+  }
 
   const asleep = mood === 'asleep'
   const happy = mood === 'happy'
@@ -48,7 +60,7 @@ export default function VirtualPet() {
           {pets > 0 ? <g key={pets} className="links-dog-hearts" fill="#efb2ce"><path d="M17 36c-8-8-14 4 0 11 14-7 8-19 0-11Z" /><path d="M101 24c-7-7-12 3 0 9 12-6 7-16 0-9Z" /><path d="M58 8c-5-5-9 2 0 7 9-5 5-12 0-7Z" /></g> : null}
         </svg>
       </button>
-      <div><strong>Esse é o Pixel<span aria-hidden="true">.</span></strong><p key={mood} className="links-pet-message" role="status">{asleep ? 'Recarregando as patinhas…' : happy ? 'Carinho recebido. Rabinho a mil!' : 'Um toque, um carinho.'}</p></div>
+      <div><strong>Esse é o Pixel<span aria-hidden="true">.</span></strong><p key={mood} className="links-pet-message" role="status">{reaction ? replies[reaction.vibe] : asleep ? 'Recarregando as patinhas…' : happy ? 'Carinho recebido. Rabinho a mil!' : 'Um toque, um carinho.'}</p></div>
     </section>
   )
 }
