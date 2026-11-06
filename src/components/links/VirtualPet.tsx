@@ -4,34 +4,51 @@ type Mood = 'awake' | 'happy' | 'asleep'
 
 export default function VirtualPet() {
   const [mood, setMood] = useState<Mood>('awake')
+  const [pets, setPets] = useState(0)
 
   useEffect(() => {
     if (mood === 'asleep') return
-    const timer = setTimeout(() => setMood(mood === 'happy' ? 'awake' : 'asleep'), mood === 'happy' ? 2400 : 20000)
+    const timer = setTimeout(() => setMood(mood === 'happy' ? 'awake' : 'asleep'), mood === 'happy' ? 4000 : 20000)
     return () => clearTimeout(timer)
-  }, [mood])
+  }, [mood, pets])
 
   const asleep = mood === 'asleep'
   const happy = mood === 'happy'
+  function pet() {
+    setMood('happy')
+    setPets(count => count + 1)
+  }
+
   return (
-    <section className={`links-pet links-pet-${mood}`} aria-label="Pet virtual Pixel">
-      <button className="links-pet-touch" type="button" onClick={() => setMood(happy ? 'awake' : 'happy')} aria-label={asleep ? 'Acordar e fazer carinho no Pixel' : 'Fazer carinho no Pixel'}>
-        <svg className="links-cat" viewBox="0 0 120 100" fill="none" aria-hidden="true">
-          <ellipse cx="59" cy="91" rx="37" ry="5" fill="#000" opacity=".15" />
-          <path className="links-cat-tail" d="M86 80c24 2 26-19 14-24-8-3-12 6-6 10" stroke="#829fcd" strokeWidth="10" strokeLinecap="round" />
-          <path d="M35 62c-10 8-12 24-3 26h50c9-4 2-24-8-27" fill="#9db9e4" stroke="#bed3ef" strokeWidth="2" />
-          <path d="m28 40 1-23c1-4 4-4 7-1l16 13h21l14-14c3-3 6-2 6 2l-1 28c8 29-2 38-31 38S20 73 28 40Z" fill="#bdd1ee" stroke="#d7e5fa" strokeWidth="2" strokeLinejoin="round" />
-          <path d="m34 24 12 10-12 4V24Zm43 10 11-11-1 15-10-4Z" fill="#dbb9d1" />
-          <path d="M56 29v10m8-10v9m8-8v7" stroke="#91add4" strokeWidth="3" strokeLinecap="round" />
-          {asleep || happy ? <g stroke="#344765" strokeWidth="2.5" strokeLinecap="round"><path d={happy ? 'M39 54q5-7 10 0' : 'M39 53q5 5 10 0'} /><path d={happy ? 'M72 54q5-7 10 0' : 'M72 53q5 5 10 0'} /></g> : <g fill="#344765"><ellipse cx="44" cy="53" rx="3" ry="4" /><ellipse cx="77" cy="53" rx="3" ry="4" /></g>}
-          <path d="m57 60 7 0-3.5 4L57 60Z" fill="#a47497" /><path d="M60.5 64v3m0 0q-4 4-7 0m7 0q4 4 7 0" stroke="#596c8b" strokeWidth="1.5" strokeLinecap="round" />
-          <path d="m25 57 12 3m-13 4 12-1m49-3 12-3m-11 6 12 1" stroke="#91a9cb" strokeWidth="1.5" strokeLinecap="round" />
-          <path d="M40 82v5m34-5v5" stroke="#829fcd" strokeWidth="2" strokeLinecap="round" />
-          {happy ? <g className="links-cat-hearts" fill="#e9aecf"><path d="M10 24c-7-7-12 3 0 9 12-6 7-16 0-9ZM105 15c-6-6-10 3 0 8 10-5 6-14 0-8Z" /></g> : null}
-          {asleep ? <text x="96" y="30" fill="#a6c2ec" fontSize="13" fontFamily="monospace">zZ</text> : null}
+    <section className={`links-pet links-pet-${mood}`} aria-label="Cachorrinho virtual Pixel">
+      <button className="links-pet-touch" type="button" onClick={pet} aria-label={asleep ? 'Acordar e fazer carinho no Pixel' : 'Fazer carinho no Pixel'}>
+        <svg className="links-dog" viewBox="0 0 120 110" fill="none" aria-hidden="true">
+          <ellipse cx="59" cy="100" rx="37" ry="5" fill="#000" opacity=".15" />
+          <g className="links-dog-body">
+            <path className="links-dog-tail" d="M84 85c20 0 24-18 18-26" stroke="#c89a70" strokeWidth="11" strokeLinecap="round" />
+            <path d="M38 65c-8 7-13 26-8 31h55c5-6-1-25-10-31" fill="#c89a70" stroke="#e8c49d" strokeWidth="1.5" />
+            <ellipse cx="58" cy="83" rx="16" ry="15" fill="#f1d7b6" />
+            <path d="M32 89q-5 8 1 9h14q4-4-1-9m24 0q-5 7-1 9h15q5-3-1-9" fill="#e3be94" stroke="#edcda9" strokeWidth="1.5" strokeLinejoin="round" />
+            <g className="links-dog-head">
+              <path className="links-dog-ear links-dog-ear-left" d="M36 28C16 18 13 40 19 60c3 9 13 8 18-4l7-22" fill="#94684b" stroke="#b08563" strokeWidth="1.5" />
+              <path className="links-dog-ear links-dog-ear-right" d="M79 28c20-10 23 12 17 32-3 9-13 8-18-4l-7-22" fill="#94684b" stroke="#b08563" strokeWidth="1.5" />
+              <path d="M29 43c0-18 11-26 29-26s29 8 29 26v12c0 19-12 25-29 25S29 74 29 55V43Z" fill="#dfb98d" stroke="#efcfa9" strokeWidth="1.5" />
+              <path d="M55 18c-4 10-2 22 3 26 5-5 7-17 4-26" fill="#f1d7b6" />
+              <ellipse cx="58" cy="63" rx="20" ry="13" fill="#f5e1c6" />
+              <g className="links-dog-eyes-open" fill="#3d3540"><ellipse cx="43" cy="47" rx="3.3" ry="4.3" /><ellipse cx="74" cy="47" rx="3.3" ry="4.3" /><circle cx="44" cy="46" r="1" fill="#fff" /><circle cx="75" cy="46" r="1" fill="#fff" /></g>
+              <g className="links-dog-eyes-happy" stroke="#544453" strokeWidth="2.4" strokeLinecap="round"><path d="M38 48q5-7 10 0m21 0q5-7 10 0" /></g>
+              <g className="links-dog-eyes-sleep" stroke="#544453" strokeWidth="2.2" strokeLinecap="round"><path d="M38 47q5 5 10 0m21 0q5 5 10 0" /></g>
+              <g className="links-dog-cheeks" fill="#d69295"><ellipse cx="35" cy="57" rx="5" ry="2.4" /><ellipse cx="81" cy="57" rx="5" ry="2.4" /></g>
+              <path d="M52 57q6-4 12 0l-2 4q-4 4-8 0l-2-4Z" fill="#51414a" /><path d="M58 63v4m0 0q-4 5-8 0m8 0q4 5 8 0" stroke="#795d5b" strokeWidth="1.7" strokeLinecap="round" />
+              <g className="links-dog-tongue"><path d="M54 68h8v6a4 4 0 0 1-8 0v-6Z" fill="#dc929d" /><path d="M58 69v4" stroke="#b86d82" strokeLinecap="round" /></g>
+              <path d="m39 75 19 5 19-5-19 14-19-14Z" fill="#779fe0" stroke="#a2c0ee" strokeWidth="1.2" /><circle cx="58" cy="81" r="2" fill="#dae8ff" />
+            </g>
+          </g>
+          <g className="links-dog-snooze"><text x="93" y="24" fill="#a6c2ec" fontSize="12" fontFamily="monospace">zZ</text></g>
+          {pets > 0 ? <g key={pets} className="links-dog-hearts" fill="#efb2ce"><path d="M17 36c-8-8-14 4 0 11 14-7 8-19 0-11Z" /><path d="M101 24c-7-7-12 3 0 9 12-6 7-16 0-9Z" /><path d="M58 8c-5-5-9 2 0 7 9-5 5-12 0-7Z" /></g> : null}
         </svg>
       </button>
-      <div><strong>Esse é o Pixel<span aria-hidden="true">.</span></strong><p role="status">{asleep ? 'Recarregando as patinhas…' : happy ? 'Carinho recebido. Ronrom ativado.' : 'Um toque, um carinho.'}</p></div>
+      <div><strong>Esse é o Pixel<span aria-hidden="true">.</span></strong><p key={mood} className="links-pet-message" role="status">{asleep ? 'Recarregando as patinhas…' : happy ? 'Carinho recebido. Rabinho a mil!' : 'Um toque, um carinho.'}</p></div>
     </section>
   )
 }
