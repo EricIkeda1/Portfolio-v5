@@ -919,7 +919,7 @@ a {
 
 /* Portfolio language switch stays available on desktop and mobile. */
 .language-selector { margin-left: 1rem; flex: 0 0 auto; }
-.language-selector select { min-width: 60px; min-height: 44px; padding: .5rem .4rem; background: var(--card); color: var(--text); border: 1px solid var(--border-bright); border-radius: 10px; font: 600 .75rem/1.5 'Space Mono', monospace; cursor: pointer; }
+.language-selector select { width: 64px; min-width: 60px; min-height: 44px; padding: .5rem .4rem; background: var(--card); color: var(--text); border: 1px solid var(--border-bright); border-radius: 10px; font: 600 .75rem/1.5 'Space Mono', monospace; cursor: pointer; }
 .language-selector select:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
 @media (max-width: 768px) { .language-selector { margin-left: auto; margin-right: .75rem; } }
 @media (max-width: 390px) { header .font-display { font-size: .75rem !important; letter-spacing: .08em !important; } }

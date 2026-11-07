@@ -3,7 +3,7 @@ import english from './en.json'
 import spanish from './es.json'
 import { LOCALE_STORAGE_KEY, resolveLocale, translateText, type Locale } from './locale'
 
-const LanguageContext = createContext({ locale: 'pt' as Locale, setLocale: (_locale: Locale) => {}, t: (text: string) => text })
+const LanguageContext = createContext({ locale: 'pt' as Locale, setLocale: (_locale: Locale) => {}, detectLocale: () => {}, t: (text: string) => text })
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
   // Keep the initial render equal to the Portuguese pre-rendered page.
@@ -16,6 +16,11 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const setLocale = useCallback((next: Locale) => {
     updateLocale(next)
     try { localStorage.setItem(LOCALE_STORAGE_KEY, next) } catch { /* The selector still works without persistence. */ }
+  }, [])
+  const detectLocale = useCallback(() => {
+    // A new detection must discard any previous manual override.
+    try { localStorage.removeItem(LOCALE_STORAGE_KEY) } catch { /* Detection works without storage. */ }
+    updateLocale(resolveLocale(null, navigator.languages?.length ? navigator.languages : [navigator.language]))
   }, [])
   useEffect(() => {
     const oldLang = document.documentElement.lang
@@ -38,20 +43,24 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     }
   }, [locale])
   const t = useCallback((text: string) => translateText(text, locale, locale === 'es' ? spanish : english), [locale])
-  const value = useMemo(() => ({ locale, setLocale, t }), [locale, setLocale, t])
+  const value = useMemo(() => ({ locale, setLocale, detectLocale, t }), [locale, setLocale, detectLocale, t])
   return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>
 }
 
 export function useTranslation() { return useContext(LanguageContext) }
 
 export function LanguageSelector() {
-  const { locale, setLocale, t } = useTranslation()
+  const { locale, setLocale, detectLocale, t } = useTranslation()
   return <label className="language-selector">
     <span className="sr-only">{t('Idioma do portfólio')}</span>
-    <select value={locale} onChange={event => setLocale(event.target.value as Locale)} aria-label={t('Idioma do portfólio')}>
+    <select value={locale} onChange={event => {
+      if (event.target.value === 'auto') detectLocale()
+      else setLocale(event.target.value as Locale)
+    }} aria-label={t('Idioma do portfólio')}>
       <option value="pt" lang="pt-BR">PT</option>
       <option value="en" lang="en">EN</option>
       <option value="es" lang="es">ES</option>
+      <option value="auto">{t('Detectar idioma')}</option>
     </select>
   </label>
 }

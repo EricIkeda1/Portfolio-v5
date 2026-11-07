@@ -21,6 +21,10 @@ assert.equal(resolveLocale(null, []), 'pt')
 assert.equal(resolveLocale('pt', ['en-US']), 'pt')
 assert.equal(resolveLocale('en', ['pt-BR']), 'en')
 assert.equal(resolveLocale('invalid', ['EN-us']), 'en')
+// Detect again after a manual selection: no saved override is passed.
+assert.equal(resolveLocale('en', ['es-MX']), 'en')
+assert.equal(resolveLocale(null, ['es-MX']), 'es')
+assert.equal(resolveLocale(null, ['de-DE']), 'pt')
 assert.equal(translateText('Contato', 'pt', english), 'Contato')
 assert.equal(translateText('Contato', 'en', english), 'Contact')
 assert.equal(translateText('  Contato\n', 'en', english), 'Contact')
@@ -28,7 +32,7 @@ assert.equal(translateText('A new unreviewed project', 'en', english), 'A new un
 assert.equal(translateText('toString', 'en', english), 'toString')
 assert.equal(translateText('__proto__', 'en', english), '__proto__')
 // Every literal translation requested by a public component must be present.
-const paths = ['src/App.tsx', 'src/components/Nav.tsx', 'src/components/ContactForm.tsx', ...readdirSync(new URL('../src/sections/', import.meta.url)).map(f => `src/sections/${f}`)]
+const paths = ['src/i18n/LanguageContext.tsx', 'src/App.tsx', 'src/components/Nav.tsx', 'src/components/ContactForm.tsx', ...readdirSync(new URL('../src/sections/', import.meta.url)).map(f => `src/sections/${f}`)]
 for (const path of paths) {
   const source = readFileSync(new URL(`../${path}`, import.meta.url), 'utf8')
   const ast = ts.createSourceFile(path, source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
