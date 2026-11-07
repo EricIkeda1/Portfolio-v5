@@ -1065,3 +1065,29 @@ a {
 .admin-push-panel>p,.admin-push-panel>small{color:var(--muted);font-size:.85rem;line-height:1.7;display:block;margin:.6rem 0}
 .admin-push-panel>small{font-size:.75rem;margin-top:1rem}
 .admin-push-panel .admin-form-row{flex-wrap:wrap}
+
+/* Lightweight admin navigation and section motion. */
+.admin-sidebar { transition: transform 280ms cubic-bezier(.22,1,.36,1), visibility 280ms; }
+.admin-main-area { transition: margin-left 280ms cubic-bezier(.22,1,.36,1); }
+.admin-menu-toggle { display: grid; place-items: center; flex: 0 0 auto; width: 40px; height: 40px; margin-right: 1rem; border: 1px solid var(--border); border-radius: 10px; background: rgba(255,255,255,.025); color: var(--text); cursor: pointer; transition: background 160ms, border-color 160ms; }
+.admin-menu-toggle:hover { background: rgba(66,133,255,.12); border-color: var(--blue); }
+.admin-menu-toggle:focus-visible, .admin-sidebar button:focus-visible, .admin-sidebar a:focus-visible { outline: 2px solid var(--blue); outline-offset: 4px; }
+.admin-topbar > div:first-of-type { margin-right: auto; }
+.admin-page-transition { animation: admin-page-enter 260ms cubic-bezier(.22,1,.36,1) both; }
+.admin-page-transition > .admin-stat-grid, .admin-page-transition > .admin-overview-grid { animation: admin-page-enter 320ms cubic-bezier(.22,1,.36,1) both; }
+.admin-page-transition > .admin-overview-grid { animation-delay: 40ms; }
+.admin-login-card { animation: admin-page-enter 320ms ease-out both; }
+.admin-sidebar-overlay { animation: admin-overlay-enter 180ms ease-out both; }
+@keyframes admin-page-enter { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes admin-overlay-enter { from { opacity: 0; } to { opacity: 1; } }
+@media (min-width: 761px) {
+  .admin-app-shell.sidebar-collapsed .admin-sidebar { transform: translateX(-100%); visibility: hidden; }
+  .admin-app-shell.sidebar-collapsed .admin-main-area { margin-left: 0; }
+}
+@media (max-width: 760px) {
+  .admin-sidebar:not(.open) { visibility: hidden; }
+  .admin-menu-toggle { margin-right: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .admin-app-shell *, .admin-login-card { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}

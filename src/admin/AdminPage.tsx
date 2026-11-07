@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from 'react'
+import { useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from 'react'
 import {
   adminLogin,
   adminLogout,
@@ -411,6 +411,42 @@ function SettingsPanel({ user, onUserUpdated }: { user: AdminUser; onUserUpdated
 function Dashboard({ user, onUserUpdated, onLogout }: { user: AdminUser; onUserUpdated: (user: AdminUser) => void; onLogout: () => void }) {
   const [active, setActive] = useState(() => typeof window === 'undefined' ? 'overview' : window.location.hash === '#recados' ? 'personal-messages' : window.location.hash === '#mensagens' ? 'messages' : 'overview')
   const [mobileMenu, setMobileMenu] = useState(false)
+  const [compactViewport, setCompactViewport] = useState(() => window.matchMedia('(max-width: 760px)').matches)
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    try { return localStorage.getItem('eyi-admin-sidebar-v1') === 'collapsed' } catch { return false }
+  })
+  const menuToggleRef = useRef<HTMLButtonElement>(null)
+  const sidebarRef = useRef<HTMLElement>(null)
+  const sidebarVisible = compactViewport ? mobileMenu : !sidebarCollapsed
+
+  useEffect(() => {
+    const media = window.matchMedia('(max-width: 760px)')
+    const resize = () => { setCompactViewport(media.matches); setMobileMenu(false) }
+    media.addEventListener('change', resize)
+    return () => media.removeEventListener('change', resize)
+  }, [])
+
+  useEffect(() => {
+    try { localStorage.setItem('eyi-admin-sidebar-v1', sidebarCollapsed ? 'collapsed' : 'expanded') } catch { /* Storage can be unavailable in private browsers. */ }
+  }, [sidebarCollapsed])
+
+  useEffect(() => {
+    if (!compactViewport || !mobileMenu) return
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    sidebarRef.current?.querySelector<HTMLButtonElement>('button')?.focus()
+    const handleKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') { setMobileMenu(false); menuToggleRef.current?.focus() }
+      if (event.key !== 'Tab') return
+      const items = sidebarRef.current?.querySelectorAll<HTMLElement>('button:not(:disabled), a[href]')
+      if (!items?.length) return
+      const first = items[0], last = items[items.length - 1]
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus() }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus() }
+    }
+    document.addEventListener('keydown', handleKey)
+    return () => { document.body.style.overflow = previousOverflow; document.removeEventListener('keydown', handleKey) }
+  }, [compactViewport, mobileMenu])
   const [content, setContent] = useState<PortfolioContent>(DEFAULT_CONTENT)
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState('')
@@ -431,7 +467,12 @@ function Dashboard({ user, onUserUpdated, onLogout }: { user: AdminUser; onUserU
     void getAdminContent().then(setContent).catch((error) => setLoadError(error instanceof Error ? error.message : 'Erro ao carregar dados.')).finally(() => setLoading(false))
   }, [])
 
-  const navigate = (tab: string) => { setActive(tab); setMobileMenu(false); window.scrollTo({ top: 0, behavior: 'smooth' }) }
+  const closeMobileMenu = () => { setMobileMenu(false); menuToggleRef.current?.focus() }
+  const navigate = (tab: string) => {
+    setActive(tab)
+    if (mobileMenu) closeMobileMenu()
+    window.scrollTo({ top: 0, behavior: 'instant' })
+  }
   const logout = async () => {
     if (loggingOut) return
     setLoggingOut(true)
@@ -448,19 +489,20 @@ function Dashboard({ user, onUserUpdated, onLogout }: { user: AdminUser; onUserU
   const updateProjects = (projects: PortfolioProject[]) => setContent((current) => ({ ...current, projects }))
 
   return (
-    <div className="admin-app-shell">
-      <aside className={`admin-sidebar ${mobileMenu ? 'open' : ''}`}>
-        <div className="admin-sidebar-brand"><ProtectedLogo alt="Eric Y. Ikeda" /><div><strong>ERIC Y. IKEDA</strong><span>ADMIN PANEL</span></div><button className="admin-sidebar-close" onClick={() => setMobileMenu(false)}><Icon name="close"/></button></div>
-        <nav className="admin-sidebar-nav" aria-label="Menu administrativo"><span className="admin-nav-caption">MENU PRINCIPAL</span>{navigation.map((item) => <button key={item.id} className={active === item.id ? 'active' : ''} onClick={() => navigate(item.id)}><Icon name={item.icon} size={18}/><span>{item.label}</span>{active === item.id && <i/>}</button>)}</nav>
+    <div className={`admin-app-shell ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
+      <aside id="admin-navigation" ref={sidebarRef} className={`admin-sidebar ${mobileMenu ? 'open' : ''}`} inert={!sidebarVisible} aria-label="Navegação administrativa">
+        <div className="admin-sidebar-brand"><ProtectedLogo alt="Eric Y. Ikeda" /><div><strong>ERIC Y. IKEDA</strong><span>ADMIN PANEL</span></div><button className="admin-sidebar-close" aria-label="Fechar menu" onClick={closeMobileMenu}><Icon name="close"/></button></div>
+        <nav className="admin-sidebar-nav" aria-label="Menu administrativo"><span className="admin-nav-caption">MENU PRINCIPAL</span>{navigation.map((item) => <button key={item.id} className={active === item.id ? 'active' : ''} aria-current={active === item.id ? 'page' : undefined} onClick={() => navigate(item.id)}><Icon name={item.icon} size={18}/><span>{item.label}</span>{active === item.id && <i/>}</button>)}</nav>
         <div className="admin-sidebar-footer"><a href="/" target="_blank" rel="noreferrer"><Icon name="external" size={17}/><span>Ver portfólio</span></a><button onClick={() => void logout()} disabled={loggingOut} aria-busy={loggingOut}><Icon name="logout" size={17}/><span>{loggingOut ? 'Saindo...' : 'Sair'}</span></button><div className="admin-user-chip"><span>EI</span><div><strong>Eric Ikeda</strong><small>Administrador</small></div></div></div>
       </aside>
-      {mobileMenu && <button className="admin-sidebar-overlay" aria-label="Fechar menu" onClick={() => setMobileMenu(false)} />}
+      {mobileMenu && <button className="admin-sidebar-overlay" aria-label="Fechar menu" onClick={closeMobileMenu} />}
       <div className="admin-main-area">
-        <header className="admin-topbar"><button className="admin-mobile-menu" onClick={() => setMobileMenu(true)}><Icon name="menu"/></button><div><span>Painel administrativo</span><strong>{currentLabel}</strong></div><div className="admin-topbar-status"><span/><em>Neon conectado</em></div></header>
+        <header className="admin-topbar"><button ref={menuToggleRef} className="admin-menu-toggle" aria-controls="admin-navigation" aria-expanded={sidebarVisible} aria-label={sidebarVisible ? 'Recolher menu' : 'Abrir menu'} title={sidebarVisible ? 'Recolher menu' : 'Abrir menu'} onClick={() => compactViewport ? setMobileMenu((open) => !open) : setSidebarCollapsed((collapsed) => !collapsed)}><Icon name="menu"/></button><div><span>Painel administrativo</span><strong>{currentLabel}</strong></div><div className="admin-topbar-status"><span/><em>Neon conectado</em></div></header>
         <main className="admin-dashboard-content">
           {logoutError && <div role="alert" className="admin-toast-demo admin-toast-error">{logoutError}</div>}
           {loading && <div className="admin-panel-card"><p className="admin-setting-description">Carregando conteúdo do Neon...</p></div>}
           {!loading && loadError && <div className="admin-toast-demo admin-toast-error">{loadError}</div>}
+          <div key={active} className="admin-page-transition">
           {!loading && !loadError && active === 'overview' && <Overview content={content} onNavigate={navigate} />}
           {!loading && !loadError && active === 'profile' && <ProfileEditor content={content} onUpdated={setContent} />}
           {!loading && !loadError && active === 'projects' && <ProjectsEditor projects={content.projects} onProjectsChange={updateProjects} />}
@@ -468,6 +510,7 @@ function Dashboard({ user, onUserUpdated, onLogout }: { user: AdminUser; onUserU
           {!loading && !loadError && active === 'messages' && <MessagesInbox key="portfolio" source="portfolio" />}
           {!loading && !loadError && active === 'personal-messages' && <MessagesInbox key="personal" source="personal" />}
           {!loading && !loadError && active === 'settings' && <SettingsPanel user={user} onUserUpdated={onUserUpdated} />}
+          </div>
         </main>
       </div>
     </div>
