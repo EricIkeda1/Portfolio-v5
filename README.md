@@ -1,4 +1,4 @@
-# Portfólio v5 · Eric Yuji Ikeda
+# Portfólio v5 · EricIkeda1
 
 Meu portfólio e minha página de links pessoais, reunidos em um projeto com React, TypeScript, APIs em Node.js e PostgreSQL na Neon. Aqui apresento meus projetos e minha trajetória, mantenho minhas redes sociais e gerencio os conteúdos e mensagens pelo painel administrativo.
 
@@ -199,4 +199,4 @@ middleware.ts               Roteamento do subdomínio de links
 
 ## Autor
 
-**Eric Yuji Ikeda** · [GitHub](https://github.com/EricIkeda1) · [LinkedIn](https://www.linkedin.com/in/ericikeda1/)
+**EricIkeda1** · [GitHub](https://github.com/EricIkeda1) · [LinkedIn](https://www.linkedin.com/in/ericikeda1/)
