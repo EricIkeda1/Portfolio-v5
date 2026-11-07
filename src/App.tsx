@@ -73,32 +73,24 @@ function PortfolioPage() {
           </main>
           <footer className="site-footer">
             <div className="site-footer-inner">
-              <a href="/arena" style={{ color: 'var(--blue)', fontSize: '0.85rem' }}>Jogar minigame ↗</a>
-              <div className="site-footer-signature">
-                <span className="site-footer-monogram" aria-hidden="true">EI</span>
-                <div>
-                  <span className="site-footer-copy">
-                    © {new Date().getFullYear()} ERIC Y. IKEDA
-                  </span>
-                  <span className="site-footer-version">PORTFOLIO V5</span>
+              <div className="site-footer-main">
+                <div className="site-footer-signature">
+                  <span className="site-footer-monogram" aria-hidden="true">EI</span>
+                  <div>
+                    <span className="site-footer-name">Eric Y. Ikeda</span>
+                    <p className="site-footer-tagline">Ideias, código e atenção aos detalhes.</p>
+                  </div>
                 </div>
+                <nav className="site-footer-nav" aria-label="Navegação do rodapé">
+                  <a href="#sobre">Sobre</a>
+                  <a href="#contato">Contato</a>
+                  <a href="https://links.ericyikeda.com.br/">Links pessoais</a>
+                </nav>
               </div>
-
-              <a
-                className="site-footer-domain"
-                href="https://www.ericyikeda.com.br/"
-                aria-label="Acessar ericyikeda.com.br, domínio oficial do portfólio"
-              >
-                <span className="site-footer-domain-meta">
-                  <span className="site-footer-domain-dot" aria-hidden="true" />
-                  DOMÍNIO OFICIAL
-                </span>
-                <span className="site-footer-domain-address">
-                  <span className="site-footer-protocol">https://</span>
-                  <span>ericyikeda</span><strong>.com.br</strong>
-                </span>
-                
-              </a>
+              <div className="site-footer-bottom">
+                <span>© {new Date().getFullYear()} · Desenvolvido por Eric Y. Ikeda</span>
+                <a href="https://www.ericyikeda.com.br/" className="site-footer-domain">ericyikeda<span>.com.br</span></a>
+              </div>
             </div>
           </footer>
         </div>
