@@ -17,7 +17,7 @@ Meu portfólio e minha página de links pessoais, reunidos em um projeto com Rea
 - Formulário de contato com nome, e-mail e mensagem, enviado dentro do site.
 - Layout responsivo para desktop e celular, com animações e suporte a movimento reduzido.
 - A página inicial e `/portfolio` apresentam o mesmo portfólio.
-- Português como idioma principal e inglês selecionado automaticamente quando é a preferência principal do navegador; seletor PT/EN com escolha salva localmente. As traduções são locais, sem API externa. Textos novos sem tradução mantêm o original em português.
+- Português como idioma principal e inglês ou espanhol selecionado automaticamente conforme a preferência principal do navegador; seletor PT/EN/ES com escolha salva localmente. As traduções são locais, sem API externa. Textos novos sem tradução mantêm o original em português.
 
 ### Links pessoais
 

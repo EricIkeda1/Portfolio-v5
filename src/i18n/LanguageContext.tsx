@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import english from './en.json'
+import spanish from './es.json'
 import { LOCALE_STORAGE_KEY, resolveLocale, translateText, type Locale } from './locale'
 
 const LanguageContext = createContext({ locale: 'pt' as Locale, setLocale: (_locale: Locale) => {}, t: (text: string) => text })
@@ -21,10 +22,14 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     const oldTitle = document.title
     const meta = document.querySelector<HTMLMetaElement>('meta[name="description"]')
     const oldDescription = meta?.content
-    document.documentElement.lang = locale === 'en' ? 'en' : 'pt-BR'
+    document.documentElement.lang = locale === 'pt' ? 'pt-BR' : locale
     if (locale === 'en') {
       document.title = 'Eric Yuji Ikeda | Web and mobile development portfolio'
       if (meta) meta.content = 'Explore Eric Yuji Ikeda’s projects: web and mobile development with React, Flutter, TypeScript, REST APIs and PostgreSQL.'
+    }
+    if (locale === 'es') {
+      document.title = 'Eric Yuji Ikeda | Portafolio de desarrollo web y móvil'
+      if (meta) meta.content = 'Conoce los proyectos de Eric Yuji Ikeda: desarrollo web y móvil con React, Flutter, TypeScript, API REST y PostgreSQL.'
     }
     return () => {
       document.documentElement.lang = oldLang
@@ -32,7 +37,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       if (meta && oldDescription !== undefined) meta.content = oldDescription
     }
   }, [locale])
-  const t = useCallback((text: string) => translateText(text, locale, english), [locale])
+  const t = useCallback((text: string) => translateText(text, locale, locale === 'es' ? spanish : english), [locale])
   const value = useMemo(() => ({ locale, setLocale, t }), [locale, setLocale, t])
   return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>
 }
@@ -46,6 +51,7 @@ export function LanguageSelector() {
     <select value={locale} onChange={event => setLocale(event.target.value as Locale)} aria-label={t('Idioma do portfólio')}>
       <option value="pt" lang="pt-BR">PT</option>
       <option value="en" lang="en">EN</option>
+      <option value="es" lang="es">ES</option>
     </select>
   </label>
 }
