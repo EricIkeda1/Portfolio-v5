@@ -84,7 +84,6 @@ function PortfolioPage() {
                 <nav className="site-footer-nav" aria-label="Navegação do rodapé">
                   <a href="#sobre">Sobre</a>
                   <a href="#contato">Contato</a>
-                  <a href="https://links.ericyikeda.com.br/">Links pessoais</a>
                 </nav>
               </div>
               <div className="site-footer-bottom">
