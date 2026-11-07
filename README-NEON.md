@@ -55,7 +55,7 @@ A tabela `admin_login_attempts` guarda somente identificadores derivados por HMA
 
 ## Desenvolvimento local
 
-O comando `npm run dev` inicia apenas o Vite e não executa as funções `/api`. Para testar frontend + backend juntos:
+O comando `npm run dev` inicia o Vite com um middleware local para as principais rotas `/api`, incluindo conteúdo, login, contato e mensagens. Para reproduzir o ambiente da Vercel, incluindo as demais rotas e o roteamento da hospedagem:
 
 ```bash
 npm install

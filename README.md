@@ -1,114 +1,202 @@
-# Meu Portfólio
+# Portfólio v5 · Eric Yuji Ikeda
 
-Este é o meu portfólio pessoal, criado para reunir um pouco sobre mim, minhas experiências, habilidades e os projetos que venho desenvolvendo ao longo da minha trajetória como **desenvolvedor de software**.
+Meu portfólio e minha página de links pessoais, reunidos em um projeto com React, TypeScript, APIs em Node.js e PostgreSQL na Neon. Aqui apresento meus projetos e minha trajetória, mantenho minhas redes sociais e gerencio os conteúdos e mensagens pelo painel administrativo.
 
-A ideia foi criar algo **simples, moderno e com a minha identidade**, onde eu pudesse apresentar meu trabalho de forma direta e continuar evoluindo o projeto conforme aprendo coisas novas.
+| Acesso | Endereço |
+| --- | --- |
+| Portfólio | [www.ericyikeda.com.br](https://www.ericyikeda.com.br/) |
+| Links pessoais | [links.ericyikeda.com.br](https://links.ericyikeda.com.br/) |
+| Administração | [Painel administrativo](https://www.ericyikeda.com.br/admin) |
 
-**Acesse o portfólio:**  
-https://www.ericyikeda.com.br/
+## Funcionalidades
 
-A página inicial abre diretamente o portfólio. O endereço `/portfolio` também permanece disponível e exibe a mesma página, incluindo links diretos às seções.
+### Portfólio
 
-## Sobre o projeto
+- Apresentação pessoal, habilidades, trajetória e histórico das versões do site.
+- Projetos carregados do Neon, com seleção para visualizar descrição, tecnologias, destaques, imagem quando cadastrada e link do repositório.
+- Estatísticas públicas do GitHub, como repositórios e linguagens utilizadas.
+- Perfil, foto, projetos e informações de contato editáveis pelo admin.
+- Formulário de contato com nome, e-mail e mensagem, enviado dentro do site.
+- Layout responsivo para desktop e celular, com animações e suporte a movimento reduzido.
+- A página inicial e `/portfolio` apresentam o mesmo portfólio.
 
-No portfólio você encontra:
+### Links pessoais
 
-- **Sobre mim** e minha trajetória
-- Minhas principais **habilidades e tecnologias**
-- **Experiências** e formação
-- **Projetos em destaque**
-- Formas de entrar em **contato comigo**
-- **Sistema de login** para acesso administrativo
-- **Página de administração** para gerenciar e atualizar conteúdos do portfólio
-- **Banco de dados na Neon** para armazenar e gerenciar as informações do site
+- Página compacta com foto centralizada, nome e ícones para Instagram, LinkedIn, Spotify e Strava.
+- Foto obtida da configuração do perfil no Neon por uma API do servidor. Para o avatar, o proxy prioriza uma miniatura de 320 px do Google Drive e mantém cache das respostas bem-sucedidas.
+- **Pixel:** cachorro virtual com animações de carinho, rabinho, corações e descanso.
+- **Sua vibe hoje:** escolha entre “De boa”, “No foco” e “Na correria” para receber uma reação do Pixel. A escolha é mantida apenas na memória da página; não é enviada ao banco.
+- **Recadinhos privados:** o visitante escolhe entre enviar anonimamente ou informar o nome, sem precisar fornecer e-mail.
+- Compartilhamento nativo quando disponível, com alternativa para copiar o link.
+- QR Code gerado no navegador, com opção de baixar a imagem.
+- Limpeza automática de `utm_*` e `fbclid` da barra de endereço, preservando outros parâmetros, fragmentos e o estado do histórico, sem recarregar a página.
+- Capa, título e descrição próprios para a prévia de compartilhamento. O middleware entrega o HTML pessoal no subdomínio antes de carregar o JavaScript.
 
-A área administrativa foi criada para facilitar a manutenção do site, permitindo alterar informações e adicionar novos conteúdos sem precisar modificar diretamente o código da página.
+### Administração
 
-Os dados do portfólio são armazenados em um banco **PostgreSQL hospedado na Neon**, utilizado tanto no sistema de login quanto no gerenciamento dos conteúdos da área administrativa.
+O painel possui as abas **Visão geral**, **Quem sou eu**, **Projetos**, **Contato**, **Recados pessoais**, **Contatos do portfólio** e **Configurações**.
 
-O projeto foi pensado para funcionar bem tanto no **desktop quanto no mobile**, mantendo uma navegação simples, responsiva e organizada.
+- Cadastro, edição, exclusão, ordenação e controle de publicação dos projetos.
+- Edição do perfil, imagem e informações de contato.
+- Atualização do e-mail e da senha do administrador mediante confirmação da senha atual.
+- Caixas separadas para contatos profissionais e recados dos links, com paginação e contagem própria de mensagens não lidas.
+- Marcar mensagens como lidas ou não lidas e responder por e-mail quando o remetente informou um endereço.
+- **Excluir mensagem**, com confirmação antes da exclusão permanente, nas duas caixas.
+- Ativar, testar e desativar notificações push por aparelho.
+
+### Mensagens, privacidade e notificações
+
+Os formulários compartilham a validação no servidor, o campo antispam e o limite de cinco envios aceitos por origem a cada 15 minutos, aplicado de forma atômica no banco.
+
+Nome, e-mail e texto dos envios aceitos são armazenados em um payload com **AES-256-GCM**. As colunas de texto da tabela recebem marcadores de proteção; o servidor descriptografa o payload para exibição no painel autenticado. No modo anônimo, o nome informado pelo visitante não é enviado nem salvo. As mensagens não fazem parte da API pública de conteúdo.
+
+As notificações usam Web Push e um service worker, com avisos genéricos que não exibem nome, e-mail ou texto do remetente. Ao tocar, o administrador abre a caixa correspondente: `/admin#mensagens` ou `/admin#recados`. Falhas de push não desfazem uma mensagem já recebida.
+
+Para receber no celular, ative os avisos pelo painel no próprio aparelho. A entrega depende da permissão do navegador, conexão e configurações do sistema. O serviço não envia mensagens pelo WhatsApp nem por e-mail.
+
+### Moderação com IA local
+
+Antes de salvar um novo envio, o servidor analisa o texto e, quando informado, o nome com um **classificador de aprendizado de máquina local**, complementado por regras para ameaças explícitas e algumas formas de disfarce.
+
+- Modelo de regressão logística com TF-IDF e n-gramas de palavras e caracteres, treinado com o ToLD-Br e exemplos sintéticos de ameaças e frases legítimas.
+- Execução no servidor em Node.js, sem chave de IA, chamadas a fornecedores externos, GPU ou treinamento em produção.
+- A mesma proteção para contatos profissionais, recados anônimos e recados com nome.
+- Conteúdo detectado retorna HTTP `422 CONTENT_BLOCKED`, antes da gravação e do push. O código da aplicação não registra o texto bloqueado em logs ou no banco.
+- Se o modelo estiver ausente ou inválido, o envio retorna `503` e não é aceito sem análise.
+- Mensagens de visitantes não são usadas para treinar o modelo. Mensagens antigas não são apagadas retroativamente.
+
+**Limitações:** é um modelo leve, com compreensão limitada de contexto e baixa recuperação de toxicidade genérica. Pode deixar passar ameaças indiretas ou bloquear frases legítimas; a revisão e a exclusão manual continuam necessárias. O teste do modelo isolado no corpus de origem apresentou precisão de **78,95%** e recall de **26,18%**. Esses números não medem a eficácia das regras adicionais nem representam a detecção de ameaças reais do site.
+
+A arquitetura, a licença do modelo, a origem dos dados, o treinamento e a avaliação completa estão em [MODERATION.md](MODERATION.md).
+
+### Integração opcional com Spotify
+
+O projeto inclui um cartão compacto para mostrar a música atual ou a última ouvida, com capa, título, artista e link para o Spotify. Ele depende da autorização da conta e das variáveis de ambiente do servidor; não toca áudio automaticamente nem oferece controles de reprodução fictícios.
+
+Sem configuração, autorização válida ou música disponível, o cartão não é exibido na página de links e o ícone do perfil continua disponível. Consulte [docs/spotify.md](docs/spotify.md) para configurar.
+
+### Last Circle · minigame do portfólio
+
+Em `/arena`, há um battle royale original em Canvas 2D, solo contra 15 bots, com armas, equipamentos, cura e zona que encolhe.
+
+- **Desktop:** WASD/setas para mover, mouse para mirar e atirar, R para recarregar, F para usar kit e 1/2/3 para trocar armas coletadas. Esc pausa; Tab pausa e permite navegar pela interface.
+- **Celular:** controles virtuais de movimento, mira e ações.
+- Pausa ao perder foco, carregamento sob demanda e recorde local no navegador, sem conta ou multiplayer.
+- Tela cheia e captura de teclado são solicitadas quando disponíveis; o navegador e o sistema operacional controlam quais atalhos podem ser capturados.
 
 ## Tecnologias
 
-O projeto foi desenvolvido utilizando:
+| Camada | Tecnologias |
+| --- | --- |
+| Interface | React 19, TypeScript, Vite, Tailwind CSS e CSS próprio |
+| Backend | Node.js, funções serverless da Vercel e Routing Middleware |
+| Banco | PostgreSQL na Neon, com `@neondatabase/serverless` |
+| Proteção de dados | `node:crypto`, AES-256-GCM, scrypt e sessões administrativas |
+| Notificações e compartilhamento | Web Push, service worker, Web Share API, Clipboard API e `qrcode` |
+| Moderação | Classificador local versionado em JSON; treinamento offline com Python, NumPy, SciPy e scikit-learn |
+| Extras | Canvas 2D, API pública do GitHub e integração opcional com Spotify |
 
-- **React**
-- **TypeScript**
-- **Vite**
-- **PostgreSQL**
-- **Neon**
-- **Vercel**
+## Executando localmente
 
-## Rodando o projeto
-
-Clone o repositório:
-
-```bash
-git clone URL_DO_REPOSITORIO
-```
-
-Entre na pasta do projeto:
+Use Node.js compatível com o Vite instalado: **20.19+ ou 22.12+**. Os testes que importam TypeScript com `--experimental-strip-types` podem ser executados com Node.js 22.12+.
 
 ```bash
+git clone https://github.com/EricIkeda1/Portfolio-v5.git
 cd Portfolio-v5
+npm ci
 ```
 
-Instale as dependências:
+Copie `.env.example` para `.env.local` e configure os valores do seu ambiente:
 
-```bash
-npm install
-```
+| Variável | Finalidade |
+| --- | --- |
+| `DATABASE_URL` | Conexão do PostgreSQL na Neon |
+| `SESSION_SECRET` | Segredo da sessão, com pelo menos 32 caracteres |
+| `CONTACT_ENCRYPTION_KEY` | Chave permanente de 32 bytes em hexadecimal, com 64 caracteres |
+| `ADMIN_EMAIL` e `ADMIN_PASSWORD_HASH` | Opcionais, para criar a primeira conta em um banco novo |
+| `SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET` e `SPOTIFY_REFRESH_TOKEN` | Opcionais, para autorizar o cartão de música |
 
-Inicie o projeto:
+Mantenha os segredos somente no servidor e nos arquivos de ambiente ignorados pelo Git. Não use o prefixo `VITE_` nessas variáveis. Guarde uma cópia segura da chave de criptografia: perdê-la ou substituí-la impede a leitura dos payloads já cifrados.
+
+Para iniciar:
 
 ```bash
 npm run dev
 ```
 
-## Deploy
+O Vite possui um middleware local que executa as principais rotas `/api`, incluindo conteúdo, contato e mensagens administrativas. Para reproduzir o ambiente da Vercel, incluindo rotas que não estão nesse mapa local, use:
 
-O projeto está publicado na **Vercel**:
+```bash
+npm run dev:vercel
+```
 
-https://www.ericyikeda.com.br/
+Sem banco e segredos configurados, partes da interface podem usar conteúdo local de fallback, mas autenticação e gravação de mensagens exigem o backend configurado. A moderação utiliza o artefato já versionado; não é necessário instalar Python para executar o site.
+
+### Primeiro acesso administrativo
+
+Em um banco novo, configure `ADMIN_EMAIL` e gere `ADMIN_PASSWORD_HASH` com `npm run admin:hash`, usando a variável temporária `ADMIN_NEW_PASSWORD`. O script exige uma senha de 12 a 128 caracteres e imprime somente o hash.
+
+O bootstrap cria a conta apenas quando a tabela de administradores está vazia; não altera contas existentes. Depois, as credenciais podem ser gerenciadas pelo painel. Veja [README-NEON.md](README-NEON.md) para os detalhes de configuração.
+
+## Build e deploy
+
+```bash
+npx tsc -b
+npm run build
+```
+
+O build gera os arquivos em `dist/`, pré-renderiza as páginas públicas e verifica os hashes dos scripts estáticos na Content Security Policy. A administração é carregada no cliente e utiliza APIs autenticadas.
+
+O deploy está conectado à branch `main` do GitHub na Vercel. Configure as variáveis do servidor no projeto e associe os domínios antes de publicar uma instalação própria. O arquivo `middleware.ts` trata a página inicial do subdomínio de links; `vercel.json` contém os cabeçalhos de segurança e a inclusão do modelo nas funções que usam moderação.
+
+## Verificações
+
+Os comandos abaixo usam fixtures locais ou simulação em memória, sem precisar de um banco de produção:
+
+```bash
+node scripts/test-moderation.mjs
+node scripts/test-message-delete.mjs
+node scripts/test-message-sources.mjs
+node scripts/test-personal-links.mjs
+npm run test:spotify
+node scripts/test-arena.mjs
+node scripts/test-arena-keyboard.mjs
+```
+
+Após o build, valide também a prévia social e as rotas do middleware:
+
+```bash
+node --experimental-strip-types scripts/test-links-preview.mjs
+```
+
+Os testes de integração que acessam o Neon, como `test-contact.mjs`, `test-security.mjs`, `test-push.mjs` e `test-personal-links-db.mjs`, devem usar **somente uma branch isolada**, `CONTACT_TEST_DATABASE=1` e segredos exclusivos de teste. Eles criam dados fictícios. Não aponte esses comandos para produção. Instruções adicionais estão em [SECURITY.md](SECURITY.md).
+
+## Organização
+
+```text
+src/
+  sections/                 Seções do portfólio
+  components/links/         Pixel, widget de vibe, QR Code e recadinhos
+  admin/                    Painel e caixas de entrada
+  game/                     Last Circle
+  context/                  Carregamento do conteúdo público
+api/
+  _lib/moderation/           Inferência e modelo local de IA
+  _lib/                     Banco, autenticação, criptografia e push
+  *.ts                      APIs públicas e administrativas
+public/                     Assets, capa social e worker de notificações
+scripts/                    Pré-renderização e verificações
+  moderation/               Treinamento, avaliação e licença do modelo
+middleware.ts               Roteamento do subdomínio de links
+```
+
+## Documentação complementar
+
+- [Configuração do Neon e administrador](README-NEON.md)
+- [Proteção dos dados e credenciais](SECURITY.md)
+- [Moderação local, avaliação e limitações](MODERATION.md)
+- [Autorização e configuração do Spotify](docs/spotify.md)
 
 ## Autor
 
-**EricIkeda1**
-
-### Mensagens de contato
-
-A seção Contato apresenta apenas o formulário de nome, e-mail e mensagem, sem redirecionar o visitante e sem cartões de WhatsApp ou outros contatos.
-
-- `POST /api/contact` grava no Neon, valida tamanho e formato e limita a cinco envios por origem a cada 15 minutos, com controle atômico no banco e campo antispam.
-- `/admin` → **Mensagens** lista os contatos com paginação e permite marcar como lidos/não lidos e abrir uma resposta por e-mail. As notificações push podem ser ativadas em cada aparelho pelo painel. Não há notificação automática no WhatsApp ou por e-mail.
-- `GET/PUT /api/admin-messages` exigem a sessão administrativa existente. As mensagens nunca são incluídas na API pública de conteúdo.
-- `api/_lib/contact.ts` cria de forma idempotente as duas tabelas adicionais no primeiro acesso, sem alterar os projetos e contatos já cadastrados.
-- Para testar o fluxo completo em uma **branch isolada** do Neon: `CONTACT_TEST_DATABASE=1 node --env-file=/caminho/ambiente-de-teste.env scripts/test-contact.mjs`. O arquivo de ambiente deve conter `DATABASE_URL` da branch de teste e uma `SESSION_SECRET` e uma `CONTACT_ENCRYPTION_KEY` exclusivas de testes. Esse teste cria mensagens fictícias apenas nessa branch.
-
-### Notificações no celular
-
-Em `/admin` → **Mensagens**, toque em **Ativar notificações neste celular** e permita os avisos do navegador. Use **Testar notificação** para confirmar o recebimento. O botão **Desativar neste aparelho** interrompe os avisos apenas nesse dispositivo.
-
-No Android, use um navegador compatível, como Chrome. No iPhone (iOS 16.4+), adicione o painel à Tela de Início pelo Safari e abra o ícone criado antes de ativar. A permissão deve ser concedida no próprio celular. A entrega depende da conexão e das configurações de notificação/bateria do sistema.
-
-O servidor envia um aviso genérico, sem nome, e-mail ou conteúdo do visitante, e o toque abre `/admin#mensagens`. As chaves VAPID são geradas uma única vez e armazenadas no Neon; apenas a chave pública chega ao navegador. As inscrições são restritas ao administrador, persistem entre sessões e podem ser desativadas. O worker não faz cache de páginas privadas. Uma falha no push preserva a mensagem recebida na caixa de entrada.
-
-A nova integração reutiliza `/api/admin-messages` para configuração, inscrição, status, teste e desativação. `api/_lib/push.ts` cria as tabelas adicionais de forma idempotente. Não é necessário configurar uma conta de envio de e-mail, Firebase ou WhatsApp. Para validar em uma branch isolada: `CONTACT_TEST_DATABASE=1 node --env-file=/caminho/ambiente-de-teste.env scripts/test-push.mjs`. O teste valida a assinatura/criptografia real, com o transporte de push substituído para não enviar avisos externos.
-
-### Last Circle — minigame
-
-Abra `/arena` ou use “Jogar minigame” no rodapé. É um battle royale original em Canvas 2D, solo contra 15 bots, com três armas, equipamentos coletáveis, cura, colete e uma zona que encolhe. Os bots também combatem entre si.
-
-- Desktop: WASD/setas para mover, mouse para mirar e clique segurado para atirar; R recarrega, F usa kit, 1/2/3 troca entre armas coletadas e Esc pausa.
-- Celular: controle esquerdo move; controle direito mira e atira. Botões de arma, recarga e cura ficam na tela.
-- A partida pausa ao trocar de aba ou sair da janela. O recorde é um número salvo no localStorage deste navegador; não há conta, multiplayer, envio de dados de jogo ou integração com Neon.
-- O jogo carrega sob demanda em um chunk separado. A simulação e a renderização usam Canvas; o HUD atualiza até dez vezes por segundo, o DPR é limitado e partículas respeitam movimento reduzido.
-- Validação da simulação: `node scripts/test-arena.mjs`.
-
-### Foco e atalhos do minigame
-
-Ao iniciar ou continuar pelo botão, o jogo solicita tela cheia e, quando disponível, Keyboard Lock para as teclas usadas na arena e atalhos comuns. Durante a partida com o canvas focado, os eventos são capturados antes da verificação de Ctrl/Alt/Meta para evitar ações padrão do navegador, como abrir um arquivo ou recarregar a página. As teclas físicas são usadas para movimentação.
-
-Esc pausa; Tab pausa e preserva a navegação por teclado; F11 mantém a saída nativa. Ao pausar, perder o foco, sair da tela cheia ou desmontar a página, a captura é liberada. A partida funciona também quando o navegador não oferece ou não autoriza a captura. Atalhos reservados pelo Windows, como algumas combinações com Win, não podem ser bloqueados com garantia por uma página web. Não há alteração de configurações do sistema operacional.
-
-Regressão de teclado: `node scripts/test-arena-keyboard.mjs`.
+**Eric Yuji Ikeda** · [GitHub](https://github.com/EricIkeda1) · [LinkedIn](https://www.linkedin.com/in/ericikeda1/)
