@@ -31,7 +31,7 @@ export default function ContactForm() {
       <label htmlFor="contact-email">E-mail para resposta</label><input id="contact-email" name="email" type="email" autoComplete="email" required maxLength={254} />
       <label htmlFor="contact-message">Mensagem</label><textarea id="contact-message" name="message" rows={5} required minLength={10} maxLength={5000} />
       <div className="contact-honeypot" aria-hidden="true"><label htmlFor="contact-website">Deixe este campo vazio</label><input id="contact-website" name="website" tabIndex={-1} autoComplete="off" /></div>
-      <small>Seu nome e e-mail serão usados apenas para responder ao contato. A mensagem será recebida no meu painel privado.</small>
+      <small>Seu nome e e-mail serão usados apenas para responder ao contato. A mensagem será recebida no meu painel privado. Envios passam por moderação automática contra ameaças e abuso.</small>
       <button className="btn-primary" type="submit">{submitting ? 'Enviando…' : 'Enviar mensagem'}</button>
     </fieldset>
     {notice && <p className={`contact-form-notice ${notice.error ? 'is-error' : ''}`} role={notice.error ? 'alert' : 'status'}>{notice.text}</p>}

@@ -1,0 +1,29 @@
+{
+  "dataset": "ToLD-Br",
+  "source": "https://github.com/joaoaleite/ToLD-Br",
+  "license": "CC-BY-SA-4.0",
+  "raw_rows": 21000,
+  "deduplicated_rows": 20708,
+  "training_rows": 16566,
+  "synthetic_training_rows": 2360,
+  "validation_rows": 2071,
+  "test_rows": 2071,
+  "threshold": 0.8,
+  "held_out_test": {
+    "precision": 0.7895,
+    "recall": 0.2618,
+    "f1": 0.3933,
+    "confusion_matrix": [
+      [
+        1642,
+        28
+      ],
+      [
+        296,
+        105
+      ]
+    ]
+  },
+  "dataset_sha256": "a905b90d5886b9c80d737aa26c41dd29077155f23b9b857080634a78f8203c90",
+  "note": "Held-out source-domain baseline, not a guarantee or measurement of real portfolio threats. Synthetic threats are training-only; no portfolio messages are used."
+}

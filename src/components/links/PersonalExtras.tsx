@@ -56,7 +56,7 @@ export default function PersonalExtras({ vibe, onVibe }: { vibe?: VisitorVibe; o
         </fieldset>
         {notice && <p className={failed ? 'links-note-error' : 'links-note-success'} role={failed ? 'alert' : 'status'}>{notice}</p>}
       </form>
-      <details className="links-note-privacy"><summary>Privacidade e proteção contra spam</summary><p>O nome é solicitado apenas quando você escolhe se identificar; não pedimos e-mail. No modo anônimo, nenhum nome é enviado ou guardado. Para limitar envios, o servidor usa temporariamente um identificador protegido derivado do IP; o provedor de hospedagem também pode manter registros técnicos. O anonimato não é absoluto. Os recados não são publicados. Limite de cinco mensagens por 15 minutos por conexão, compartilhado com o formulário de contato.</p></details>
+      <details className="links-note-privacy"><summary>Privacidade e proteção contra spam</summary><p>O nome é solicitado apenas quando você escolhe se identificar; não pedimos e-mail. No modo anônimo, nenhum nome é enviado ou guardado. Para limitar envios, o servidor usa temporariamente um identificador protegido derivado do IP; o provedor de hospedagem também pode manter registros técnicos. O anonimato não é absoluto. Os recados não são publicados. Antes de salvar, uma IA local e regras de proteção analisam ameaças e abuso; o filtro pode cometer erros. Mensagens bloqueadas não são armazenadas nem notificadas. Limite de cinco mensagens por 15 minutos por conexão, compartilhado com o formulário de contato.</p></details>
     </dialog>
   </>
 }

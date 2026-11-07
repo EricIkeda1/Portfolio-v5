@@ -52,6 +52,7 @@ export default function MessagesInbox({ source = 'portfolio' }: { source?: Messa
   return <>
     <div className="admin-dashboard-heading"><div><span className="admin-eyebrow">Administrador</span><h1>{source === 'personal' ? 'Recados pessoais' : 'Contatos do portfólio'}</h1><p>{source === 'personal' ? 'Recadinhos anônimos ou identificados da sua página de links.' : 'Contatos profissionais enviados pelo portfólio.'} {unread} não lida(s).</p></div><button className="admin-ghost-action" onClick={() => void load()} disabled={loading || updating !== null}>Atualizar</button></div>
     <PushNotifications />
+    <p className="admin-setting-description">Novos envios passam por uma IA local e regras contra ameaças e abuso antes da gravação. A moderação pode errar; a exclusão manual continua disponível.</p>
     {error && <p className="admin-toast-demo admin-toast-error" role="alert">{error}</p>}
     {notice && <p className="admin-toast-demo" role="status">{notice}</p>}
     {loading && <p role="status">Carregando mensagens…</p>}

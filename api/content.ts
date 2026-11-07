@@ -1,3 +1,4 @@
+import { getModerationStatus } from './_lib/moderation/index.js'
 import { readPersonalRun } from './_lib/personal-run.js'
 import { readSpotify } from './_lib/spotify.js'
 import { readPortfolioContent } from './_lib/db.js'
@@ -9,6 +10,10 @@ export default async function handler(req: any, res: any) {
 
   // Reuse this function so the Hobby deployment stays within its function limit.
   const view = new URL(req.url || '/', 'https://portfolio.invalid').searchParams.get('view')
+  if (view === 'moderation') {
+    try { return res.status(200).json(getModerationStatus()) }
+    catch { return res.status(503).json({ enabled: false, error: 'Moderação indisponível.' }) }
+  }
   if (view === 'run') {
     try { return res.status(200).json({ run: await readPersonalRun() }) }
     catch { return res.status(503).json({ error: 'Corrida indisponível.' }) }

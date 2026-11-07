@@ -95,5 +95,13 @@
     "deploymentEnabled": {
       "fix/security-session-and-contact": false
     }
+  },
+  "functions": {
+    "api/contact.ts": {
+      "includeFiles": "api/_lib/moderation/model.json"
+    },
+    "api/content.ts": {
+      "includeFiles": "api/_lib/moderation/model.json"
+    }
   }
 }
