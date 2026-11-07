@@ -1,3 +1,4 @@
+import { useTranslation } from '@/i18n/LanguageContext'
 import { useEffect, useState, useRef } from 'react'
 import { Reveal } from '@/components/Reveal'
 
@@ -119,6 +120,7 @@ function StatCard({
 }
 
 function LangBar({ languages, active }: { languages: GithubStats['languages']; active: boolean }) {
+  const { t } = useTranslation()
   const total = languages.reduce((s, l) => s + l.count, 0)
   return (
     <div
@@ -133,7 +135,7 @@ function LangBar({ languages, active }: { languages: GithubStats['languages']; a
       }}
     >
       <div className="font-mono" style={{ fontSize: '0.72rem', letterSpacing: '0.14em', color: 'var(--muted)', textTransform: 'uppercase' }}>
-        Linguagens — Top {languages.length}
+        {t("Linguagens — Top")} {languages.length}
       </div>
 
       {/* Stacked bar */}
@@ -179,6 +181,7 @@ function LangBar({ languages, active }: { languages: GithubStats['languages']; a
 }
 
 export default function Highlights() {
+  const { t } = useTranslation()
   const [stats, setStats] = useState<GithubStats | null>(null)
   const [loading, setLoading] = useState(true)
   const ref = useRef<HTMLDivElement>(null)
@@ -260,9 +263,9 @@ export default function Highlights() {
             }}
           >
             <div>
-              <div className="section-label" style={{ marginBottom: '0.75rem' }}>Destaques</div>
+              <div className="section-label" style={{ marginBottom: '0.75rem' }}>{t("Destaques")}</div>
               <h2 className="display-heading">
-                Números <span className="accent">reais</span>
+                {t("Números")}{' '}<span className="accent">{t("reais")}</span>
               </h2>
             </div>
             <a
@@ -315,14 +318,14 @@ export default function Highlights() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               {/* Row 1 — 4 stat cards */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem' }} className="highlights-grid">
-                <StatCard label="Repositórios públicos" value={stats.repos} active={active} accent large />
-                <StatCard label="Projetos autorais" value={stats.ownRepos} sub="repositórios não-fork" active={active} />
-                <StatCard label="Linguagens principais" value={stats.languages.length} sub="stack presente no GitHub" active={active} />
+                <StatCard label={t("Repositórios públicos")} value={stats.repos} active={active} accent large />
+                <StatCard label={t("Projetos autorais")} value={stats.ownRepos} sub={t("repositórios não-fork")} active={active} />
+                <StatCard label={t("Linguagens principais")} value={stats.languages.length} sub={t("stack presente no GitHub")} active={active} />
                 <StatCard
-                  label="Anos no GitHub"
+                  label={t("Anos no GitHub")}
                   value={stats.yearsActive}
                   suffix="+"
-                  sub="desenvolvendo continuamente"
+                  sub={t("desenvolvendo continuamente")}
                   active={active}
                 />
               </div>
@@ -367,8 +370,7 @@ export default function Highlights() {
                     className="font-mono"
                     style={{ fontSize: '0.72rem', letterSpacing: '0.1em', color: 'var(--muted)', textTransform: 'uppercase', textAlign: 'center' }}
                   >
-                    Ver perfil
-                  </span>
+                    {t("Ver perfil")}</span>
                 </a>
               </div>
             </div>

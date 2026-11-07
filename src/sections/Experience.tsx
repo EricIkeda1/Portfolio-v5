@@ -1,3 +1,4 @@
+import { useTranslation } from '@/i18n/LanguageContext'
 import { useEffect, useMemo, useState } from 'react'
 import { Reveal } from '@/components/Reveal'
 import { usePortfolioContent } from '@/context/PortfolioContentContext'
@@ -9,6 +10,7 @@ const GithubIcon = () => (
 )
 
 export default function Experience() {
+  const { t } = useTranslation()
   const { content } = usePortfolioContent()
   const projects = useMemo(
     () => [...content.projects].sort((a, b) => a.sort_order - b.sort_order),
@@ -35,17 +37,17 @@ export default function Experience() {
       <div className="container">
         <div style={{ marginBottom: '3.5rem' }}>
           <Reveal from="bottom">
-            <div className="section-label">03 — Projetos</div>
+            <div className="section-label">{t("03 — Projetos")}</div>
           </Reveal>
           <Reveal delay={80} from="bottom">
             <h2 className="display-heading">
-              Projetos <span className="accent">em destaque</span>
+              {t("Projetos")}{' '}<span className="accent">{t("em destaque")}</span>
             </h2>
           </Reveal>
         </div>
 
         {!proj ? (
-          <div className="portfolio-empty-state">Nenhum projeto cadastrado.</div>
+          <div className="portfolio-empty-state">{t("Nenhum projeto cadastrado.")}</div>
         ) : (
           <Reveal from="bottom" delay={120} threshold={0.06}>
             <div
@@ -92,7 +94,7 @@ export default function Experience() {
                         marginBottom: 3,
                       }}
                     >
-                      {project.type}
+                      {t(project.type)}
                     </div>
                     <div
                       className="font-display"
@@ -104,7 +106,7 @@ export default function Experience() {
                         letterSpacing: '0.03em',
                       }}
                     >
-                      {project.name}
+                      {t(project.name)}
                     </div>
                   </button>
                 ))}
@@ -124,7 +126,7 @@ export default function Experience() {
                 <div>
                   {proj.image_url && (
                     <div className="project-featured-image-wrap">
-                      <img className="project-featured-image" src={proj.image_url} alt={`Imagem do projeto ${proj.name}`} />
+                      <img className="project-featured-image" src={proj.image_url} alt={`${t('Projeto')}: ${t(proj.name)}`} />
                     </div>
                   )}
 
@@ -139,7 +141,7 @@ export default function Experience() {
                         letterSpacing: '-0.01em',
                       }}
                     >
-                      {proj.name}
+                      {t(proj.name)}
                     </h3>
                     <span
                       className="font-mono"
@@ -154,12 +156,12 @@ export default function Experience() {
                         textTransform: 'uppercase',
                       }}
                     >
-                      {proj.type}
+                      {t(proj.type)}
                     </span>
                   </div>
 
                   <p style={{ fontSize: '0.95rem', lineHeight: 1.8, color: 'var(--muted)', maxWidth: 620, fontWeight: 400, marginBottom: '1.75rem' }}>
-                    {proj.description}
+                    {t(proj.description)}
                   </p>
                 </div>
 
@@ -167,12 +169,11 @@ export default function Experience() {
                   {proj.highlights.length > 0 && (
                     <>
                       <div className="font-mono" style={{ fontSize: '0.70rem', letterSpacing: '0.12em', color: 'var(--muted)', textTransform: 'uppercase', marginBottom: '0.7rem' }}>
-                        Destaques
-                      </div>
+                        {t("Destaques")}</div>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '1.5rem' }}>
                         {proj.highlights.map((highlight) => (
-                          <span key={highlight} style={{ fontSize: '0.84rem', color: 'var(--text)', background: 'var(--card)', border: '1px solid var(--border)', padding: '0.28rem 0.65rem', borderRadius: 2 }}>
-                            {highlight}
+                          <span key={t(highlight)} style={{ fontSize: '0.84rem', color: 'var(--text)', background: 'var(--card)', border: '1px solid var(--border)', padding: '0.28rem 0.65rem', borderRadius: 2 }}>
+                            {t(highlight)}
                           </span>
                         ))}
                       </div>
@@ -183,7 +184,7 @@ export default function Experience() {
                     <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
                       {proj.tags.map((tag) => (
                         <span key={tag} className="font-mono" style={{ fontSize: '0.70rem', letterSpacing: '0.1em', color: proj.color, textTransform: 'uppercase' }}>
-                          #{tag}
+                          #{t(tag)}
                         </span>
                       ))}
                     </div>
@@ -209,8 +210,7 @@ export default function Experience() {
                       }}
                     >
                       <GithubIcon />
-                      Ver projeto
-                    </a>
+                      {t("Ver projeto")}</a>
                   </div>
                 </div>
               </div>

@@ -1,3 +1,5 @@
+import { LanguageSelector } from '@/i18n/LanguageContext'
+import { useTranslation } from '@/i18n/LanguageContext'
 import { useEffect, useState } from 'react'
 import ProtectedLogo from '@/components/ProtectedLogo'
 
@@ -10,6 +12,7 @@ const links = [
 ]
 
 export default function Nav() {
+  const { t } = useTranslation()
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
 
@@ -114,7 +117,7 @@ export default function Nav() {
         {/* Desktop */}
         <nav
           className="nav-links"
-          aria-label="Navegação principal"
+          aria-label={t("Navegação principal")}
         >
           {links.map((link) => (
             <a
@@ -138,18 +141,20 @@ export default function Nav() {
                   'var(--muted)'
               }}
             >
-              {link.label}
+              {t(link.label)}
             </a>
           ))}
 
         </nav>
+
+        <LanguageSelector />
 
         {/* Hamburger */}
         <button
           type="button"
           className="nav-hamburger"
           onClick={() => setOpen((value) => !value)}
-          aria-label={open ? 'Fechar menu' : 'Abrir menu'}
+          aria-label={t(open ? 'Fechar menu' : 'Abrir menu')}
           aria-expanded={open}
           style={{
             background: 'none',
@@ -206,7 +211,7 @@ export default function Nav() {
       </div>
 
       {/* Mobile drawer */}
-      <div
+      <div inert={!open}
         style={{
           overflow: 'hidden',
           maxHeight: open ? '400px' : 0,
@@ -219,7 +224,7 @@ export default function Nav() {
         }}
       >
         <nav
-          aria-label="Navegação mobile"
+          aria-label={t("Navegação mobile")}
           style={{
             display: 'flex',
             flexDirection: 'column',
@@ -241,7 +246,7 @@ export default function Nav() {
                 textTransform: 'uppercase',
               }}
             >
-              {link.label}
+              {t(link.label)}
             </a>
           ))}
 

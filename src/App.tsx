@@ -1,4 +1,6 @@
+import { useTranslation } from '@/i18n/LanguageContext'
 import { lazy, Suspense, useState, type CSSProperties, type PointerEvent } from 'react'
+import { LanguageProvider } from '@/i18n/LanguageContext'
 import Nav from '@/components/Nav'
 import Hero from '@/sections/Hero'
 import About from '@/sections/About'
@@ -15,6 +17,7 @@ import LinksPage from './LinksPage'
 const ArenaPage = lazy(() => import('./game/ArenaPage'))
 
 function PortfolioPage() {
+  const { t } = useTranslation()
   const [hovering, setHovering] = useState(false)
   const [cursor, setCursor] = useState({ x: 0, y: 0 })
 
@@ -78,16 +81,16 @@ function PortfolioPage() {
                   <span className="site-footer-monogram" aria-hidden="true">EI</span>
                   <div>
                     <span className="site-footer-name">Eric Y. Ikeda</span>
-                    <p className="site-footer-tagline">Ideias, código e atenção aos detalhes.</p>
+                    <p className="site-footer-tagline">{t("Ideias, código e atenção aos detalhes.")}</p>
                   </div>
                 </div>
-                <nav className="site-footer-nav" aria-label="Navegação do rodapé">
-                  <a href="#sobre">Sobre</a>
-                  <a href="#contato">Contato</a>
+                <nav className="site-footer-nav" aria-label={t("Navegação do rodapé")}>
+                  <a href="#sobre">{t("Sobre")}</a>
+                  <a href="#contato">{t("Contato")}</a>
                 </nav>
               </div>
               <div className="site-footer-bottom">
-                <span>© {new Date().getFullYear()} · Desenvolvido por Eric Y. Ikeda</span>
+                <span>© {new Date().getFullYear()}  {t("· Desenvolvido por Eric Y. Ikeda")}</span>
                 <a href="https://www.ericyikeda.com.br/" className="site-footer-domain">ericyikeda<span>.com.br</span></a>
               </div>
             </div>
@@ -113,5 +116,5 @@ export default function App({ pathname = window.location.pathname }: { pathname?
     return <NotFoundPage />
   }
 
-  return <PortfolioPage />
+  return <LanguageProvider><PortfolioPage /></LanguageProvider>
 }

@@ -1,3 +1,4 @@
+import { useTranslation } from '@/i18n/LanguageContext'
 import { TypewriterText } from '@/components/TypewriterText'
 import ProtectedLogo from '@/components/ProtectedLogo'
 import { usePortfolioContent } from '@/context/PortfolioContentContext'
@@ -56,6 +57,7 @@ const getSocialLinks = (email: string, github: string, linkedin: string) => [
 ]
 
 export default function Hero() {
+  const { t } = useTranslation()
   const { content } = usePortfolioContent()
   const socialLinks = getSocialLinks(content.email, content.github, content.linkedin)
 
@@ -158,8 +160,7 @@ export default function Hero() {
                   marginBottom: '1.25rem',
                 }}
               >
-                Disponível para oportunidades Júnior
-              </div>
+                {t("Disponível para oportunidades Júnior")}</div>
             </div>
 
             <div style={anim(80)}>
@@ -211,7 +212,7 @@ export default function Hero() {
               >
                 {roles.map((r) => (
                   <span
-                    key={r}
+                    key={t(r)}
                     className="font-mono"
                     style={{
                       fontSize: '0.74rem',
@@ -224,7 +225,7 @@ export default function Hero() {
                       textTransform: 'uppercase',
                     }}
                   >
-                    {r}
+                    {t(r)}
                   </span>
                 ))}
               </div>
@@ -241,8 +242,7 @@ export default function Hero() {
                   fontWeight: 400,
                 }}
               >
-                Desenvolvedor de Software Júnior com formação em Engenharia de Software e experiência prática em aplicações web e mobile. Trabalho com React, Flutter, TypeScript, Dart, APIs REST e PostgreSQL para transformar requisitos em soluções funcionais, responsivas e bem estruturadas.
-              </p>
+                {t("Desenvolvedor de Software Júnior com formação em Engenharia de Software e experiência prática em aplicações web e mobile. Trabalho com React, Flutter, TypeScript, Dart, APIs REST e PostgreSQL para transformar requisitos em soluções funcionais, responsivas e bem estruturadas.")}</p>
             </div>
 
             <div style={anim(320)}>
@@ -282,10 +282,7 @@ export default function Hero() {
                     el.style.boxShadow = 'none'
                   }}
                 >
-                  Ver projetos
-
-                  
-                </a>
+                  {t("Ver projetos")}</a>
 
 
                 <a

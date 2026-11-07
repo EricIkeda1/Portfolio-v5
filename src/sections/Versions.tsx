@@ -1,3 +1,4 @@
+import { useTranslation } from '@/i18n/LanguageContext'
 import { Reveal } from '@/components/Reveal'
 import { useRef, useEffect, useState } from 'react'
 
@@ -47,6 +48,7 @@ const versions = [
 
 
 function VersionCard({ v, index }: { v: (typeof versions)[0]; index: number }) {
+  const { t } = useTranslation()
   const ref = useRef<HTMLDivElement>(null)
   const [visible, setVisible] = useState(false)
 
@@ -116,7 +118,7 @@ function VersionCard({ v, index }: { v: (typeof versions)[0]; index: number }) {
 
       {/* Title */}
       <div style={{ fontWeight: 600, color: 'var(--text)', fontSize: '0.88rem', lineHeight: 1.3 }}>
-        {v.title}
+        {t(v.title)}
       </div>
 
       {/* Description — fixed height so cards align */}
@@ -130,7 +132,7 @@ function VersionCard({ v, index }: { v: (typeof versions)[0]; index: number }) {
           minHeight: '3.3em',
         }}
       >
-        {v.description}
+        {t(v.description)}
       </p>
 
       {/* Tech chips */}
@@ -177,12 +179,10 @@ function VersionCard({ v, index }: { v: (typeof versions)[0]; index: number }) {
             onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = 'var(--blue)')}
             onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = 'var(--muted)')}
           >
-            Visitar 
-          </a>
+            {t("Visitar")}</a>
         ) : (
           <div className="font-mono" style={{ fontSize: '0.72rem', letterSpacing: '0.1em', color: 'var(--blue)', textTransform: 'uppercase' }}>
-            ● Você está aqui
-          </div>
+            {t("● Você está aqui")}</div>
         )}
       </div>
     </div>
@@ -190,20 +190,20 @@ function VersionCard({ v, index }: { v: (typeof versions)[0]; index: number }) {
 }
 
 export default function Versions() {
+  const { t } = useTranslation()
   return (
     <section style={{ maxWidth: 1200, margin: '0 auto', padding: '7rem 2rem' }}>
       <div style={{ marginBottom: '3.5rem' }}>
         <Reveal from="bottom">
-          <div className="section-label">04 — Versões anteriores</div>
+          <div className="section-label">{t("04 — Versões anteriores")}</div>
         </Reveal>
         <Reveal delay={80} from="bottom">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '1rem' }}>
             <h2 className="display-heading">
-              Evolução do <span className="accent">portfólio</span>
+              {t("Evolução do")}{' '}<span className="accent">{t("portfólio")}</span>
             </h2>
             <p className="font-mono" style={{ fontSize: '0.76rem', color: 'var(--muted)', letterSpacing: '0.05em', maxWidth: 260, lineHeight: 1.7 }}>
-              Cada versão representa um passo na jornada como desenvolvedor.
-            </p>
+              {t("Cada versão representa um passo na jornada como desenvolvedor.")}</p>
           </div>
         </Reveal>
       </div>

@@ -1,3 +1,4 @@
+import { useTranslation } from '@/i18n/LanguageContext'
 import { Reveal } from '@/components/Reveal'
 
 const categories = [
@@ -9,13 +10,14 @@ const categories = [
 ]
 
 export default function Skills() {
+  const { t } = useTranslation()
   return (
     <section id="habilidades" className="section-pad">
       <div className="container">
         {/* Header */}
         <div style={{ marginBottom: '3.5rem' }}>
           <Reveal from="bottom">
-            <div className="section-label">02 — Habilidades</div>
+            <div className="section-label">{t("02 — Habilidades")}</div>
           </Reveal>
           <Reveal delay={80} from="bottom">
             <div
@@ -28,11 +30,10 @@ export default function Skills() {
               }}
             >
               <h2 className="display-heading">
-                Stack <span className="accent">técnico</span>
+                {t("Stack")}{' '}<span className="accent">{t("técnico")}</span>
               </h2>
               <p className="font-mono" style={{ fontSize: '0.76rem', color: 'var(--muted)', letterSpacing: '0.04em', maxWidth: 280, lineHeight: 1.7 }}>
-                Tecnologias para construir soluções completas e escaláveis.
-              </p>
+                {t("Tecnologias para construir soluções completas e escaláveis.")}</p>
             </div>
           </Reveal>
         </div>
@@ -40,13 +41,13 @@ export default function Skills() {
         {/* Rows — each row reveals independently */}
         <div>
           {categories.map((cat, i) => (
-            <Reveal key={cat.category} delay={i * 60} from="bottom" threshold={0.06}>
+            <Reveal key={t(cat.category)} delay={i * 60} from="bottom" threshold={0.06}>
               <div className="skills-row">
                 <span
                   className="font-mono"
                   style={{ fontSize: '0.74rem', letterSpacing: '0.12em', color: 'var(--muted)', textTransform: 'uppercase' }}
                 >
-                  {cat.category}
+                  {t(cat.category)}
                 </span>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.45rem' }}>
                   {cat.items.map((tech) => (

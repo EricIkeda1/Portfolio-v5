@@ -1,3 +1,4 @@
+import { useTranslation } from '@/i18n/LanguageContext'
 import { useEffect, useState, type DragEvent, type MouseEvent } from 'react'
 import { Reveal, RevealGroup } from '@/components/Reveal'
 import { usePortfolioContent } from '@/context/PortfolioContentContext'
@@ -49,6 +50,7 @@ const areas = [
 ]
 
 export default function About() {
+  const { t } = useTranslation()
   const { content } = usePortfolioContent()
   const [profileImage, setProfileImage] = useState<string | null>(null)
   const [imageLoaded, setImageLoaded] = useState(false)
@@ -123,12 +125,12 @@ export default function About() {
         <div className="grid-2">
           <div>
             <Reveal from="bottom">
-              <div className="section-label">01 — Sobre</div>
+              <div className="section-label">{t("01 — Sobre")}</div>
             </Reveal>
 
             <Reveal delay={60} from="bottom">
               <h2 className="display-heading" style={{ marginBottom: '1.5rem' }}>
-                Quem sou <span className="accent">eu</span>
+                {t("Quem sou")}{' '}<span className="accent">{t("eu")}</span>
               </h2>
             </Reveal>
 
@@ -195,8 +197,7 @@ export default function About() {
                         fontSize: '0.7rem',
                       }}
                     >
-                      Carregando...
-                    </div>
+                      {t("Carregando...")}</div>
                   )}
 
                   {imageError && (
@@ -213,8 +214,7 @@ export default function About() {
                         padding: '0.5rem',
                       }}
                     >
-                      Foto indisponível
-                    </div>
+                      {t("Foto indisponível")}</div>
                   )}
                 </div>
 
@@ -266,7 +266,7 @@ export default function About() {
                     whiteSpace: 'pre-line',
                   }}
                 >
-                  {paragraph}
+                  {t(paragraph)}
                 </p>
               </Reveal>
             ))}
@@ -291,14 +291,11 @@ export default function About() {
                     marginBottom: 4,
                   }}
                 >
-                  Formação
-                </div>
+                  {t("Formação")}</div>
                 <div style={{ fontSize: '0.95rem', color: 'var(--text)', fontWeight: 500 }}>
-                  Engenharia de Software
-                </div>
+                  {t("Engenharia de Software")}</div>
                 <div style={{ fontSize: '0.85rem', color: 'var(--muted)', marginTop: 2 }}>
-                  UniSenaiPR, Londrina · Concluído em 26/06/2026
-                </div>
+                  {t("UniSenaiPR, Londrina · Concluído em 26/06/2026")}</div>
               </div>
             </Reveal>
           </div>
@@ -315,8 +312,7 @@ export default function About() {
                   marginBottom: '1.5rem',
                 }}
               >
-                Áreas de atuação
-              </div>
+                {t("Áreas de atuação")}</div>
             </Reveal>
 
             <RevealGroup
@@ -327,7 +323,7 @@ export default function About() {
             >
               {areas.map((area) => (
                 <div
-                  key={area.title}
+                  key={t(area.title)}
                   style={{
                     display: 'flex',
                     gap: '1rem',
@@ -350,10 +346,10 @@ export default function About() {
                   <span style={{ color: 'var(--blue)', marginTop: 2, flexShrink: 0 }}>{area.icon}</span>
                   <div>
                     <div style={{ fontWeight: 600, color: 'var(--text)', marginBottom: 3, fontSize: '0.9rem' }}>
-                      {area.title}
+                      {t(area.title)}
                     </div>
                     <div style={{ fontSize: '0.82rem', color: 'var(--muted)', lineHeight: 1.6 }}>
-                      {area.desc}
+                      {t(area.desc)}
                     </div>
                   </div>
                 </div>
