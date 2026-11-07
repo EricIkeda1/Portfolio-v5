@@ -39,6 +39,10 @@ export function markMessageRead(id: number, read: boolean, source: MessageSource
   return request<{ id: number; read_at: string | null }>(`/api/admin-messages?source=${source}`, { method: 'PUT', body: JSON.stringify({ id, read }) })
 }
 
+export function deleteAdminMessage(id: number, source: MessageSource) {
+  return request<{ id: number; read_at: string | null }>(`/api/admin-messages?source=${source}`, { method: 'DELETE', body: JSON.stringify({ action: 'delete_message', id }) })
+}
+
 async function request<T>(url: string, options: RequestInit = {}): Promise<T> {
   const response = await fetch(url, {
     credentials: 'same-origin',

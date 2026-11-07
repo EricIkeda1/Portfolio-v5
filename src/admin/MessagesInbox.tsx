@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import PushNotifications from './PushNotifications'
-import { getAdminMessages, markMessageRead, type ContactMessage, type MessageSource } from '@/lib/api'
+import { getAdminMessages, markMessageRead, deleteAdminMessage, type ContactMessage, type MessageSource } from '@/lib/api'
 
 export default function MessagesInbox({ source = 'portfolio' }: { source?: MessageSource }) {
   const [messages, setMessages] = useState<ContactMessage[]>([])
@@ -8,11 +8,13 @@ export default function MessagesInbox({ source = 'portfolio' }: { source?: Messa
   const [unread, setUnread] = useState(0)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [notice, setNotice] = useState('')
+  const [deleting, setDeleting] = useState<number | null>(null)
   const [updating, setUpdating] = useState<number | null>(null)
 
   const load = async (before?: number) => {
     setLoading(true)
-    setError('')
+    setError(''); setNotice('')
     try {
       const result = await getAdminMessages(before, source)
       setMessages(current => before ? [...current, ...result.messages] : result.messages)
@@ -25,7 +27,7 @@ export default function MessagesInbox({ source = 'portfolio' }: { source?: Messa
 
   const toggleRead = async (message: ContactMessage) => {
     setUpdating(message.id)
-    setError('')
+    setError(''); setNotice('')
     try {
       const result = await markMessageRead(message.id, !message.read_at, source)
       setMessages(current => current.map(item => item.id === message.id ? { ...item, read_at: result.read_at } : item))
@@ -34,17 +36,31 @@ export default function MessagesInbox({ source = 'portfolio' }: { source?: Messa
     finally { setUpdating(null) }
   }
 
+  const removeMessage = async (message: ContactMessage) => {
+    if (updating !== null || loading) return
+    if (!window.confirm('Excluir esta mensagem permanentemente? Essa ação não pode ser desfeita.')) return
+    setUpdating(message.id); setDeleting(message.id); setError(''); setNotice('')
+    try {
+      const result = await deleteAdminMessage(message.id, source)
+      setMessages(current => current.filter(item => item.id !== result.id))
+      if (!result.read_at) setUnread(current => Math.max(0, current - 1))
+      setNotice('Mensagem excluída.')
+    } catch (error) { setError(error instanceof Error ? error.message : 'Não foi possível excluir. Tente novamente.') }
+    finally { setUpdating(null); setDeleting(null) }
+  }
+
   return <>
     <div className="admin-dashboard-heading"><div><span className="admin-eyebrow">Administrador</span><h1>{source === 'personal' ? 'Recados pessoais' : 'Contatos do portfólio'}</h1><p>{source === 'personal' ? 'Recadinhos anônimos ou identificados da sua página de links.' : 'Contatos profissionais enviados pelo portfólio.'} {unread} não lida(s).</p></div><button className="admin-ghost-action" onClick={() => void load()} disabled={loading || updating !== null}>Atualizar</button></div>
     <PushNotifications />
     {error && <p className="admin-toast-demo admin-toast-error" role="alert">{error}</p>}
+    {notice && <p className="admin-toast-demo" role="status">{notice}</p>}
     {loading && <p role="status">Carregando mensagens…</p>}
     {!loading && !error && !messages.length && <section className="admin-panel-card"><h2>Sua caixa de entrada está vazia</h2><p className="admin-setting-description">{source === 'personal' ? 'Os recadinhos da sua página pessoal aparecerão aqui.' : 'Os contatos do portfólio aparecerão aqui.'}</p></section>}
     <div className="admin-message-list">{messages.map(message => <article className="admin-panel-card admin-message" key={message.id}>
       <div className="admin-message-heading"><div><h2>{message.name}</h2>{message.email ? <a href={`mailto:${encodeURIComponent(message.email)}`}>{message.email}</a> : <small>{(message.anonymous ?? message.name === 'Recado anônimo') ? 'Recado anônimo · sem nome ou e-mail' : 'Nome informado pelo visitante · sem e-mail'}</small>}</div><span>{message.read_at ? 'Lida' : 'Nova'}</span></div>
       <time dateTime={message.created_at}>{new Date(message.created_at).toLocaleString('pt-BR')}</time>
       <p className="admin-message-body">{message.message}</p>
-      <div className="admin-form-row">{message.email && <a className="admin-primary-action" href={`mailto:${encodeURIComponent(message.email)}?subject=${encodeURIComponent('Seu contato pelo portfólio — Eric Ikeda')}`}>Responder por e-mail</a>}<button className="admin-ghost-action" disabled={updating !== null} onClick={() => void toggleRead(message)}>{updating === message.id ? 'Atualizando…' : message.read_at ? 'Marcar como não lida' : 'Marcar como lida'}</button></div>
+      <div className="admin-form-row">{message.email && <a className="admin-primary-action" href={`mailto:${encodeURIComponent(message.email)}?subject=${encodeURIComponent('Seu contato pelo portfólio — Eric Ikeda')}`}>Responder por e-mail</a>}<button className="admin-ghost-action" disabled={loading || updating !== null} onClick={() => void toggleRead(message)}>{updating === message.id && deleting !== message.id ? 'Atualizando…' : message.read_at ? 'Marcar como não lida' : 'Marcar como lida'}</button><button className="admin-danger-button" disabled={loading || updating !== null} onClick={() => void removeMessage(message)}>{deleting === message.id ? 'Excluindo…' : 'Excluir mensagem'}</button></div>
     </article>)}</div>
     {next && <button className="admin-ghost-action" disabled={loading || updating !== null} onClick={() => void load(next)}>Carregar mensagens anteriores</button>}
   </>
