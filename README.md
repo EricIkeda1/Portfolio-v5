@@ -1,12 +1,11 @@
 # Portfólio v5 · EricIkeda1
 
-Meu portfólio e minha página de links pessoais, reunidos em um projeto com React, TypeScript, APIs em Node.js e PostgreSQL na Neon. Aqui apresento meus projetos e minha trajetória, mantenho minhas redes sociais e gerencio os conteúdos e mensagens pelo painel administrativo.
+Meu portfólio e minha página de links pessoais, reunidos em um projeto com React, TypeScript, APIs em Node.js e PostgreSQL na Neon. Aqui apresento meus projetos e minha trajetória e reúno minhas redes sociais.
 
 | Acesso | Endereço |
 | --- | --- |
 | Portfólio | [www.ericyikeda.com.br](https://www.ericyikeda.com.br/) |
 | Links pessoais | [links.ericyikeda.com.br](https://links.ericyikeda.com.br/) |
-| Administração | [Painel administrativo](https://www.ericyikeda.com.br/admin) |
 
 ## Funcionalidades
 
@@ -15,7 +14,6 @@ Meu portfólio e minha página de links pessoais, reunidos em um projeto com Rea
 - Apresentação pessoal, habilidades, trajetória e histórico das versões do site.
 - Projetos carregados do Neon, com seleção para visualizar descrição, tecnologias, destaques, imagem quando cadastrada e link do repositório.
 - Estatísticas públicas do GitHub, como repositórios e linguagens utilizadas.
-- Perfil, foto, projetos e informações de contato editáveis pelo admin.
 - Formulário de contato com nome, e-mail e mensagem, enviado dentro do site.
 - Layout responsivo para desktop e celular, com animações e suporte a movimento reduzido.
 - A página inicial e `/portfolio` apresentam o mesmo portfólio.
@@ -32,27 +30,15 @@ Meu portfólio e minha página de links pessoais, reunidos em um projeto com Rea
 - Limpeza automática de `utm_*` e `fbclid` da barra de endereço, preservando outros parâmetros, fragmentos e o estado do histórico, sem recarregar a página.
 - Capa, título e descrição próprios para a prévia de compartilhamento. O middleware entrega o HTML pessoal no subdomínio antes de carregar o JavaScript.
 
-### Administração
-
-O painel possui as abas **Visão geral**, **Quem sou eu**, **Projetos**, **Contato**, **Recados pessoais**, **Contatos do portfólio** e **Configurações**.
-
-- Cadastro, edição, exclusão, ordenação e controle de publicação dos projetos.
-- Edição do perfil, imagem e informações de contato.
-- Atualização do e-mail e da senha do administrador mediante confirmação da senha atual.
-- Caixas separadas para contatos profissionais e recados dos links, com paginação e contagem própria de mensagens não lidas.
-- Marcar mensagens como lidas ou não lidas e responder por e-mail quando o remetente informou um endereço.
-- **Excluir mensagem**, com confirmação antes da exclusão permanente, nas duas caixas.
-- Ativar, testar e desativar notificações push por aparelho.
-
 ### Mensagens, privacidade e notificações
 
 Os formulários compartilham a validação no servidor, o campo antispam e o limite de cinco envios aceitos por origem a cada 15 minutos, aplicado de forma atômica no banco.
 
-Nome, e-mail e texto dos envios aceitos são armazenados em um payload com **AES-256-GCM**. As colunas de texto da tabela recebem marcadores de proteção; o servidor descriptografa o payload para exibição no painel autenticado. No modo anônimo, o nome informado pelo visitante não é enviado nem salvo. As mensagens não fazem parte da API pública de conteúdo.
+Nome, e-mail e texto dos envios aceitos são armazenados em um payload com **AES-256-GCM**. A leitura dos dados é restrita ao servidor e exige autenticação. No modo anônimo, o nome informado pelo visitante não é enviado nem salvo. As mensagens não fazem parte da API pública de conteúdo.
 
-As notificações usam Web Push e um service worker, com avisos genéricos que não exibem nome, e-mail ou texto do remetente. Ao tocar, o administrador abre a caixa correspondente: `/admin#mensagens` ou `/admin#recados`. Falhas de push não desfazem uma mensagem já recebida.
+As notificações usam Web Push e um service worker, com avisos genéricos que não exibem nome, e-mail ou texto do remetente. Falhas de push não desfazem uma mensagem já recebida.
 
-Para receber no celular, ative os avisos pelo painel no próprio aparelho. A entrega depende da permissão do navegador, conexão e configurações do sistema. O serviço não envia mensagens pelo WhatsApp nem por e-mail.
+A entrega no celular depende da permissão do navegador, conexão e configurações do sistema. O serviço não envia mensagens pelo WhatsApp nem por e-mail.
 
 ### Moderação com IA local
 
@@ -91,7 +77,7 @@ Em `/arena`, há um battle royale original em Canvas 2D, solo contra 15 bots, co
 | Interface | React 19, TypeScript, Vite, Tailwind CSS e CSS próprio |
 | Backend | Node.js, funções serverless da Vercel e Routing Middleware |
 | Banco | PostgreSQL na Neon, com `@neondatabase/serverless` |
-| Proteção de dados | `node:crypto`, AES-256-GCM, scrypt e sessões administrativas |
+| Proteção de dados | `node:crypto`, AES-256-GCM, scrypt e sessões autenticadas |
 | Notificações e compartilhamento | Web Push, service worker, Web Share API, Clipboard API e `qrcode` |
 | Moderação | Classificador local versionado em JSON; treinamento offline com Python, NumPy, SciPy e scikit-learn |
 | Extras | Canvas 2D, API pública do GitHub e integração opcional com Spotify |
@@ -113,7 +99,6 @@ Copie `.env.example` para `.env.local` e configure os valores do seu ambiente:
 | `DATABASE_URL` | Conexão do PostgreSQL na Neon |
 | `SESSION_SECRET` | Segredo da sessão, com pelo menos 32 caracteres |
 | `CONTACT_ENCRYPTION_KEY` | Chave permanente de 32 bytes em hexadecimal, com 64 caracteres |
-| `ADMIN_EMAIL` e `ADMIN_PASSWORD_HASH` | Opcionais, para criar a primeira conta em um banco novo |
 | `SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET` e `SPOTIFY_REFRESH_TOKEN` | Opcionais, para autorizar o cartão de música |
 
 Mantenha os segredos somente no servidor e nos arquivos de ambiente ignorados pelo Git. Não use o prefixo `VITE_` nessas variáveis. Guarde uma cópia segura da chave de criptografia: perdê-la ou substituí-la impede a leitura dos payloads já cifrados.
@@ -124,19 +109,13 @@ Para iniciar:
 npm run dev
 ```
 
-O Vite possui um middleware local que executa as principais rotas `/api`, incluindo conteúdo, contato e mensagens administrativas. Para reproduzir o ambiente da Vercel, incluindo rotas que não estão nesse mapa local, use:
+O Vite possui um middleware local que executa as principais rotas `/api`, incluindo conteúdo e contato. Para reproduzir o ambiente da Vercel, incluindo rotas que não estão nesse mapa local, use:
 
 ```bash
 npm run dev:vercel
 ```
 
 Sem banco e segredos configurados, partes da interface podem usar conteúdo local de fallback, mas autenticação e gravação de mensagens exigem o backend configurado. A moderação utiliza o artefato já versionado; não é necessário instalar Python para executar o site.
-
-### Primeiro acesso administrativo
-
-Em um banco novo, configure `ADMIN_EMAIL` e gere `ADMIN_PASSWORD_HASH` com `npm run admin:hash`, usando a variável temporária `ADMIN_NEW_PASSWORD`. O script exige uma senha de 12 a 128 caracteres e imprime somente o hash.
-
-O bootstrap cria a conta apenas quando a tabela de administradores está vazia; não altera contas existentes. Depois, as credenciais podem ser gerenciadas pelo painel. Veja [README-NEON.md](README-NEON.md) para os detalhes de configuração.
 
 ## Build e deploy
 
@@ -145,7 +124,7 @@ npx tsc -b
 npm run build
 ```
 
-O build gera os arquivos em `dist/`, pré-renderiza as páginas públicas e verifica os hashes dos scripts estáticos na Content Security Policy. A administração é carregada no cliente e utiliza APIs autenticadas.
+O build gera os arquivos em `dist/`, pré-renderiza as páginas públicas e verifica os hashes dos scripts estáticos na Content Security Policy.
 
 O deploy está conectado à branch `main` do GitHub na Vercel. Configure as variáveis do servidor no projeto e associe os domínios antes de publicar uma instalação própria. O arquivo `middleware.ts` trata a página inicial do subdomínio de links; `vercel.json` contém os cabeçalhos de segurança e a inclusão do modelo nas funções que usam moderação.
 
@@ -177,13 +156,12 @@ Os testes de integração que acessam o Neon, como `test-contact.mjs`, `test-sec
 src/
   sections/                 Seções do portfólio
   components/links/         Pixel, widget de vibe, QR Code e recadinhos
-  admin/                    Painel e caixas de entrada
   game/                     Last Circle
   context/                  Carregamento do conteúdo público
 api/
   _lib/moderation/           Inferência e modelo local de IA
   _lib/                     Banco, autenticação, criptografia e push
-  *.ts                      APIs públicas e administrativas
+  *.ts                      Rotas da API
 public/                     Assets, capa social e worker de notificações
 scripts/                    Pré-renderização e verificações
   moderation/               Treinamento, avaliação e licença do modelo
@@ -192,7 +170,7 @@ middleware.ts               Roteamento do subdomínio de links
 
 ## Documentação complementar
 
-- [Configuração do Neon e administrador](README-NEON.md)
+- [Configuração do Neon](README-NEON.md)
 - [Proteção dos dados e credenciais](SECURITY.md)
 - [Moderação local, avaliação e limitações](MODERATION.md)
 - [Autorização e configuração do Spotify](docs/spotify.md)
