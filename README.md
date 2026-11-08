@@ -21,7 +21,7 @@ Meu portfólio e minha página de links pessoais, reunidos em um projeto com Rea
 
 ### Links pessoais
 
-- Página compacta com foto centralizada, nome e ícones para Instagram, LinkedIn, Spotify e Strava.
+- Página compacta com foto centralizada, nome e ícones para Instagram, LinkedIn e Spotify.
 - Foto obtida da configuração do perfil no Neon por uma API do servidor. Para o avatar, o proxy prioriza uma miniatura de 320 px do Google Drive e mantém cache das respostas bem-sucedidas.
 - **Pixel:** cachorro virtual com animações de carinho, rabinho, corações e descanso.
 - **Sua vibe hoje:** escolha entre “De boa”, “No foco” e “Na correria” para receber uma reação do Pixel. A escolha é mantida apenas na memória da página; não é enviada ao banco.
