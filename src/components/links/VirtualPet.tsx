@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { careForPixel, EMPTY_PIXEL_PROGRESS, parsePixelProgress, PIXEL_PROGRESS_KEY, PIXEL_TRICKS, pixelTotal, type PixelCare } from './pixel-progress'
 import type { VisitorVibe } from './VibeWidget'
 
 type Mood = 'awake' | 'happy' | 'asleep'
@@ -6,6 +7,25 @@ type Mood = 'awake' | 'happy' | 'asleep'
 export default function VirtualPet({ reaction }: { reaction?: { vibe: VisitorVibe; id: number } | null }) {
   const [mood, setMood] = useState<Mood>('awake')
   const [pets, setPets] = useState(0)
+  const [progress, setProgress] = useState(EMPTY_PIXEL_PROGRESS)
+  const [loaded, setLoaded] = useState(false)
+  const [action, setAction] = useState('pet')
+  const [message, setMessage] = useState('')
+  const [saved, setSaved] = useState(true)
+  const total = pixelTotal(progress)
+  const nextTrick = PIXEL_TRICKS.find(trick => total < trick.required)
+  const unlocked = PIXEL_TRICKS.filter(trick => total >= trick.required)
+
+  useEffect(() => {
+    try { setProgress(parsePixelProgress(localStorage.getItem(PIXEL_PROGRESS_KEY))) }
+    catch { setSaved(false) }
+    setLoaded(true)
+  }, [])
+  useEffect(() => {
+    if (!loaded) return
+    try { localStorage.setItem(PIXEL_PROGRESS_KEY, JSON.stringify(progress)); setSaved(true) }
+    catch { setSaved(false) }
+  }, [loaded, progress])
 
   useEffect(() => {
     if (mood === 'asleep') return
@@ -16,6 +36,8 @@ export default function VirtualPet({ reaction }: { reaction?: { vibe: VisitorVib
   useEffect(() => {
     if (!reaction) return
     setMood('happy')
+    setMessage('')
+    setAction('pet')
     setPets(count => count + 1)
   }, [reaction?.id])
   const replies: Record<VisitorVibe, string> = {
@@ -26,15 +48,32 @@ export default function VirtualPet({ reaction }: { reaction?: { vibe: VisitorVib
 
   const asleep = mood === 'asleep'
   const happy = mood === 'happy'
-  function pet() {
+  function interact(care: PixelCare) {
+    if (!loaded) return
+    const next = careForPixel(progress, care)
+    const newTrick = PIXEL_TRICKS.find(trick => total < trick.required && pixelTotal(next) >= trick.required)
+    setProgress(next)
+    setAction(care)
     setMood('happy')
     setPets(count => count + 1)
+    const responses = {
+      pet: 'Carinho recebido. Rabinho a mil! 💙',
+      treat: 'Croc, croc… o melhor petisco do dia! 🦴',
+      play: 'Peguei a bolinha! De novo, de novo! 🎾',
+    }
+    setMessage(newTrick ? `${responses[care]} Desbloqueou: ${newTrick.label}!` : responses[care])
+  }
+  function performTrick(id: string) {
+    const trick = unlocked.find(item => item.id === id)
+    if (!trick) return
+    setAction(id); setMood('happy'); setPets(count => count + 1)
+    setMessage(id === 'paw' ? 'Toca aqui! Uma patinha só pra você. 🐾' : id === 'spin' ? 'Uma voltinha de felicidade! ✨' : 'Você é da turma do Pixel! Festa de rabinho! 🎉')
   }
 
   return (
-    <section className={`links-pet links-pet-${mood}`} aria-label="Cachorrinho virtual Pixel">
-      <button className="links-pet-touch" type="button" onClick={pet} aria-label={asleep ? 'Acordar e fazer carinho no Pixel' : 'Fazer carinho no Pixel'}>
-        <svg className="links-dog" viewBox="0 0 120 110" fill="none" aria-hidden="true">
+    <section className={`links-pet links-pet-interactive links-pet-${mood}`} aria-label="Cachorrinho virtual Pixel">
+      <button className="links-pet-touch" type="button" onClick={() => interact('pet')} disabled={!loaded} aria-label={asleep ? 'Acordar e fazer carinho no Pixel' : 'Fazer carinho no Pixel'}>
+        <svg key={pets} className={`links-dog pixel-action-${happy ? action : 'idle'}`} viewBox="0 0 120 110" fill="none" aria-hidden="true">
           <ellipse cx="59" cy="100" rx="37" ry="5" fill="#000" opacity=".15" />
           <g className="links-dog-body">
             <path className="links-dog-tail" d="M84 85c20 0 24-18 18-26" stroke="#c89a70" strokeWidth="11" strokeLinecap="round" />
@@ -60,7 +99,21 @@ export default function VirtualPet({ reaction }: { reaction?: { vibe: VisitorVib
           {pets > 0 ? <g key={pets} className="links-dog-hearts" fill="#efb2ce"><path d="M17 36c-8-8-14 4 0 11 14-7 8-19 0-11Z" /><path d="M101 24c-7-7-12 3 0 9 12-6 7-16 0-9Z" /><path d="M58 8c-5-5-9 2 0 7 9-5 5-12 0-7Z" /></g> : null}
         </svg>
       </button>
-      <div><strong>Esse é o Pixel<span aria-hidden="true">.</span></strong><p key={mood} className="links-pet-message" role="status">{reaction ? replies[reaction.vibe] : asleep ? 'Recarregando as patinhas…' : happy ? 'Carinho recebido. Rabinho a mil!' : 'Um toque, um carinho.'}</p></div>
+      <div className="links-pet-copy"><strong>Esse é o Pixel<span aria-hidden="true">.</span></strong><p key={mood} className="links-pet-message" role="status">{asleep ? 'Recarregando as patinhas…' : happy && message ? message : reaction ? replies[reaction.vibe] : happy ? 'Carinho recebido. Rabinho a mil!' : 'Um toque, um carinho.'}</p></div>
+      <div className="pixel-care-actions" aria-label="Cuidar do Pixel">
+        <button type="button" disabled={!loaded} onClick={() => interact('pet')}><span aria-hidden="true">💙</span>Carinho</button>
+        <button type="button" disabled={!loaded} onClick={() => interact('treat')}><span aria-hidden="true">🦴</span>Petisco</button>
+        <button type="button" disabled={!loaded} onClick={() => interact('play')}><span aria-hidden="true">🎾</span>Brincar</button>
+      </div>
+      <details className="pixel-tricks">
+        <summary>Truques do Pixel <span>{unlocked.length}/{PIXEL_TRICKS.length}</span></summary>
+        <div className="pixel-trick-actions">
+          {PIXEL_TRICKS.map(trick => <button key={trick.id} type="button" disabled={!loaded || total < trick.required} onClick={() => performTrick(trick.id)}>{total >= trick.required ? '✨' : '🔒'} {trick.label}<small>{total >= trick.required ? 'Desbloqueado' : `${trick.required} cuidados`}</small></button>)}
+        </div>
+        <p className="pixel-progress-copy">{nextTrick ? `Faltam ${nextTrick.required - total} cuidados para ${nextTrick.label.toLowerCase()}.` : 'Todos os truques desbloqueados. O Pixel adorou sua companhia!'} {saved ? 'Progresso salvo neste navegador.' : 'O navegador não permitiu salvar. Você ainda pode brincar nesta visita.'}</p>
+      </details>
+      {happy && action === 'treat' && <span key={`treat-${pets}`} className="pixel-prop" aria-hidden="true">🦴</span>}
+      {happy && action === 'play' && <span key={`ball-${pets}`} className="pixel-prop pixel-ball" aria-hidden="true">🎾</span>}
     </section>
   )
 }
