@@ -84,6 +84,13 @@ export default function LinksPage() {
         </nav>
         <SpotifyPlayer compact fallback={null} />
         <PersonalExtras vibe={reaction?.vibe} onVibe={vibe => setReaction(current => ({ vibe, id: (current?.id || 0) + 1 }))} />
+        <details className="links-about-card">
+          <summary>Um pouco de mim <span aria-hidden="true">+</span></summary>
+          <div className="links-about-content">
+            <p>Sou o Eric, de Ibiporã, no Paraná. Curto tecnologia, jogos e fotografia. Este é meu cantinho para compartilhar um pouco da vida além do código.</p>
+            <div className="links-interests" aria-label="Meus interesses"><span>Tecnologia</span><span>Jogos</span><span>Fotografia</span></div>
+          </div>
+        </details>
         <VirtualPet reaction={reaction} />
       </main>
     </div>

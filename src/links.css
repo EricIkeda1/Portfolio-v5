@@ -84,3 +84,40 @@
   .links-avatar:hover, .links-share-actions button:hover, .links-share-actions button:active,
   .links-note-open:hover, .links-note-open:active, .links-vibe-options button:active { transform: none !important; }
 }
+
+/* Native sharing is preferred; this sheet covers unsupported desktop browsers. */
+.links-share-sheet { inset: auto 0 0; width: min(100%, 440px); margin: 0 auto; border-radius: 28px 28px 0 0; padding: 38px 24px max(24px, env(safe-area-inset-bottom)); }
+.links-share-sheet[open] { animation: links-sheet-up 380ms cubic-bezier(.16,1,.3,1) both; }
+.links-sheet-handle { display: block; position: absolute; top: 12px; left: calc(50% - 20px); width: 40px; height: 4px; border-radius: 8px; background: #b6c9e14d; }
+.links-share-destinations { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; }
+.links-share-destinations a, .links-share-destinations button { display: flex; align-items: center; gap: 9px; min-height: 56px; padding: 12px; border: 1px solid #b6c9e126; border-radius: 16px; background: #d4e3ff08; color: #dfebfc; font: inherit; font-size: 12px; text-decoration: none; cursor: pointer; }
+.links-share-destinations span { color: #b9a7ec; font-size: 20px; }
+.links-share-destinations :is(a,button):focus-visible { outline: 3px solid #c2daff; outline-offset: 3px; }
+.links-share-destinations :is(a,button):hover { background: #d4e3ff14; }
+.links-share-sheet .links-sheet-notice { min-height: 18px; font-size: 11px; margin: 16px 0 0; }
+.links-qr-reveal { overflow-x: hidden; }
+.links-qr-reveal[open] { animation: links-qr-unfold 540ms cubic-bezier(.16,1,.3,1) both; }
+.links-qr-frame { position: relative; max-width: 278px; margin: 0 auto; padding: 11px; }
+.links-qr-frame > i { position: absolute; width: 24px; height: 24px; border: solid #bda9ee; pointer-events: none; }
+.links-qr-frame > i:nth-child(1) { top: 0; left: 0; border-width: 2px 0 0 2px; border-radius: 10px 0 0; }
+.links-qr-frame > i:nth-child(2) { top: 0; right: 0; border-width: 2px 2px 0 0; border-radius: 0 10px 0 0; }
+.links-qr-frame > i:nth-child(3) { bottom: 0; left: 0; border-width: 0 0 2px 2px; border-radius: 0 0 0 10px; }
+.links-qr-frame > i:nth-child(4) { bottom: 0; right: 0; border-width: 0 2px 2px 0; border-radius: 0 0 10px; }
+.links-qr-reveal[open] .links-qr-frame { animation: links-qr-paper 650ms 100ms cubic-bezier(.16,1,.3,1) both; }
+.links-qr-reveal[open] .links-qr-image img { animation: links-reveal 420ms ease-out both; }
+.links-qr-reveal[open] .links-qr-download { animation: links-reveal 450ms 180ms ease-out both; }
+.links-about-card { text-align: left; border: 1px solid #d4e3ff20; border-radius: 18px; background: #d4e3ff06; }
+.links-about-card summary { display: flex; justify-content: space-between; align-items: center; min-height: 44px; padding: 10px 14px; list-style: none; cursor: pointer; color: #cfddf2; font-size: 11px; }
+.links-about-card summary::-webkit-details-marker { display: none; }
+.links-about-card summary:focus-visible { outline: 3px solid #c2daff; outline-offset: 3px; border-radius: 18px; }
+.links-about-card summary > span { font-size: 18px; color: #bda9ee; transition: transform 240ms; }
+.links-about-card[open] summary > span { transform: rotate(45deg); }
+.links-about-content { padding: 0 14px 14px; }
+.links-about-content p { color: #bac7da; font-size: 11px; line-height: 1.7; }
+.links-about-card[open] .links-about-content { animation: links-reveal 300ms ease-out both; }
+.links-interests { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.links-interests span { padding: 4px 9px; background: #bda9ee10; border: 1px solid #bda9ee26; border-radius: 20px; color: #cbbce8; font-size: 9px; }
+@keyframes links-sheet-up { from { opacity: 0; transform: translateY(100%); } to { opacity: 1; transform: translateY(0); } }
+@keyframes links-qr-unfold { from { opacity: 0; transform: translateY(22px) scale(.88); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes links-qr-paper { from { opacity: 0; transform: perspective(700px) rotateX(-18deg) translateY(16px) scale(.9); } to { opacity: 1; transform: perspective(700px) rotateX(0) translateY(0) scale(1); } }
+@media(prefers-reduced-motion:reduce) { .links-page *, .links-page *::backdrop { animation: none !important; transition: none !important; } }
