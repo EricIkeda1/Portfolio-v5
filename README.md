@@ -23,7 +23,7 @@ Meu portfólio e minha página de links pessoais, reunidos em um projeto com Rea
 
 - Página compacta com foto centralizada, nome e ícones para Instagram, LinkedIn e Spotify.
 - Foto obtida da configuração do perfil no Neon por uma API do servidor. Para o avatar, o proxy prioriza uma miniatura de 320 px do Google Drive e mantém cache das respostas bem-sucedidas.
-- **Pixel:** cachorro virtual com carinho, petiscos e brincadeiras. Cuidados desbloqueiam patinha, rodopio e comemoração; progresso salvo apenas neste navegador, sem envio ao banco. Inclui animações e suporte a movimento reduzido.
+- **Pixel:** cachorro virtual com carinho ao tocar, petisco ao segurar e brincadeira ao deslizar para o lado, além de atalhos de teclado. Cuidados desbloqueiam patinha, rodopio e comemoração, executados como surpresas durante as interações; progresso salvo apenas neste navegador, sem envio ao banco. Inclui animações e suporte a movimento reduzido.
 - **Sua vibe hoje:** escolha entre “De boa”, “No foco” e “Na correria” para receber uma reação do Pixel. A escolha é mantida apenas na memória da página; não é enviada ao banco.
 - **Recadinhos privados:** o visitante escolhe entre enviar anonimamente ou informar o nome, sem precisar fornecer e-mail.
 - Compartilhamento nativo quando disponível; gaveta alternativa com WhatsApp, Telegram, e-mail e cópia do link.

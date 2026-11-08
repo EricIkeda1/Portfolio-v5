@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState, type PointerEvent } from 'react'
 import { careForPixel, EMPTY_PIXEL_PROGRESS, parsePixelProgress, PIXEL_PROGRESS_KEY, PIXEL_TRICKS, pixelTotal, type PixelCare } from './pixel-progress'
 import type { VisitorVibe } from './VibeWidget'
 
@@ -15,6 +15,7 @@ export default function VirtualPet({ reaction }: { reaction?: { vibe: VisitorVib
   const total = pixelTotal(progress)
   const nextTrick = PIXEL_TRICKS.find(trick => total < trick.required)
   const unlocked = PIXEL_TRICKS.filter(trick => total >= trick.required)
+  const gesture = useRef<{ id: number; x: number; y: number; time: number } | null>(null)
 
   useEffect(() => {
     try { setProgress(parsePixelProgress(localStorage.getItem(PIXEL_PROGRESS_KEY))) }
@@ -53,7 +54,9 @@ export default function VirtualPet({ reaction }: { reaction?: { vibe: VisitorVib
     const next = careForPixel(progress, care)
     const newTrick = PIXEL_TRICKS.find(trick => total < trick.required && pixelTotal(next) >= trick.required)
     setProgress(next)
-    setAction(care)
+    const available = PIXEL_TRICKS.filter(trick => pixelTotal(next) >= trick.required)
+    const surprise = newTrick ?? (pixelTotal(next) % 3 === 0 && available.length ? available[(Math.floor(pixelTotal(next) / 3) - 1) % available.length] : null)
+    setAction(surprise?.id ?? care)
     setMood('happy')
     setPets(count => count + 1)
     const responses = {
@@ -61,18 +64,31 @@ export default function VirtualPet({ reaction }: { reaction?: { vibe: VisitorVib
       treat: 'Croc, croc… o melhor petisco do dia! 🦴',
       play: 'Peguei a bolinha! De novo, de novo! 🎾',
     }
-    setMessage(newTrick ? `${responses[care]} Desbloqueou: ${newTrick.label}!` : responses[care])
+    setMessage(newTrick ? `${responses[care]} Desbloqueou: ${newTrick.label}!` : surprise ? `${responses[care]} Olha meu truque: ${surprise.label.toLowerCase()}! ✨` : responses[care])
   }
-  function performTrick(id: string) {
-    const trick = unlocked.find(item => item.id === id)
-    if (!trick) return
-    setAction(id); setMood('happy'); setPets(count => count + 1)
-    setMessage(id === 'paw' ? 'Toca aqui! Uma patinha só pra você. 🐾' : id === 'spin' ? 'Uma voltinha de felicidade! ✨' : 'Você é da turma do Pixel! Festa de rabinho! 🎉')
+  function startGesture(event: PointerEvent<HTMLButtonElement>) {
+    if (!event.isPrimary || event.button !== 0) return
+    gesture.current = { id: event.pointerId, x: event.clientX, y: event.clientY, time: performance.now() }
+    event.currentTarget.setPointerCapture(event.pointerId)
+  }
+  function finishGesture(event: PointerEvent<HTMLButtonElement>) {
+    const start = gesture.current
+    gesture.current = null
+    if (!start || start.id !== event.pointerId) return
+    const dx = event.clientX - start.x, dy = event.clientY - start.y
+    if (Math.abs(dy) > 35 && Math.abs(dy) > Math.abs(dx)) return
+    interact(Math.abs(dx) > 30 ? 'play' : performance.now() - start.time >= 550 ? 'treat' : 'pet')
   }
 
   return (
     <section className={`links-pet links-pet-interactive links-pet-${mood}`} aria-label="Cachorrinho virtual Pixel">
-      <button className="links-pet-touch" type="button" onClick={() => interact('pet')} disabled={!loaded} aria-label={asleep ? 'Acordar e fazer carinho no Pixel' : 'Fazer carinho no Pixel'}>
+      <button className="links-pet-touch" type="button" onContextMenu={event => event.preventDefault()} onPointerDown={startGesture} onPointerUp={finishGesture} onPointerCancel={() => { gesture.current = null }}
+        onClick={event => { if (event.detail === 0) interact('pet') }}
+        onKeyDown={event => {
+          if (event.key === 'ArrowRight') { event.preventDefault(); interact('play') }
+          if (event.key === 'Enter' && event.shiftKey) { event.preventDefault(); interact('treat') }
+        }}
+        disabled={!loaded} aria-label={asleep ? 'Acordar e interagir com o Pixel' : 'Interagir com o Pixel'} aria-describedby="pixel-gesture-help pixel-keyboard-help">
         <svg key={pets} className={`links-dog pixel-action-${happy ? action : 'idle'}`} viewBox="0 0 120 110" fill="none" aria-hidden="true">
           <ellipse cx="59" cy="100" rx="37" ry="5" fill="#000" opacity=".15" />
           <g className="links-dog-body">
@@ -100,18 +116,11 @@ export default function VirtualPet({ reaction }: { reaction?: { vibe: VisitorVib
         </svg>
       </button>
       <div className="links-pet-copy"><strong>Esse é o Pixel<span aria-hidden="true">.</span></strong><p key={mood} className="links-pet-message" role="status">{asleep ? 'Recarregando as patinhas…' : happy && message ? message : reaction ? replies[reaction.vibe] : happy ? 'Carinho recebido. Rabinho a mil!' : 'Um toque, um carinho.'}</p></div>
-      <div className="pixel-care-actions" aria-label="Cuidar do Pixel">
-        <button type="button" disabled={!loaded} onClick={() => interact('pet')}><span aria-hidden="true">💙</span>Carinho</button>
-        <button type="button" disabled={!loaded} onClick={() => interact('treat')}><span aria-hidden="true">🦴</span>Petisco</button>
-        <button type="button" disabled={!loaded} onClick={() => interact('play')}><span aria-hidden="true">🎾</span>Brincar</button>
+      <div className="pixel-gesture-help">
+        <p id="pixel-gesture-help">Toque: carinho · segure: petisco · deslize para o lado: brincar</p>
+        <span id="pixel-keyboard-help" className="sr-only">No teclado: Enter dá carinho, Shift e Enter dá petisco, seta para a direita brinca.</span>
+        <small>{unlocked.length}/{PIXEL_TRICKS.length} truques · {nextTrick ? `mais ${nextTrick.required - total} cuidados para ${nextTrick.label.toLowerCase()}` : 'todos desbloqueados!'}{!saved && ' · progresso só nesta visita'}</small>
       </div>
-      <details className="pixel-tricks">
-        <summary>Truques do Pixel <span>{unlocked.length}/{PIXEL_TRICKS.length}</span></summary>
-        <div className="pixel-trick-actions">
-          {PIXEL_TRICKS.map(trick => <button key={trick.id} type="button" disabled={!loaded || total < trick.required} onClick={() => performTrick(trick.id)}>{total >= trick.required ? '✨' : '🔒'} {trick.label}<small>{total >= trick.required ? 'Desbloqueado' : `${trick.required} cuidados`}</small></button>)}
-        </div>
-        <p className="pixel-progress-copy">{nextTrick ? `Faltam ${nextTrick.required - total} cuidados para ${nextTrick.label.toLowerCase()}.` : 'Todos os truques desbloqueados. O Pixel adorou sua companhia!'} {saved ? 'Progresso salvo neste navegador.' : 'O navegador não permitiu salvar. Você ainda pode brincar nesta visita.'}</p>
-      </details>
       {happy && action === 'treat' && <span key={`treat-${pets}`} className="pixel-prop" aria-hidden="true">🦴</span>}
       {happy && action === 'play' && <span key={`ball-${pets}`} className="pixel-prop pixel-ball" aria-hidden="true">🎾</span>}
     </section>

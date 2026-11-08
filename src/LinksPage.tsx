@@ -4,6 +4,7 @@ import PersonalExtras from './components/links/PersonalExtras'
 import ShareLinks from './components/links/ShareLinks'
 import VirtualPet from './components/links/VirtualPet'
 import SpotifyPlayer from './components/SpotifyPlayer'
+import TypingName from './components/links/TypingName'
 import './links.css'
 
 const networks = [
@@ -62,7 +63,7 @@ export default function LinksPage() {
             <img src="/api/profile-image?size=avatar" alt="Foto de Eric Yuji Ikeda" width="104" height="104" loading="eager" fetchPriority="high" decoding="async" onError={() => setPhotoError(true)} />
           )}
         </div>
-        <h1>Eric Yuji Ikeda</h1>
+        <TypingName />
         <p className="links-bio">Tecnologia, jogos e vida real.</p>
         </header>
         <ShareLinks />
