@@ -9,5 +9,9 @@ export default function middleware(request: Request) {
     url.pathname = '/links/index.html'
     return rewrite(url)
   }
+  if (url.hostname === 'loja.ericyikeda.com.br' && (url.pathname === '/' || url.pathname === '/index.html')) {
+    url.pathname = '/loja/index.html'
+    return rewrite(url)
+  }
   return next()
 }

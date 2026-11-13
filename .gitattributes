@@ -153,3 +153,7 @@ public/notification-*.png -filter -diff -merge -text
 
 # Capa social pequena servida diretamente, sem Git LFS.
 public/links-preview.png -filter -diff -merge -text
+
+# Imagens otimizadas da loja: servir os arquivos reais no deploy.
+public/shop/* -filter -diff -merge -text
+docs/shop-preview.jpg -filter -diff -merge -text

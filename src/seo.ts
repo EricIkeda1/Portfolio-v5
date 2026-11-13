@@ -3,16 +3,17 @@ const personId = `${origin}/#person`
 const websiteId = `${origin}/#website`
 
 export function seoHead(pathname: string) {
+  const shop = pathname.replace(/\/+$/, '') === '/loja'
   const portfolio = pathname === '/' || pathname.replace(/\/+$/, '') === '/portfolio'
   const privatePage = pathname === '/admin' || pathname === '/404' || pathname === '/arena'
   const links = pathname.replace(/\/+$/, '') === '/links'
-  const title = links ? 'Eric Yuji Ikeda · Me encontre por aqui' : privatePage
+  const title = shop ? 'Sites WordPress sob medida | Eric Y. Ikeda' : links ? 'Eric Yuji Ikeda · Me encontre por aqui' : privatePage
     ? `${pathname === '/admin' ? 'Administração' : pathname === '/arena' ? 'Last Circle — Minigame' : 'Página não encontrada'} | Eric Y. Ikeda`
     : 'Eric Yuji Ikeda | Portfólio de desenvolvimento web e mobile'
-  const description = links ? 'Tecnologia, games e vida real. Minhas redes, recadinhos privados e um Pixel esperando seu carinho.' : 'Conheça os projetos de Eric Yuji Ikeda: desenvolvimento web e mobile com React, Flutter, TypeScript, APIs REST e PostgreSQL.'
-  const url = links ? 'https://links.ericyikeda.com.br/' : `${origin}/`
-  const image = links ? 'https://links.ericyikeda.com.br/links-preview.png' : `${origin}/api/logo-image`
-  const imageAlt = links ? 'Eric Yuji Ikeda: tecnologia, games e vida real, com o cachorrinho Pixel' : 'Eric Y. Ikeda — Portfólio'
+  const description = shop ? 'Criação de landing pages, sites institucionais e lojas virtuais em WordPress. Design responsivo e desenvolvimento sob medida para o seu negócio.' : links ? 'Tecnologia, games e vida real. Minhas redes, recadinhos privados e um Pixel esperando seu carinho.' : 'Conheça os projetos de Eric Yuji Ikeda: desenvolvimento web e mobile com React, Flutter, TypeScript, APIs REST e PostgreSQL.'
+  const url = shop ? 'https://loja.ericyikeda.com.br/' : links ? 'https://links.ericyikeda.com.br/' : `${origin}/`
+  const image = shop ? 'https://loja.ericyikeda.com.br/shop/architecture.webp' : links ? 'https://links.ericyikeda.com.br/links-preview.png' : `${origin}/api/logo-image`
+  const imageAlt = shop ? 'Conceito demonstrativo de site para arquitetura — Eric Y. Ikeda' : links ? 'Eric Yuji Ikeda: tecnologia, games e vida real, com o cachorrinho Pixel' : 'Eric Y. Ikeda — Portfólio'
   const escape = (value: string) => value.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;')
   const meta = (name: string, content: string, property = false) => `<meta ${property ? 'property' : 'name'}="${name}" content="${escape(content)}" />`
   const graph: Record<string, unknown>[] = [
@@ -24,7 +25,7 @@ export function seoHead(pathname: string) {
     `<title>${escape(title)}</title>`,
     meta('description', description), meta('author', 'Eric Yuji Ikeda'),
     meta('robots', privatePage ? 'noindex, nofollow, noarchive' : 'index, follow, max-image-preview:large'),
-    meta('theme-color', '#07070f'),
+    meta('theme-color', shop ? '#fcf5ec' : '#07070f'),
     ...(!privatePage ? [`<link rel="canonical" href="${url}" />`, meta('og:type', 'website', true), meta('og:locale', 'pt_BR', true), meta('og:site_name', links ? 'Eric Yuji Ikeda' : 'Eric Y. Ikeda', true), meta('og:url', url, true), meta('og:title', title, true), meta('og:description', description, true), meta('og:image', image, true), meta('og:image:alt', imageAlt, true), ...(links ? [meta('og:image:type', 'image/png', true), meta('og:image:width', '1200', true), meta('og:image:height', '630', true)] : []), meta('twitter:card', 'summary_large_image'), meta('twitter:title', title), meta('twitter:description', description), meta('twitter:image', image), `<script type="application/ld+json">${JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }).replace(/</g, '\\u003c')}</script>`] : []),
   ].join('\n    ')
 }
