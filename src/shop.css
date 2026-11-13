@@ -8,7 +8,7 @@
 .shop-page button,.shop-page a,.shop-page summary{-webkit-tap-highlight-color:transparent}
 .shop-page :focus-visible{outline:3px solid var(--shop-blue);outline-offset:5px}
 .shop-page ::selection{background:#d4e8fc;color:#171916}
-.shop-wrap{width:min(1180px,calc(100% - 88px));margin-inline:auto}
+.shop-wrap{width:min(1800px,calc(100% - clamp(56px,6.25vw,120px)));margin-inline:auto}
 .shop-page section[id]{scroll-margin-top:30px}
 .shop-header{display:flex;align-items:center;gap:40px;padding-block:24px;border-bottom:1px solid #d8cfc14d}
 .shop-brand{margin-right:auto;display:flex;width:258px;background:#080908;border-radius:8px;overflow:hidden;padding:7px 12px}
@@ -140,7 +140,7 @@
 to{opacity:1;transform:translateY(0)}
 }
 
-@media(min-width:1500px){.shop-wrap{width:min(1260px,calc(100% - 110px))}
+@media(min-width:1500px){
 .shop-hero{padding-block:50px}
 .shop-hero h1{font-size:72px}
 }
@@ -266,3 +266,8 @@ to{opacity:1;transform:translateY(0)}
 
 
 @media(prefers-reduced-motion:reduce){html:has(.shop-page){scroll-behavior:auto}}
+/* Keep concept titles clear of their miniature navigation on wide screens. */
+.shop-project .shop-aurea-mark{font-size:5cqw}
+.shop-project .shop-preview-copy{bottom:10%}
+.shop-project .shop-preview-copy h3{font-size:5.2cqw!important;max-width:70%}
+.shop-project .shop-preview-copy p{display:none}
