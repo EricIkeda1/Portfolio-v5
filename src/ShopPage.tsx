@@ -99,6 +99,12 @@ const examples = {
       "Um conceito editorial para apresentar ambientes, serviços e uma experiência acolhedora em cada detalhe.",
     image: "/shop/interior.webp",
   },
+  store: {
+    name: "Casa Lume",
+    title: "Objetos para a sua casa.",
+    description: "Conceito de uma loja de decoração com catálogo de peças para cada ambiente.",
+    image: "/shop/interior.webp",
+  },
 }
 type Example = keyof typeof examples
 function SitePreview({
@@ -162,59 +168,23 @@ const services: { kind: Example; store?: boolean; title: string; text: string }[
     text: "E-commerce em WordPress e WooCommerce para vender seus produtos com autonomia.",
   },
 ]
-const benefits: { icon: IconName; title: string; text: string }[] = [
-  {
-    icon: "screen",
-    title: "Responsivo",
-    text: "Uma experiência pensada para computador, tablet e celular.",
-  },
-  {
-    icon: "pen",
-    title: "Fácil de atualizar",
-    text: "Você mesmo pode manter os conteúdos do seu site.",
-  },
-  {
-    icon: "whatsapp",
-    title: "Conectado ao WhatsApp",
-    text: "Seus clientes falam com você de forma rápida e prática.",
-  },
-]
-const steps = [
-  [
-    "Conversa",
-    "Entendemos a sua ideia, os objetivos e as necessidades do projeto.",
-  ],
-  ["Design", "Definimos a estrutura, o conteúdo e o visual do site com você."],
-  [
-    "Desenvolvimento",
-    "Criamos o seu site em WordPress, com atenção aos detalhes.",
-  ],
-  [
-    "Publicação",
-    "Você confere o resultado e, após os ajustes, o site vai ao ar.",
-  ],
-]
-const faqs = [
-  [
-    "O site funciona no celular?",
-    "Sim. O layout é adaptado para celulares, tablets e computadores, com uma experiência pensada para cada tela.",
-  ],
-  [
-    "Posso atualizar o conteúdo?",
-    "Sim. O WordPress permite editar textos e imagens pelo painel. Na entrega, você recebe orientação para cuidar dos conteúdos combinados no projeto.",
-  ],
-  [
-    "Como funciona o orçamento?",
-    "Primeiro conversamos sobre sua ideia, o número de páginas e os recursos necessários. Depois, você recebe uma proposta com escopo, prazo e valor antes de começar.",
-  ],
-  [
-    "O que está incluído no projeto?",
-    "O escopo é definido na proposta: design responsivo, desenvolvimento, ajustes e orientação de uso. Domínio, hospedagem, licenças e manutenção são alinhados separadamente, sem surpresas.",
-  ],
-]
+const concepts: Example[] = ["architecture", "interior", "store"]
+const categories = { architecture: "Arquitetura", interior: "Interiores", store: "Loja virtual" }
+const stages = [
+  ["Conversa", "Entendemos sua ideia, seus objetivos e o que seu público precisa encontrar.", "whatsapp"],
+  ["Criação", "Desenhamos e desenvolvemos seu site em WordPress com conteúdo e estrutura sob medida.", "screen"],
+  ["Publicação", "Revisamos juntos e colocamos o site no ar para seus clientes conhecerem seu trabalho.", "arrow"],
+] as const
 export default function ShopPage() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [selected, setSelected] = useState<Example | null>(null)
+  const [slide, setSlide] = useState(0)
+  const touch = useRef<{ x: number; y: number } | null>(null)
+  function moveSlide(offset: number) {
+    setSlide(current => (current + offset + concepts.length) % concepts.length)
+  }
+  const current = concepts[slide]
+  const following = concepts[(slide + 1) % concepts.length]
   const dialog = useRef<HTMLDialogElement>(null)
   const menuButton = useRef<HTMLButtonElement>(null)
   const menu = useRef<HTMLDivElement>(null)
@@ -297,8 +267,8 @@ export default function ShopPage() {
             <a href="#projetos" onClick={() => setMenuOpen(false)}>
               Projetos
             </a>
-            <a href="#processo" onClick={() => setMenuOpen(false)}>
-              Como funciona
+            <a href="#contato" onClick={() => setMenuOpen(false)}>
+              Contato
             </a>
           </nav>
         </div>
@@ -309,123 +279,49 @@ export default function ShopPage() {
       <main>
         <section className="shop-hero shop-wrap" aria-labelledby="shop-title">
           <div className="shop-hero-text">
-            <p className="shop-eyebrow">
-              Design + WordPress <span />
-            </p>
-            <h1 id="shop-title">Sites que<br /> valorizam o<br /> seu <em>negócio.</em></h1>
-            <p className="shop-hero-description">Uma presença digital bonita,<br /> intuitiva e feita para você.</p>
+            <h1 id="shop-title">Você pode estar <em>perdendo clientes</em> por não ter um site.</h1>
+            <p className="shop-hero-description">Quem procura seu negócio precisa encontrar motivos para confiar. Mostre seus serviços e facilite o contato com um site profissional.</p>
             <div className="shop-hero-actions">
-              <ContactLink dark>Começar meu projeto</ContactLink>
-              <a href="#projetos">Ver projetos</a>
+              <ContactLink dark>Quero meu site</ContactLink>
+              <a href="#projetos">Ver exemplos</a>
             </div>
           </div>
           <div className="shop-hero-visual">
             <DevicePreview phone eager />
           </div>
         </section>
-        <section
-          id="servicos"
-          className="shop-services shop-wrap"
-          aria-labelledby="services-title"
-        >
-          <h2 id="services-title">
-            Sua ideia. A <em>experiência</em> certa.
-          </h2>
-          <div className="shop-service-grid">
-            {services.map((service) => (
-              <article key={service.title}>
-                <DevicePreview kind={service.kind} store={service.store} />
-                <div>
-                  <h3>{service.title}</h3>
-                  <p>{service.text}</p>
-                </div>
-              </article>
-            ))}
+        <section id="projetos" className="shop-gallery shop-wrap" aria-labelledby="projects-title" aria-roledescription="carrossel">
+          <h2 id="projects-title">Imagine seu negócio <em>aqui.</em></h2>
+          <div className="shop-slides" onTouchStart={event => {
+            const point = event.touches[0]
+            touch.current = { x: point.clientX, y: point.clientY }
+          }} onTouchCancel={() => { touch.current = null }} onTouchEnd={event => {
+            if (!touch.current) return
+            const dx = event.changedTouches[0].clientX - touch.current.x
+            const dy = event.changedTouches[0].clientY - touch.current.y
+            touch.current = null
+            if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) moveSlide(dx < 0 ? 1 : -1)
+          }}>
+            <button className="shop-feature" onClick={() => setSelected(current)} aria-label={`Explorar conceito de ${categories[current]}`}><SitePreview key={current} kind={current} small /></button>
+            <button className="shop-peek" aria-label={`Mostrar conceito de ${categories[following]}`} onClick={() => moveSlide(1)}><SitePreview kind={following} small /></button>
+          </div>
+          <div className="shop-gallery-controls">
+            <button aria-label="Projeto anterior" onClick={() => moveSlide(-1)}>←</button>
+            <span aria-live="polite">Conceito · {categories[current]}　{slide + 1} / {concepts.length}</span>
+            <button aria-label="Próximo projeto" onClick={() => moveSlide(1)}>→</button>
           </div>
         </section>
-        <section
-          id="projetos"
-          className="shop-projects shop-wrap"
-          aria-labelledby="projects-title"
-        >
-          <div className="shop-section-heading">
-            <h2 id="projects-title">Design que faz a <em>diferença.</em></h2>
-
-          </div>
-          <div className="shop-project-grid">
-            {(Object.keys(examples) as Example[]).map((kind) => (
-              <button
-                key={kind}
-                className="shop-project"
-                onClick={() => setSelected(kind)}
-                aria-label={`Explorar conceito ${examples[kind].name}`}
-              >
-                <SitePreview kind={kind} small />
-                <span className="shop-project-caption">
-                  Conceito de site · {kind === "architecture" ? "Arquitetura" : "Interiores"}
-                  <span>
-                    Explorar conceito <Icon name="arrow" />
-                  </span>
-                </span>
-              </button>
-            ))}
-          </div>
+        <section id="servicos" className="shop-split shop-wrap">
+          <h2>Não deixe sua presença digital para <em>depois.</em></h2>
+          <ol>{services.map((service, index) => <li key={service.title}>
+            <strong>0{index + 1}</strong><div><h3>{service.title}</h3><p>{service.text}</p></div>
+          </li>)}</ol>
         </section>
-        <section
-          className="shop-benefits shop-wrap"
-          aria-labelledby="benefits-title"
-        >
-          <DevicePreview phone />
-          <div className="shop-benefit-list">
-            <h2 id="benefits-title">Bonito por fora.<br /><em>Simples de usar.</em></h2>
-            {benefits.map((benefit) => (
-              <article key={benefit.title}>
-                <Icon name={benefit.icon} />
-                <div>
-                  <h3>{benefit.title}</h3>
-                  <p>{benefit.text}</p>
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
-        <section id="processo" className="shop-process" aria-labelledby="process-title">
-          <div className="shop-wrap">
-            <span className="shop-blue-rule" />
-            <h2 id="process-title">
-              Um processo simples. Do início ao site no ar.
-            </h2>
-            <ol>
-              {steps.map(([title, text], index) => (
-                <li key={title}>
-                  <span className="shop-step-number">0{index + 1}</span>
-                  <div>
-                    <h3>{title}</h3>
-                    <p>{text}</p>
-                  </div>
-                </li>
-              ))}
-            </ol>
-          </div>
-        </section>
-        <section className="shop-faq shop-wrap" aria-labelledby="faq-title">
-          <div>
-            <span className="shop-blue-rule" />
-            <h2 id="faq-title">
-              Vamos esclarecer suas dúvidas.
-            </h2>
-          </div>
-          <div>
-            {faqs.map(([question, answer]) => (
-              <details key={question} name="shop-faq">
-                <summary>
-                  {question}
-                  <span aria-hidden="true" />
-                </summary>
-                <p>{answer}</p>
-              </details>
-            ))}
-          </div>
+        <section id="processo" className="shop-split shop-wrap">
+          <h2>Sua ideia merece <em>sair do papel.</em></h2>
+          <ol>{stages.map(([title, text, icon]) => <li key={title}>
+            <span className="shop-stage-icon"><Icon name={icon} /></span><div><h3>{title}</h3><p>{text}</p></div>
+          </li>)}</ol>
         </section>
         <section
           id="contato"
@@ -435,10 +331,10 @@ export default function ShopPage() {
           <div className="shop-wrap">
             <span className="shop-blue-rule" />
             <h2 id="contact-title">
-              Vamos criar algo que<br /> tenha a sua cara?
+              Seu próximo cliente pode estar procurando por você.
             </h2>
 
-            <ContactLink />
+            <ContactLink>Vamos criar meu site</ContactLink>
           </div>
         </section>
       </main>
