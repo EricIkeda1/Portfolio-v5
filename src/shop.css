@@ -9,7 +9,7 @@
 .shop-page :focus-visible{outline:3px solid var(--shop-blue);outline-offset:5px}
 .shop-page ::selection{background:#d4e8fc;color:#171916}
 .shop-wrap{width:min(1800px,calc(100% - clamp(56px,6.25vw,120px)));margin-inline:auto}
-.shop-page section[id]{scroll-margin-top:30px}
+.shop-page section[id]{scroll-margin-top:112px}
 .shop-header{display:flex;align-items:center;gap:40px;padding-block:24px;border-bottom:1px solid #d8cfc14d}
 .shop-brand{margin-right:auto;display:flex;width:258px;background:#080908;border-radius:8px;overflow:hidden;padding:7px 12px}
 .shop-brand img{width:100%;height:43px;object-fit:contain}
@@ -390,7 +390,7 @@ to{opacity:1;transform:translateY(0)}
 
 .shop-page { background: #f6f5f8; }
 .shop-header, .shop-hero { color: #fff; background: #06132d;  }
-.shop-header { position: relative; z-index: 3; clip-path: none; box-shadow: none; }
+.shop-header { position: sticky; top: 0; z-index: 10; clip-path: none; box-shadow: none; }
 .shop-header::before { content: ""; position: absolute; inset: 0 calc((100% - 100vw) / 2); background: #06132d; z-index: -1; }
 .shop-hero { position: relative; isolation: isolate; }
 .shop-hero::before { content: ""; position: absolute; z-index: -1; inset: 0 calc((100% - 100vw) / 2); background: linear-gradient(128deg,transparent 63%,#0035cb 63.2%,#1757ff 76%,transparent 76.2%), radial-gradient(ellipse at 75% 80%, #143989,transparent 55%), #06132d; }
@@ -536,4 +536,13 @@ to{opacity:1;transform:translateY(0)}
   .shop-slides .shop-site-preview, .shop-example-dialog .shop-site-preview { aspect-ratio: 1.24; }
   .shop-gallery .editorial-copy strong, .shop-example-dialog .editorial-copy strong { font-size: 8cqw; }
   .shop-gallery .editorial-action, .shop-example-dialog .editorial-action { font-size: 3cqw; }
+}
+
+@media (max-width: 700px) {
+  .shop-page section[id] { scroll-margin-top: 90px; }
+  .shop-navigation nav.is-open { max-height: calc(100dvh - 86px); overflow-y: auto; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .shop-page main > section { transition: opacity .34s ease-out; }
+  .shop-page main > section.shop-out-of-view:not(:focus-within) { opacity: 0; }
 }

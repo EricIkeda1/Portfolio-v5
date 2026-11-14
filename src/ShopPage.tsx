@@ -162,7 +162,7 @@ const concepts: Example[] = ["architecture", "interior", "store"]
 const stages = [
   ["Conversa", "Entendemos sua ideia, seus objetivos e o que seu público precisa encontrar.", "whatsapp"],
   ["Criação", "Desenhamos e desenvolvemos seu site em WordPress com conteúdo e estrutura sob medida.", "screen"],
-  ["Publicação", "Revisamos juntos e colocamos o site no ar para seus clientes conhecerem seu trabalho.", "arrow"],
+  ["Entrega", "Você revisa o site, faço os ajustes combinados e entrego o projeto desenvolvido. A publicação fica por sua conta.", "screen"],
 ] as const
 const headlines = [
   ["Você pode estar ", "perdendo clientes", " por não ter um site."],
@@ -225,6 +225,21 @@ export default function ShopPage() {
   }
   const current = concepts[slide]
   const following = concepts[(slide + 1) % concepts.length]
+  const main = useRef<HTMLElement>(null)
+  useEffect(() => {
+    if (!main.current || !("IntersectionObserver" in window)) return
+    const sections = main.current.querySelectorAll<HTMLElement>(":scope > section")
+    const observer = new IntersectionObserver(entries => {
+      for (const entry of entries) {
+        entry.target.classList.toggle("shop-out-of-view", !entry.isIntersecting)
+      }
+    }, { rootMargin: "-8% 0px -6% 0px" })
+    sections.forEach(section => observer.observe(section))
+    return () => {
+      observer.disconnect()
+      sections.forEach(section => section.classList.remove("shop-out-of-view"))
+    }
+  }, [])
   const dialog = useRef<HTMLDialogElement>(null)
   const menuButton = useRef<HTMLButtonElement>(null)
   const menu = useRef<HTMLDivElement>(null)
@@ -316,7 +331,7 @@ export default function ShopPage() {
           <ContactLink>Fale no WhatsApp</ContactLink>
         </div>
       </header>
-      <main>
+      <main ref={main}>
         <section className="shop-hero shop-wrap" aria-labelledby="shop-title">
           <div className="shop-hero-text">
             <IntroHeadline />
