@@ -90,22 +90,24 @@ const examples = {
     title: "Arquitetura contemporânea para a vida real.",
     description:
       "Um conceito de site institucional que valoriza espaços, projetos e a identidade de um escritório de arquitetura.",
-    image: "/shop/project-eyi.webp",
+    image: "/shop/architecture.webp",
   },
   interior: {
     name: "Lume Interiores",
     title: "Design de interiores com propósito.",
     description:
       "Um conceito editorial para apresentar ambientes, serviços e uma experiência acolhedora em cada detalhe.",
-    image: "/shop/project-lume.webp",
+    image: "/shop/interior.webp",
   },
 }
 type Example = keyof typeof examples
 function SitePreview({
   kind = "architecture",
   small = false,
+  store = false,
 }: {
   kind?: Example
+  store?: boolean
   small?: boolean
 }) {
   const example = examples[kind]
@@ -119,28 +121,43 @@ function SitePreview({
       <img
         src={example.image}
         alt=""
-        width="1400"
-        height="934"
+        width={kind === "architecture" ? 1200 : 1000}
+        height={kind === "architecture" ? 1006 : 667}
         loading={small ? "lazy" : "eager"}
         fetchPriority={small ? "auto" : "high"}
       />
-
+      <span className="shop-screen-brand">{store ? "Casa Lume" : example.name}</span>
+      <span className="shop-screen-heading">{store ? "Objetos para sua casa." : example.title}</span>
     </div>
   )
 }
-const services: { image: string; title: string; text: string }[] = [
+function DevicePreview({ kind = "architecture", phone = false, eager = false, store = false }: {
+  kind?: Example
+  phone?: boolean
+  eager?: boolean
+  store?: boolean
+}) {
+  return (
+    <div className="shop-device-scene" aria-hidden="true">
+      <div className="shop-device-desktop"><SitePreview kind={kind} small={!eager} store={store} /></div>
+      {phone && <div className="shop-device-mobile"><SitePreview kind={kind} small /></div>}
+    </div>
+  )
+}
+const services: { kind: Example; store?: boolean; title: string; text: string }[] = [
   {
-    image: "service-landing",
+    kind: "architecture",
     title: "Landing pages",
     text: "Páginas estratégicas para apresentar sua ideia, divulgar campanhas e receber novos contatos.",
   },
   {
-    image: "service-institutional",
+    kind: "interior",
     title: "Sites institucionais",
     text: "Presença online profissional para apresentar sua empresa, seus serviços e diferenciais.",
   },
   {
-    image: "service-store",
+    kind: "interior",
+    store: true,
     title: "Lojas virtuais",
     text: "E-commerce em WordPress e WooCommerce para vender seus produtos com autonomia.",
   },
@@ -303,7 +320,7 @@ export default function ShopPage() {
             </div>
           </div>
           <div className="shop-hero-visual">
-            <img src="/shop/hero-eyi.webp" width="404" height="300" fetchPriority="high" alt="Site EYI em telas de computador e celular" />
+            <DevicePreview phone eager />
           </div>
         </section>
         <section
@@ -317,7 +334,7 @@ export default function ShopPage() {
           <div className="shop-service-grid">
             {services.map((service) => (
               <article key={service.title}>
-                <img src={`/shop/${service.image}.webp`} alt="" width="194" height="125" loading="lazy" />
+                <DevicePreview kind={service.kind} store={service.store} />
                 <div>
                   <h3>{service.title}</h3>
                   <p>{service.text}</p>
@@ -358,7 +375,7 @@ export default function ShopPage() {
           className="shop-benefits shop-wrap"
           aria-labelledby="benefits-title"
         >
-          <img className="shop-benefit-art" src="/shop/devices-eyi.webp" width="350" height="211" loading="lazy" alt="" />
+          <DevicePreview phone />
           <div className="shop-benefit-list">
             <h2 id="benefits-title">Bonito por fora.<br /><em>Simples de usar.</em></h2>
             {benefits.map((benefit) => (
