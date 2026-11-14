@@ -85,50 +85,46 @@ function ContactLink({
   )
 }
 const examples = {
-  software: {
-    name: "EYI Flow", category: "Software", nav: "Produto　 Planos",
-    title: "Seu trabalho, em dia.", action: "Conhecer o Flow",
-    description: "Landing page de software com demonstração de um quadro de tarefas.",
+  architecture: {
+    name: "EYI", category: "Arquitetura", nav: "Projetos　 Estúdio",
+    title: "Arquitetura para viver.", action: "Conheça os projetos",
+    image: "/shop/architecture.webp", section: "Projetos selecionados",
+    items: ["Residencial", "Comercial", "Interiores"],
+    description: "Landing page de um estúdio de arquitetura com portfólio e apresentação dos serviços.",
   },
-  clinic: {
-    name: "Clínica Oliva", category: "Saúde", nav: "Especialidades　 Equipe",
-    title: "Tempo para cuidar de você.", action: "Agendar consulta",
-    description: "Landing page de uma clínica com especialidades e prévia do agendamento.",
+  interior: {
+    name: "Lume Interiores", category: "Interiores", nav: "Ambientes　 Sobre",
+    title: "Seu espaço, com propósito.", action: "Explore os ambientes",
+    image: "/shop/interior.webp", section: "Ambientes em destaque",
+    items: ["Estar", "Descanso", "Convívio"],
+    description: "Landing page editorial de interiores com ambientes e serviços de consultoria.",
   },
-  event: {
-    name: "Forma Festival", category: "Eventos", nav: "Programação　 Ingressos",
-    title: "Design em movimento.", action: "Ver ingressos",
-    description: "Landing page de um festival de design com programação por horário.",
+  store: {
+    name: "Casa Lume", category: "Decoração", nav: "Coleção　 Sobre",
+    title: "Detalhes que habitam.", action: "Descubra a coleção",
+    image: "/shop/interior.webp", section: "Explore a coleção",
+    items: ["Iluminação", "Objetos", "Mobiliário"],
+    description: "Landing page de uma coleção de decoração com destaques por categoria.",
   },
 }
 type Example = keyof typeof examples
-function SitePreview({ kind = "software" }: { kind?: Example }) {
+function SitePreview({ kind = "architecture", eager = false }: { kind?: Example; eager?: boolean }) {
   const example = examples[kind]
   return (
-    <div className={`shop-site-preview landing-sample sample-${kind}`} aria-hidden="true">
-      <div className="sample-nav"><b>{example.name}</b><span>{example.nav}</span></div>
-      <div className="sample-body">
-        <div className="sample-intro">
-          <strong>{example.title}</strong>
-          <span className="sample-action">{example.action} ↗</span>
-        </div>
-        {kind === "software" && <div className="sample-board">
-          <b>Quadro da equipe</b><span>Em andamento</span><i>Revisar protótipo</i><i>Preparar entrega</i>
-        </div>}
-        {kind === "clinic" && <div className="sample-booking">
-          <b>Escolha um horário</b><span>Seg　 Ter　 Qua</span><i>09h00</i><i>14h30</i>
-        </div>}
-        {kind === "event" && <div className="sample-agenda">
-          <b>Palco principal</b><span>10h　Design e cultura</span><span>14h　Oficina de tipos</span><span>18h　Som e imagem</span>
-        </div>}
+    <div className={`shop-site-preview editorial-preview editorial-${kind}`} aria-hidden="true">
+      <div className="editorial-nav"><b>{example.name}</b><span>{example.nav}　 Contato</span></div>
+      <div className="editorial-cover">
+        <img src={example.image} alt="" loading={eager ? "eager" : "lazy"} fetchPriority={eager ? "high" : "auto"} decoding="async" />
+        <div className="editorial-copy"><strong>{example.title}</strong><span>{example.action} →</span></div>
       </div>
+      <div className="editorial-collection"><b>{example.section}</b><div>{example.items.map(item => <span key={item}>{item}</span>)}</div></div>
     </div>
   )
 }
 function DevicePreview() {
   return (
     <div className="shop-device-scene" aria-hidden="true">
-      <div className="shop-device-desktop"><SitePreview /></div>
+      <div className="shop-device-desktop"><SitePreview eager /></div>
       <div className="shop-device-mobile"><SitePreview /></div>
     </div>
   )
@@ -147,7 +143,7 @@ const services = [
     text: "E-commerce em WordPress e WooCommerce para vender seus produtos com autonomia.",
   },
 ]
-const concepts: Example[] = ["software", "clinic", "event"]
+const concepts: Example[] = ["architecture", "interior", "store"]
 const stages = [
   ["Conversa", "Entendemos sua ideia, seus objetivos e o que seu público precisa encontrar.", "whatsapp"],
   ["Criação", "Desenhamos e desenvolvemos seu site em WordPress com conteúdo e estrutura sob medida.", "screen"],
