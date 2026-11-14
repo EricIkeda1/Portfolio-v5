@@ -86,21 +86,21 @@ function ContactLink({
 }
 const examples = {
   architecture: {
-    name: "EYI", category: "Arquitetura", nav: "Projetos　 Estúdio",
+    name: "EYI", category: "Arquitetura",
     title: "Arquitetura para viver.", action: "Conheça os projetos",
     image: "/shop/architecture.webp", section: "Projetos selecionados",
     items: ["Residencial", "Comercial", "Interiores"],
     description: "Landing page de um estúdio de arquitetura com portfólio e apresentação dos serviços.",
   },
   interior: {
-    name: "Lume Interiores", category: "Interiores", nav: "Ambientes　 Sobre",
+    name: "Lume Interiores", category: "Interiores",
     title: "Seu espaço, com propósito.", action: "Explore os ambientes",
     image: "/shop/interior.webp", section: "Ambientes em destaque",
     items: ["Estar", "Descanso", "Convívio"],
     description: "Landing page editorial de interiores com ambientes e serviços de consultoria.",
   },
   store: {
-    name: "Casa Lume", category: "Decoração", nav: "Coleção　 Sobre",
+    name: "Casa Lume", category: "Decoração",
     title: "Detalhes que habitam.", action: "Descubra a coleção",
     image: "/shop/interior.webp", section: "Explore a coleção",
     items: ["Iluminação", "Objetos", "Mobiliário"],
@@ -108,11 +108,26 @@ const examples = {
   },
 }
 type Example = keyof typeof examples
+function PreviewNav({ kind }: { kind: Example }) {
+  if (kind === "interior") {
+    return <div className="editorial-nav nav-studio">
+      <span>Ambientes</span><b>Lume <i>Interiores</i></b><span>Estúdio</span>
+    </div>
+  }
+  if (kind === "store") {
+    return <div className="editorial-nav nav-boutique">
+      <Icon name="menu" /><b>Casa Lume</b><span>Coleção</span><Icon name="cart" />
+    </div>
+  }
+  return <div className="editorial-nav nav-architecture">
+    <b>EYI</b><span>Projetos</span><span>Estúdio</span><Icon name="menu" />
+  </div>
+}
 function SitePreview({ kind = "architecture", eager = false }: { kind?: Example; eager?: boolean }) {
   const example = examples[kind]
   return (
     <div className={`shop-site-preview editorial-preview editorial-${kind}`} aria-hidden="true">
-      <div className="editorial-nav"><b>{example.name}</b><span>{example.nav}　 Contato</span></div>
+      <PreviewNav kind={kind} />
       <div className="editorial-cover">
         <img src={example.image} alt="" loading={eager ? "eager" : "lazy"} fetchPriority={eager ? "high" : "auto"} decoding="async" />
         <div className="editorial-copy"><strong>{example.title}</strong><span className="editorial-action">{example.action}{kind === "architecture" && " ↗"}{kind === "store" && <i aria-hidden="true">→</i>}</span></div>
