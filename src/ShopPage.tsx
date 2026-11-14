@@ -129,6 +129,7 @@ function SitePreview({
         alt=""
         width={kind === "architecture" ? 1200 : 1000}
         height={kind === "architecture" ? 1006 : 667}
+        decoding="async"
         loading={small ? "lazy" : "eager"}
         fetchPriority={small ? "auto" : "high"}
       />
@@ -302,7 +303,7 @@ export default function ShopPage() {
             touch.current = null
             if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) moveSlide(dx < 0 ? 1 : -1)
           }}>
-            <button className="shop-feature" onClick={() => setSelected(current)} aria-label={`Explorar conceito de ${categories[current]}`}><SitePreview key={current} kind={current} small /></button>
+            <button className="shop-feature" onClick={() => setSelected(current)} aria-label={`Explorar conceito de ${categories[current]}`}><SitePreview kind={current} small /></button>
             <button className="shop-peek" aria-label={`Mostrar conceito de ${categories[following]}`} onClick={() => moveSlide(1)}><SitePreview kind={following} small /></button>
           </div>
           <div className="shop-gallery-controls">

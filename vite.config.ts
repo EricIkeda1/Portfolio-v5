@@ -109,6 +109,7 @@ export default defineConfig(({ mode }) => {
   }
 
   return {
+    build: { manifest: true },
     plugins: [apiDevPlugin(), react(), tailwindcss()],
     resolve: {
       alias: {

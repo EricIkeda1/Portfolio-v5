@@ -7,6 +7,7 @@ const temporary = new URL('../.seo-build/', import.meta.url)
 try {
   await build({ build: { ssr: 'src/entry-server.tsx', outDir: '.seo-build', emptyOutDir: true } })
   const { renderPage, seoHead } = await import(new URL('entry-server.js', temporary).href)
+  const manifest = JSON.parse(await readFile('dist/.vite/manifest.json', 'utf8'))
   const template = await readFile('dist/index.html', 'utf8')
   if (!template.includes('<!-- seo:start -->')) throw new Error('Marcador SEO ausente no HTML.')
   for (const [pathname, output] of [['/', 'index.html'], ['/portfolio', 'portfolio/index.html'], ['/links', 'links/index.html'], ['/loja', 'loja/index.html'], ['/arena', 'arena/index.html'], ['/admin', 'admin/index.html'], ['/404', '404.html']]) {
@@ -14,7 +15,9 @@ try {
     const pageTemplate = pathname === '/admin' ? template.replace('</head>', '<link rel="manifest" href="/admin.webmanifest"><link rel="apple-touch-icon" href="/notification-icon.png"></head>') : template
     const publicTemplate = pathname === '/links' ? pageTemplate.replace('rel="icon" href="/api/logo-image"', 'rel="icon" href="/social-icon.svg"') : pageTemplate
     const shopTemplate = pathname === '/loja' ? publicTemplate.replace(/https:\/\/fonts.googleapis.com\/css2\?[^"]+/, 'https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap').replace('rel="icon" href="/api/logo-image"', 'rel="icon" href="/shop/logo.webp"') : publicTemplate
-    const html = shopTemplate
+    const entry = manifest[pathname === '/loja' ? 'src/ShopPage.tsx' : 'src/App.tsx']
+    const styles = (entry.css ?? []).map(file => `<link rel="stylesheet" href="/${file}">`).join('')
+    const html = shopTemplate.replace('</head>', `${styles}<link rel="modulepreload" href="/${entry.file}"></head>`)
       .replace(/<!-- seo:start -->[\s\S]*?<!-- seo:end -->/, `<!-- seo:start -->\n${seoHead(pathname)}\n<!-- seo:end -->`)
       .replace('<div id="root"></div>', `<div id="root">${content}</div>`)
     // Detecta referências erradas antes de publicar imagens quebradas.

@@ -389,11 +389,11 @@ to{opacity:1;transform:translateY(0)}
 }
 
 .shop-page { background: #f6f5f8; }
-.shop-header, .shop-hero { color: #fff; background: #06132d; box-shadow: 0 0 0 100vmax #06132d; clip-path: inset(0 -100vmax); }
+.shop-header, .shop-hero { color: #fff; background: #06132d;  }
 .shop-header { position: relative; z-index: 3; clip-path: none; box-shadow: none; }
-.shop-header::before { content: ""; position: absolute; inset: 0 -100vw; background: #06132d; z-index: -1; }
+.shop-header::before { content: ""; position: absolute; inset: 0 calc((100% - 100vw) / 2); background: #06132d; z-index: -1; }
 .shop-hero { position: relative; isolation: isolate; }
-.shop-hero::before { content: ""; position: absolute; z-index: -1; inset: 0 -8vw; background: linear-gradient(128deg,transparent 63%,#0035cb 63.2%,#1757ff 76%,transparent 76.2%), radial-gradient(ellipse at 75% 80%, #143989,transparent 55%); }
+.shop-hero::before { content: ""; position: absolute; z-index: -1; inset: 0 calc((100% - 100vw) / 2); background: linear-gradient(128deg,transparent 63%,#0035cb 63.2%,#1757ff 76%,transparent 76.2%), radial-gradient(ellipse at 75% 80%, #143989,transparent 55%), #06132d; }
 .shop-hero h1 { max-width: 13ch; line-height: 1; font-weight: 760; }
 .shop-hero h1 em { background: #1349ed; font-family: inherit; font-weight: inherit; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
 .shop-hero-description { max-width: 35ch; }
@@ -420,7 +420,8 @@ to{opacity:1;transform:translateY(0)}
 .shop-stage-icon { color: #1444dd; }
 .shop-contact { background: linear-gradient(125deg,#071e73,#113bd2 65%,#0048ff); }
 .shop-contact h2 { max-width: 20ch; }
-.shop-footer { color: white; background: #06132d; box-shadow: 0 0 0 100vmax #06132d; clip-path: inset(0 -100vmax); }
+.shop-footer { color: white; background: #06132d; position: relative; isolation: isolate; }
+.shop-footer::before { content: ""; position: absolute; z-index: -1; inset: 0 calc((100% - 100vw) / 2); background: #06132d; }
 .shop-site-store > img { object-position: right; transform: scale(1.35); }
 .shop-site-interior .shop-screen-heading,.shop-site-interior .shop-screen-brand { color: #fff; }
 @media (max-width: 700px) {
