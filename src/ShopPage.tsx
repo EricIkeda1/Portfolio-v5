@@ -86,18 +86,18 @@ function ContactLink({
 }
 const examples = {
   architecture: {
-    name: "Áurea Arquitetura",
+    name: "EYI",
     title: "Arquitetura contemporânea para a vida real.",
     description:
       "Um conceito de site institucional que valoriza espaços, projetos e a identidade de um escritório de arquitetura.",
-    image: "/shop/architecture.webp",
+    image: "/shop/project-eyi.webp",
   },
   interior: {
     name: "Lume Interiores",
     title: "Design de interiores com propósito.",
     description:
       "Um conceito editorial para apresentar ambientes, serviços e uma experiência acolhedora em cada detalhe.",
-    image: "/shop/interior.webp",
+    image: "/shop/project-lume.webp",
   },
 }
 type Example = keyof typeof examples
@@ -124,29 +124,23 @@ function SitePreview({
         loading={small ? "lazy" : "eager"}
         fetchPriority={small ? "auto" : "high"}
       />
-      <div className="shop-preview-shade" />
-      {!small && (
-        <div className="shop-preview-copy">
-          <span>{example.name}</span>
-          <h3>{example.title}</h3>
-        </div>
-      )}
+
     </div>
   )
 }
-const services: { icon: IconName; title: string; text: string }[] = [
+const services: { image: string; title: string; text: string }[] = [
   {
-    icon: "screen",
+    image: "service-landing",
     title: "Landing pages",
     text: "Páginas estratégicas para apresentar sua ideia, divulgar campanhas e receber novos contatos.",
   },
   {
-    icon: "layers",
+    image: "service-institutional",
     title: "Sites institucionais",
     text: "Presença online profissional para apresentar sua empresa, seus serviços e diferenciais.",
   },
   {
-    icon: "cart",
+    image: "service-store",
     title: "Lojas virtuais",
     text: "E-commerce em WordPress e WooCommerce para vender seus produtos com autonomia.",
   },
@@ -154,7 +148,7 @@ const services: { icon: IconName; title: string; text: string }[] = [
 const benefits: { icon: IconName; title: string; text: string }[] = [
   {
     icon: "screen",
-    title: "Bonito em qualquer tela",
+    title: "Responsivo",
     text: "Uma experiência pensada para computador, tablet e celular.",
   },
   {
@@ -164,7 +158,7 @@ const benefits: { icon: IconName; title: string; text: string }[] = [
   },
   {
     icon: "whatsapp",
-    title: "Contato a um toque",
+    title: "Conectado ao WhatsApp",
     text: "Seus clientes falam com você de forma rápida e prática.",
   },
 ]
@@ -286,8 +280,8 @@ export default function ShopPage() {
             <a href="#projetos" onClick={() => setMenuOpen(false)}>
               Projetos
             </a>
-            <a href="#contato" onClick={() => setMenuOpen(false)}>
-              Contato
+            <a href="#processo" onClick={() => setMenuOpen(false)}>
+              Como funciona
             </a>
           </nav>
         </div>
@@ -299,25 +293,17 @@ export default function ShopPage() {
         <section className="shop-hero shop-wrap" aria-labelledby="shop-title">
           <div className="shop-hero-text">
             <p className="shop-eyebrow">
-              Sites WordPress sob medida <span />
+              Design + WordPress <span />
             </p>
-            <h1 id="shop-title">
-              Presença digital
-              <br />
-              feita para o seu
-              <br />
-              negócio.
-            </h1>
-            <p className="shop-hero-description">
-              Design e tecnologia para transformar
-              <br className="shop-desktop-break" /> sua ideia em uma experiência
-              única.
-            </p>
-            <ContactLink dark>Começar meu projeto</ContactLink>
-
+            <h1 id="shop-title">Sites que<br /> valorizam o<br /> seu <em>negócio.</em></h1>
+            <p className="shop-hero-description">Uma presença digital bonita,<br /> intuitiva e feita para você.</p>
+            <div className="shop-hero-actions">
+              <ContactLink dark>Começar meu projeto</ContactLink>
+              <a href="#projetos">Ver projetos</a>
+            </div>
           </div>
           <div className="shop-hero-visual">
-            <SitePreview />
+            <img src="/shop/hero-eyi.webp" width="404" height="300" fetchPriority="high" alt="Site EYI em telas de computador e celular" />
           </div>
         </section>
         <section
@@ -326,12 +312,12 @@ export default function ShopPage() {
           aria-labelledby="services-title"
         >
           <h2 id="services-title">
-            Serviços
+            Sua ideia. A <em>experiência</em> certa.
           </h2>
           <div className="shop-service-grid">
             {services.map((service) => (
               <article key={service.title}>
-                <Icon name={service.icon} />
+                <img src={`/shop/${service.image}.webp`} alt="" width="194" height="125" loading="lazy" />
                 <div>
                   <h3>{service.title}</h3>
                   <p>{service.text}</p>
@@ -346,8 +332,8 @@ export default function ShopPage() {
           aria-labelledby="projects-title"
         >
           <div className="shop-section-heading">
-            <h2 id="projects-title">Projetos selecionados</h2>
-            <p>Conceitos demonstrativos</p>
+            <h2 id="projects-title">Design que faz a <em>diferença.</em></h2>
+
           </div>
           <div className="shop-project-grid">
             {(Object.keys(examples) as Example[]).map((kind) => (
@@ -359,7 +345,7 @@ export default function ShopPage() {
               >
                 <SitePreview kind={kind} small />
                 <span className="shop-project-caption">
-                  {examples[kind].name}
+                  Conceito de site · {kind === "architecture" ? "Arquitetura" : "Interiores"}
                   <span>
                     Explorar conceito <Icon name="arrow" />
                   </span>
@@ -372,17 +358,9 @@ export default function ShopPage() {
           className="shop-benefits shop-wrap"
           aria-labelledby="benefits-title"
         >
-          <div className="shop-benefits-heading">
-            <span className="shop-blue-rule" />
-            <h2 id="benefits-title">
-              Feito para o<br className="shop-desktop-break" /> seu negócio.
-            </h2>
-            <p>
-              Um site profissional, elegante e fácil de gerenciar, que apresenta
-              sua marca com clareza e gera novas possibilidades.
-            </p>
-          </div>
+          <img className="shop-benefit-art" src="/shop/devices-eyi.webp" width="350" height="211" loading="lazy" alt="" />
           <div className="shop-benefit-list">
+            <h2 id="benefits-title">Bonito por fora.<br /><em>Simples de usar.</em></h2>
             {benefits.map((benefit) => (
               <article key={benefit.title}>
                 <Icon name={benefit.icon} />
@@ -394,11 +372,11 @@ export default function ShopPage() {
             ))}
           </div>
         </section>
-        <section className="shop-process" aria-labelledby="process-title">
+        <section id="processo" className="shop-process" aria-labelledby="process-title">
           <div className="shop-wrap">
             <span className="shop-blue-rule" />
             <h2 id="process-title">
-              Como funciona
+              Um processo simples. Do início ao site no ar.
             </h2>
             <ol>
               {steps.map(([title, text], index) => (
@@ -417,12 +395,12 @@ export default function ShopPage() {
           <div>
             <span className="shop-blue-rule" />
             <h2 id="faq-title">
-              Dúvidas frequentes
+              Vamos esclarecer suas dúvidas.
             </h2>
           </div>
           <div>
-            {faqs.map(([question, answer], index) => (
-              <details key={question} name="shop-faq" open={index === 0}>
+            {faqs.map(([question, answer]) => (
+              <details key={question} name="shop-faq">
                 <summary>
                   {question}
                   <span aria-hidden="true" />
@@ -440,10 +418,9 @@ export default function ShopPage() {
           <div className="shop-wrap">
             <span className="shop-blue-rule" />
             <h2 id="contact-title">
-              Sua próxima fase começa
-              <br className="shop-desktop-break" /> com um bom site.
+              Vamos criar algo que<br /> tenha a sua cara?
             </h2>
-            <p>Vamos conversar sobre a sua ideia?</p>
+
             <ContactLink />
           </div>
         </section>

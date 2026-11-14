@@ -317,3 +317,34 @@ to{opacity:1;transform:translateY(0)}
   .shop-project-caption { flex-wrap: wrap; gap: 8px; }
   .shop-benefits { grid-template-columns: 1fr; }
 }
+
+.shop-page { background: #fbf9f8; --shop-blue: #1049ed; }
+.shop-hero { grid-template-columns: .84fr 1.16fr; gap: 2%; }
+.shop-hero h1 { font-family: inherit; font-weight: 750; }
+.shop-page em { font-family: Georgia, serif; font-weight: 600; }
+.shop-eyebrow { color: var(--shop-blue); }
+.shop-hero-actions { display: flex; flex-wrap: wrap; gap: 20px; align-items: center; }
+.shop-hero-actions > a:last-child { text-decoration: underline; text-underline-offset: 4px; font-weight: 650; }
+.shop-hero-actions .shop-button { background: #0848ed; }
+.shop-header-contact .shop-button { background: #087a38; color: white !important; border: 0; }
+.shop-hero-visual img, .shop-benefit-art { width: 100%; height: auto; display: block; mix-blend-mode: multiply; }
+.shop-services, .shop-projects, .shop-benefits { border: 0; padding-block: clamp(24px, 3vw, 48px); }
+.shop-services h2::before, .shop-projects h2::before { content: ''; display: block; background: var(--shop-blue); width: 42px; height: 3px; margin-bottom: 15px; }
+.shop-service-grid article, .shop-service-grid article + article { background: #f1efee; border-radius: 14px; padding: clamp(16px, 2vw, 30px); }
+.shop-service-grid article + article::before { display: none; }
+.shop-service-grid img { display: block; width: 100%; height: auto; mix-blend-mode: multiply; margin-bottom: 16px; }
+.shop-service-grid p { max-width: 42ch; }
+.shop-project .shop-site-preview, .shop-example-dialog .shop-site-preview { aspect-ratio: 1.88; }
+.shop-process { background: transparent; }
+.shop-process .shop-step-number { color: var(--shop-blue); font: 600 34px/1 Georgia, serif; }
+.shop-contact { background: linear-gradient(112deg,#16181e 75%,#063ebc); }
+.shop-contact .shop-wrap { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.shop-contact h2, .shop-contact .shop-button { margin: 0; }
+.shop-contact .shop-blue-rule { display: none; }
+@media (max-width: 700px) {
+  .shop-hero { grid-template-columns: 1fr; gap: 16px; }
+  .shop-service-grid article, .shop-service-grid article + article { display: grid; grid-template-columns: 42% 1fr; gap: 12px; padding: 12px; align-items: center; }
+  .shop-service-grid img { margin: 0; }
+  .shop-service-grid { gap: 10px; }
+  .shop-contact .shop-wrap { flex-direction: column; align-items: flex-start; }
+}
