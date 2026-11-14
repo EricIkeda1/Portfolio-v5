@@ -115,7 +115,7 @@ function SitePreview({ kind = "architecture", eager = false }: { kind?: Example;
       <div className="editorial-nav"><b>{example.name}</b><span>{example.nav}　 Contato</span></div>
       <div className="editorial-cover">
         <img src={example.image} alt="" loading={eager ? "eager" : "lazy"} fetchPriority={eager ? "high" : "auto"} decoding="async" />
-        <div className="editorial-copy"><strong>{example.title}</strong><span>{example.action} →</span></div>
+        <div className="editorial-copy"><strong>{example.title}</strong><span className="editorial-action">{example.action}{kind === "architecture" && " ↗"}{kind === "store" && <i aria-hidden="true">→</i>}</span></div>
       </div>
       <div className="editorial-collection"><b>{example.section}</b><div>{example.items.map(item => <span key={item}>{item}</span>)}</div></div>
     </div>
