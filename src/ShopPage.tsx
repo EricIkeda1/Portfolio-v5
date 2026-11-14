@@ -164,14 +164,15 @@ const stages = [
   ["Criação", "Desenhamos e desenvolvemos seu site em WordPress com conteúdo e estrutura sob medida.", "screen"],
   ["Publicação", "Revisamos juntos e colocamos o site no ar para seus clientes conhecerem seu trabalho.", "arrow"],
 ] as const
-const introMessages = [
-  "Mostre seus serviços e facilite o primeiro contato.",
-  "Dê ao seu portfólio um endereço próprio.",
-  "Transforme sua coleção em uma vitrine online.",
+const headlines = [
+  ["Você pode estar ", "perdendo clientes", " por não ter um site."],
+  ["Sua marca merece ", "ser encontrada", " online."],
+  ["Seu próximo cliente pode ", "chegar pelo site", "."],
 ]
+const introMessages = headlines.map(parts => parts.join(""))
 
-function IntroMessage() {
-  const [text, setText] = useState(introMessages[0])
+function IntroHeadline() {
+  const [frame, setFrame] = useState({ index: 0, length: introMessages[0].length })
   useEffect(() => {
     const motion = window.matchMedia("(prefers-reduced-motion: reduce)")
     let timer: number
@@ -180,11 +181,11 @@ function IntroMessage() {
       let index = 0
       let length = introMessages[0].length
       let deleting = true
-      setText(introMessages[0])
+      setFrame({ index, length })
       if (motion.matches || document.hidden) return
       function tick() {
         length += deleting ? -1 : 1
-        setText(introMessages[index].slice(0, length))
+        setFrame({ index, length })
         let delay = deleting ? 24 : 48
         if (length === 0) {
           index = (index + 1) % introMessages.length
@@ -207,9 +208,11 @@ function IntroMessage() {
       document.removeEventListener("visibilitychange", restart)
     }
   }, [])
-  return <p className="shop-hero-description shop-intro-message">
-    <span className="sr-only">{introMessages[0]}</span><span aria-hidden="true">{text}</span>
-  </p>
+  const [before, emphasis, after] = headlines[frame.index]
+  return <h1 id="shop-title" className="shop-headline" aria-label={introMessages[0]}>
+    {headlines.map(([start, accent, end]) => <span className="shop-headline-size" key={accent} aria-hidden="true">{start}<em>{accent}</em>{end}</span>)}
+    <span aria-hidden="true">{before.slice(0, frame.length)}<em>{emphasis.slice(0, Math.max(0, frame.length - before.length))}</em>{after.slice(0, Math.max(0, frame.length - before.length - emphasis.length))}</span>
+  </h1>
 }
 
 export default function ShopPage() {
@@ -316,8 +319,8 @@ export default function ShopPage() {
       <main>
         <section className="shop-hero shop-wrap" aria-labelledby="shop-title">
           <div className="shop-hero-text">
-            <h1 id="shop-title">Você pode estar <em>perdendo clientes</em> por não ter um site.</h1>
-            <IntroMessage />
+            <IntroHeadline />
+            <p className="shop-hero-description">Mostre seus serviços e facilite o primeiro contato.</p>
             <div className="shop-hero-actions">
               <ContactLink dark>Quero meu site</ContactLink>
               <a href="#projetos">Ver exemplos</a>

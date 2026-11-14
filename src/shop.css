@@ -517,3 +517,23 @@ to{opacity:1;transform:translateY(0)}
   .shop-gallery-controls { gap: 8px; }
   .shop-gallery-controls button { padding-inline: 10px; }
 }
+
+
+.shop-headline { display: grid; }
+.shop-headline > span { grid-area: 1 / 1; }
+.shop-headline-size { visibility: hidden; pointer-events: none; }
+@media (max-width: 700px) {
+  .shop-header { flex-wrap: wrap; }
+  .shop-navigation { display: contents; }
+  .shop-menu-toggle { margin-left: auto; }
+  .shop-navigation nav.is-open {
+    position: static; flex: 0 0 100%; width: 100%; min-width: 0;
+    padding: 8px 0 0; border: 0; border-radius: 0; box-shadow: none; background: transparent;
+  }
+  .shop-navigation nav a { padding: 17px 4px; font-size: 20px; border-top: 1px solid #ffffff28; border-radius: 0; }
+  .shop-gallery .shop-slides { margin-inline: -12px; grid-template-columns: 100%; }
+  .shop-gallery .shop-peek { display: none; }
+  .shop-slides .shop-site-preview, .shop-example-dialog .shop-site-preview { aspect-ratio: 1.24; }
+  .shop-gallery .editorial-copy strong, .shop-example-dialog .editorial-copy strong { font-size: 8cqw; }
+  .shop-gallery .editorial-action, .shop-example-dialog .editorial-action { font-size: 3cqw; }
+}
