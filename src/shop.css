@@ -402,6 +402,8 @@ to{opacity:1;transform:translateY(0)}
 .shop-gallery h2, .shop-split h2 { font: 600 clamp(33px, 4.6vw, 76px)/.99 Georgia,serif; letter-spacing: -.055em; }
 .shop-gallery h2::before, .shop-split h2::before { content: ""; display: block; width: 44px; height: 3px; margin-bottom: 16px; background: #1049ed; }
 .shop-gallery em, .shop-split em { color: #1641d9; }
+.shop-slides, .shop-gallery-controls { max-width: 1080px; margin-inline: auto; }
+.shop-gallery h2 { font-size: clamp(33px, 3.5vw, 54px); }
 .shop-slides { display: grid; grid-template-columns: 74% 56%; overflow: hidden; align-items: center; gap: 2%; padding: 24px 0 10px; touch-action: pan-y; }
 .shop-slides button { border: 0; padding: 0; background: transparent; }
 .shop-slides button:focus-visible { outline-offset: -4px; }
