@@ -12,7 +12,7 @@ export function seoHead(pathname: string) {
     : 'Eric Yuji Ikeda | Portfólio de desenvolvimento web e mobile'
   const description = shop ? 'Criação de landing pages, sites institucionais e lojas virtuais em WordPress. Design responsivo e desenvolvimento sob medida para o seu negócio.' : links ? 'Tecnologia, games e vida real. Minhas redes, recadinhos privados e um Pixel esperando seu carinho.' : 'Conheça os projetos de Eric Yuji Ikeda: desenvolvimento web e mobile com React, Flutter, TypeScript, APIs REST e PostgreSQL.'
   const url = shop ? 'https://loja.ericyikeda.com.br/' : links ? 'https://links.ericyikeda.com.br/' : `${origin}/`
-  const image = shop ? 'https://loja.ericyikeda.com.br/shop/architecture.webp' : links ? 'https://links.ericyikeda.com.br/links-preview.png' : `${origin}/api/logo-image`
+  const image = shop ? 'https://loja.ericyikeda.com.br/shop/logo.webp' : links ? 'https://links.ericyikeda.com.br/links-preview.png' : `${origin}/api/logo-image`
   const imageAlt = shop ? 'Conceito demonstrativo de site para arquitetura — Eric Y. Ikeda' : links ? 'Eric Yuji Ikeda: tecnologia, games e vida real, com o cachorrinho Pixel' : 'Eric Y. Ikeda — Portfólio'
   const escape = (value: string) => value.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;')
   const meta = (name: string, content: string, property = false) => `<meta ${property ? 'property' : 'name'}="${name}" content="${escape(content)}" />`

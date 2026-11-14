@@ -432,3 +432,34 @@ to{opacity:1;transform:translateY(0)}
   .shop-slides { grid-template-columns: 88% 80%; }
   .shop-hero-actions { align-items: stretch; flex-direction: column; text-align: center; gap: 10px; }
 }
+
+.shop-site-preview.landing-sample {
+  display: flex; flex-direction: column; justify-content: flex-start;
+  background: #edf1ff; color: #192657; font-family: 'DM Sans', Arial, sans-serif;
+}
+.landing-sample::before { content: none; }
+.sample-nav { display: flex; align-items: center; justify-content: space-between; padding: 3% 6%; border-bottom: 1px solid #8993aa55; }
+.sample-nav b { font-size: 3cqw; }
+.sample-nav span { font-size: 1.8cqw; }
+.sample-body { display: grid; flex: 1; align-content: center; align-items: center; grid-template-columns: 1fr 1fr; gap: 6%; padding: 4% 6%; }
+.sample-intro strong { display: block; font-size: 6.3cqw; letter-spacing: -.055em; line-height: .98; }
+.sample-action { display: inline-block; margin-top: 10%; padding: .65em 1em; font-size: 2cqw; border-radius: 5px; background: #283fc4; color: white; }
+.sample-board, .sample-booking, .sample-agenda { display: grid; gap: .55em; padding: 8%; font-size: 2.2cqw; text-align: left; }
+.sample-board { background: white; border: 1px solid #cbd1ea; border-radius: 7px; box-shadow: 3px 4px 0 #d5dcf6; }
+.sample-board span { color: #6354aa; }
+.sample-board i { background: #edf0fc; border-left: 3px solid #6855cd; padding: .45em; font-style: normal; }
+.shop-site-preview.sample-clinic { background: #f7f4e9; color: #294b3d; }
+.sample-clinic .sample-intro strong { font-family: Georgia,serif; font-weight: 400; }
+.sample-clinic .sample-action { background: #315e4c; border-radius: 2em; }
+.sample-booking { background: #dde9d8; border-radius: 1em; }
+.sample-booking i { padding: .35em; border-radius: 1em; background: #fff; text-align: center; font-style: normal; }
+.shop-site-preview.sample-event { background: #ff573d; color: #231523; }
+.sample-event .sample-intro strong { text-transform: uppercase; }
+.sample-event .sample-action { background: #25192c; color: #effb80; }
+.sample-agenda { background: #f0fb83; transform: rotate(-3deg); }
+.sample-agenda span { padding-block: .4em; border-top: 1px solid currentColor; }
+.shop-device-mobile .sample-body { grid-template-columns: 1fr; gap: 5%; padding: 8%; }
+.shop-device-mobile .sample-nav b { font-size: 8cqw; }
+.shop-device-mobile .sample-nav span { display: none; }
+.shop-device-mobile .sample-intro strong { font-size: 13cqw; }
+.shop-device-mobile .sample-board, .shop-device-mobile .sample-action { font-size: 5cqw; }

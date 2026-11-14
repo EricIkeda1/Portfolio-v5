@@ -85,92 +85,69 @@ function ContactLink({
   )
 }
 const examples = {
-  architecture: {
-    name: "EYI",
-    title: "Arquitetura contemporânea para a vida real.",
-    description:
-      "Um conceito de site institucional que valoriza espaços, projetos e a identidade de um escritório de arquitetura.",
-    image: "/shop/architecture.webp",
+  software: {
+    name: "EYI Flow", category: "Software", nav: "Produto　 Planos",
+    title: "Seu trabalho, em dia.", action: "Conhecer o Flow",
+    description: "Landing page de software com demonstração de um quadro de tarefas.",
   },
-  interior: {
-    name: "Lume Interiores",
-    title: "Design de interiores com propósito.",
-    description:
-      "Um conceito editorial para apresentar ambientes, serviços e uma experiência acolhedora em cada detalhe.",
-    image: "/shop/interior.webp",
+  clinic: {
+    name: "Clínica Oliva", category: "Saúde", nav: "Especialidades　 Equipe",
+    title: "Tempo para cuidar de você.", action: "Agendar consulta",
+    description: "Landing page de uma clínica com especialidades e prévia do agendamento.",
   },
-  store: {
-    name: "Casa Lume",
-    title: "Objetos para a sua casa.",
-    description: "Conceito de uma loja de decoração com catálogo de peças para cada ambiente.",
-    image: "/shop/interior.webp",
+  event: {
+    name: "Forma Festival", category: "Eventos", nav: "Programação　 Ingressos",
+    title: "Design em movimento.", action: "Ver ingressos",
+    description: "Landing page de um festival de design com programação por horário.",
   },
 }
 type Example = keyof typeof examples
-function SitePreview({
-  kind = "architecture",
-  small = false,
-  store = false,
-}: {
-  kind?: Example
-  store?: boolean
-  small?: boolean
-}) {
+function SitePreview({ kind = "software" }: { kind?: Example }) {
   const example = examples[kind]
   return (
-    <div
-      className={`shop-site-preview shop-site-${kind} ${
-        small ? "shop-site-small" : ""
-      }`}
-      aria-hidden="true"
-    >
-      <img
-        src={example.image}
-        alt=""
-        width={kind === "architecture" ? 1200 : 1000}
-        height={kind === "architecture" ? 1006 : 667}
-        decoding="async"
-        loading={small ? "lazy" : "eager"}
-        fetchPriority={small ? "auto" : "high"}
-      />
-      <span className="shop-screen-brand">{store ? "Casa Lume" : example.name}</span>
-      <span className="shop-screen-heading">{store ? "Objetos para sua casa." : example.title}</span>
+    <div className={`shop-site-preview landing-sample sample-${kind}`} aria-hidden="true">
+      <div className="sample-nav"><b>{example.name}</b><span>{example.nav}</span></div>
+      <div className="sample-body">
+        <div className="sample-intro">
+          <strong>{example.title}</strong>
+          <span className="sample-action">{example.action} ↗</span>
+        </div>
+        {kind === "software" && <div className="sample-board">
+          <b>Quadro da equipe</b><span>Em andamento</span><i>Revisar protótipo</i><i>Preparar entrega</i>
+        </div>}
+        {kind === "clinic" && <div className="sample-booking">
+          <b>Escolha um horário</b><span>Seg　 Ter　 Qua</span><i>09h00</i><i>14h30</i>
+        </div>}
+        {kind === "event" && <div className="sample-agenda">
+          <b>Palco principal</b><span>10h　Design e cultura</span><span>14h　Oficina de tipos</span><span>18h　Som e imagem</span>
+        </div>}
+      </div>
     </div>
   )
 }
-function DevicePreview({ kind = "architecture", phone = false, eager = false, store = false }: {
-  kind?: Example
-  phone?: boolean
-  eager?: boolean
-  store?: boolean
-}) {
+function DevicePreview() {
   return (
     <div className="shop-device-scene" aria-hidden="true">
-      <div className="shop-device-desktop"><SitePreview kind={kind} small={!eager} store={store} /></div>
-      {phone && <div className="shop-device-mobile"><SitePreview kind={kind} small /></div>}
+      <div className="shop-device-desktop"><SitePreview /></div>
+      <div className="shop-device-mobile"><SitePreview /></div>
     </div>
   )
 }
-const services: { kind: Example; store?: boolean; title: string; text: string }[] = [
+const services = [
   {
-    kind: "architecture",
     title: "Landing pages",
     text: "Páginas estratégicas para apresentar sua ideia, divulgar campanhas e receber novos contatos.",
   },
   {
-    kind: "interior",
     title: "Sites institucionais",
     text: "Presença online profissional para apresentar sua empresa, seus serviços e diferenciais.",
   },
   {
-    kind: "interior",
-    store: true,
     title: "Lojas virtuais",
     text: "E-commerce em WordPress e WooCommerce para vender seus produtos com autonomia.",
   },
 ]
-const concepts: Example[] = ["architecture", "interior", "store"]
-const categories = { architecture: "Arquitetura", interior: "Interiores", store: "Loja virtual" }
+const concepts: Example[] = ["software", "clinic", "event"]
 const stages = [
   ["Conversa", "Entendemos sua ideia, seus objetivos e o que seu público precisa encontrar.", "whatsapp"],
   ["Criação", "Desenhamos e desenvolvemos seu site em WordPress com conteúdo e estrutura sob medida.", "screen"],
@@ -288,7 +265,7 @@ export default function ShopPage() {
             </div>
           </div>
           <div className="shop-hero-visual">
-            <DevicePreview phone eager />
+            <DevicePreview />
           </div>
         </section>
         <section id="projetos" className="shop-gallery shop-wrap" aria-labelledby="projects-title" aria-roledescription="carrossel">
@@ -303,12 +280,12 @@ export default function ShopPage() {
             touch.current = null
             if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) moveSlide(dx < 0 ? 1 : -1)
           }}>
-            <button className="shop-feature" onClick={() => setSelected(current)} aria-label={`Explorar conceito de ${categories[current]}`}><SitePreview kind={current} small /></button>
-            <button className="shop-peek" aria-label={`Mostrar conceito de ${categories[following]}`} onClick={() => moveSlide(1)}><SitePreview kind={following} small /></button>
+            <button className="shop-feature" onClick={() => setSelected(current)} aria-label={`Explorar conceito de ${examples[current].category}`}><SitePreview kind={current} /></button>
+            <button className="shop-peek" aria-label={`Mostrar conceito de ${examples[following].category}`} onClick={() => moveSlide(1)}><SitePreview kind={following} /></button>
           </div>
           <div className="shop-gallery-controls">
             <button aria-label="Projeto anterior" onClick={() => moveSlide(-1)}>←</button>
-            <span aria-live="polite">Conceito · {categories[current]}　{slide + 1} / {concepts.length}</span>
+            <span aria-live="polite">Conceito · {examples[current].category}　{slide + 1} / {concepts.length}</span>
             <button aria-label="Próximo projeto" onClick={() => moveSlide(1)}>→</button>
           </div>
         </section>
