@@ -80,7 +80,7 @@ function ContactLink({
     >
       {!dark && <Icon name="whatsapp" />}
       {children}
-      {dark && <Icon name="arrow" />}
+
     </a>
   )
 }
@@ -130,7 +130,7 @@ function SitePreview({ kind = "architecture", eager = false }: { kind?: Example;
       <PreviewNav kind={kind} />
       <div className="editorial-cover">
         <img src={example.image} alt="" loading={eager ? "eager" : "lazy"} fetchPriority={eager ? "high" : "auto"} decoding="async" />
-        <div className="editorial-copy"><strong>{example.title}</strong><span className="editorial-action">{example.action}{kind === "architecture" && " ↗"}{kind === "store" && <i aria-hidden="true">→</i>}</span></div>
+        <div className="editorial-copy" key={kind}><strong>{example.title}</strong><span className="editorial-action">{example.action}</span></div>
       </div>
       <div className="editorial-collection"><b>{example.section}</b><div>{example.items.map(item => <span key={item}>{item}</span>)}</div></div>
     </div>
@@ -164,6 +164,54 @@ const stages = [
   ["Criação", "Desenhamos e desenvolvemos seu site em WordPress com conteúdo e estrutura sob medida.", "screen"],
   ["Publicação", "Revisamos juntos e colocamos o site no ar para seus clientes conhecerem seu trabalho.", "arrow"],
 ] as const
+const introMessages = [
+  "Mostre seus serviços e facilite o primeiro contato.",
+  "Dê ao seu portfólio um endereço próprio.",
+  "Transforme sua coleção em uma vitrine online.",
+]
+
+function IntroMessage() {
+  const [text, setText] = useState(introMessages[0])
+  useEffect(() => {
+    const motion = window.matchMedia("(prefers-reduced-motion: reduce)")
+    let timer: number
+    function restart() {
+      window.clearTimeout(timer)
+      let index = 0
+      let length = introMessages[0].length
+      let deleting = true
+      setText(introMessages[0])
+      if (motion.matches || document.hidden) return
+      function tick() {
+        length += deleting ? -1 : 1
+        setText(introMessages[index].slice(0, length))
+        let delay = deleting ? 24 : 48
+        if (length === 0) {
+          index = (index + 1) % introMessages.length
+          deleting = false
+          delay = 280
+        } else if (length === introMessages[index].length) {
+          deleting = true
+          delay = 3200
+        }
+        timer = window.setTimeout(tick, delay)
+      }
+      timer = window.setTimeout(tick, 3200)
+    }
+    restart()
+    motion.addEventListener("change", restart)
+    document.addEventListener("visibilitychange", restart)
+    return () => {
+      window.clearTimeout(timer)
+      motion.removeEventListener("change", restart)
+      document.removeEventListener("visibilitychange", restart)
+    }
+  }, [])
+  return <p className="shop-hero-description shop-intro-message">
+    <span className="sr-only">{introMessages[0]}</span><span aria-hidden="true">{text}</span>
+  </p>
+}
+
 export default function ShopPage() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [selected, setSelected] = useState<Example | null>(null)
@@ -243,7 +291,7 @@ export default function ShopPage() {
             aria-label={menuOpen ? "Fechar menu" : "Abrir menu"}
             onClick={() => setMenuOpen(!menuOpen)}
           >
-            <Icon name={menuOpen ? "close" : "menu"} />
+            <span className="shop-menu-lines" aria-hidden="true" />
           </button>
           <nav
             id="shop-nav"
@@ -269,7 +317,7 @@ export default function ShopPage() {
         <section className="shop-hero shop-wrap" aria-labelledby="shop-title">
           <div className="shop-hero-text">
             <h1 id="shop-title">Você pode estar <em>perdendo clientes</em> por não ter um site.</h1>
-            <p className="shop-hero-description">Quem procura seu negócio precisa encontrar motivos para confiar. Mostre seus serviços e facilite o contato com um site profissional.</p>
+            <IntroMessage />
             <div className="shop-hero-actions">
               <ContactLink dark>Quero meu site</ContactLink>
               <a href="#projetos">Ver exemplos</a>
@@ -295,9 +343,9 @@ export default function ShopPage() {
             <button className="shop-peek" aria-label={`Mostrar conceito de ${examples[following].category}`} onClick={() => moveSlide(1)}><SitePreview kind={following} /></button>
           </div>
           <div className="shop-gallery-controls">
-            <button aria-label="Projeto anterior" onClick={() => moveSlide(-1)}>←</button>
+            <button aria-label="Projeto anterior" onClick={() => moveSlide(-1)}>Anterior</button>
             <span aria-live="polite">Conceito · {examples[current].category}　{slide + 1} / {concepts.length}</span>
-            <button aria-label="Próximo projeto" onClick={() => moveSlide(1)}>→</button>
+            <button aria-label="Próximo projeto" onClick={() => moveSlide(1)}>Próximo</button>
           </div>
         </section>
         <section id="servicos" className="shop-split shop-wrap">
@@ -367,7 +415,7 @@ export default function ShopPage() {
                 `Olá, Eric! Gostei do conceito ${examples[selected].name} e gostaria de um orçamento para meu site.`,
               )}
             >
-              Quero um site assim <Icon name="arrow" />
+              Quero um site assim
             </a>
           </div>
         </dialog>

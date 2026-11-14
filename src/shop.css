@@ -486,3 +486,34 @@ to{opacity:1;transform:translateY(0)}
   .nav-studio b { grid-column: 2; }
   .nav-boutique svg { width: 5cqw; height: 5cqw; }
 }
+
+.shop-intro-message { min-height: 3em; }
+.shop-intro-message > [aria-hidden]::after { content: ""; display: inline-block; height: .9em; margin-left: .16em; border-right: 2px solid #94b9ff; vertical-align: -.05em; }
+.shop-gallery-controls button { width: auto; padding-inline: 16px; border-radius: 22px; }
+.editorial-interior .editorial-cover { background: #eee6d9; }
+.editorial-interior .editorial-cover img { width: 55%; right: 0; left: auto; object-position: 65% center; }
+.editorial-interior .editorial-cover::before { display: none; }
+.editorial-interior .editorial-copy { width: 48%; color: #41362a; padding: 3% 4%; }
+.editorial-interior .editorial-action { background: #524438; color: #fff9f1; }
+.editorial-store .editorial-collection { background: #382e25; color: #fff9ef; }
+.editorial-store .editorial-action { border-bottom: 1px solid currentColor; padding-bottom: .2em; }
+@media (prefers-reduced-motion: no-preference) {
+  html:has(.shop-page) { scroll-behavior: smooth; }
+  .shop-hero-text, .shop-feature .editorial-copy, .shop-example-dialog[open] { animation: shop-arrive .32s ease-out both; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .shop-intro-message > [aria-hidden]::after { display: none; }
+}
+@media (max-width: 700px) {
+  .shop-menu-toggle { border: 1px solid #ffffff45; border-radius: 50%; background: #ffffff0e; }
+  .shop-menu-lines { position: relative; width: 19px; height: 14px; }
+  .shop-menu-lines::before, .shop-menu-lines::after { content: ""; position: absolute; right: 0; top: 3px; width: 19px; height: 2px; background: currentColor; border-radius: 2px; transition: transform .2s, width .2s; }
+  .shop-menu-lines::after { top: 10px; width: 13px; }
+  [aria-expanded="true"] .shop-menu-lines::before { transform: translateY(3.5px) rotate(45deg); }
+  [aria-expanded="true"] .shop-menu-lines::after { width: 19px; transform: translateY(-3.5px) rotate(-45deg); }
+  .shop-navigation nav { width: min(290px, calc(100vw - 40px)); padding: 8px; background: #101f39; color: #f5f8ff; border: 1px solid #34425c; border-radius: 16px; box-shadow: 0 12px 28px #03102240; }
+  .shop-navigation nav a { min-height: 46px; padding: 13px 16px; border-radius: 9px; }
+  .shop-navigation nav a:is(:hover,:focus-visible) { color: white; background: #233757; }
+  .shop-gallery-controls { gap: 8px; }
+  .shop-gallery-controls button { padding-inline: 10px; }
+}
