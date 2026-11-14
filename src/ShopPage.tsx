@@ -125,28 +125,12 @@ function SitePreview({
         fetchPriority={small ? "auto" : "high"}
       />
       <div className="shop-preview-shade" />
-      <div className="shop-preview-nav">
-        <span>
-          {kind === "architecture" && (
-            <span className="shop-aurea-mark">Λ</span>
-          )}
-          {example.name}
-        </span>
-        <div>
-          Projetos <span>Sobre</span> Contato
+      {!small && (
+        <div className="shop-preview-copy">
+          <span>{example.name}</span>
+          <h3>{example.title}</h3>
         </div>
-      </div>
-      <div className="shop-preview-copy">
-        <h3>{example.title}</h3>
-        <p>
-          {kind === "architecture"
-            ? "Projetos que conectam pessoas, espaços e novas possibilidades."
-            : "Ambientes que unem estética, conforto e bem-estar."}
-        </p>
-        <span className="shop-preview-cta">
-          Conheça os projetos <span>→</span>
-        </span>
-      </div>
+      )}
     </div>
   )
 }
@@ -330,11 +314,7 @@ export default function ShopPage() {
               única.
             </p>
             <ContactLink dark>Começar meu projeto</ContactLink>
-            <p className="shop-wordpress">
-              <span aria-hidden="true">W</span>
-              <i />
-              Feito com WordPress
-            </p>
+
           </div>
           <div className="shop-hero-visual">
             <SitePreview />
@@ -346,7 +326,7 @@ export default function ShopPage() {
           aria-labelledby="services-title"
         >
           <h2 id="services-title">
-            Simplicidade no visual. Cuidado em cada detalhe.
+            Serviços
           </h2>
           <div className="shop-service-grid">
             {services.map((service) => (
@@ -366,7 +346,7 @@ export default function ShopPage() {
           aria-labelledby="projects-title"
         >
           <div className="shop-section-heading">
-            <h2 id="projects-title">Possibilidades para a sua marca.</h2>
+            <h2 id="projects-title">Projetos selecionados</h2>
             <p>Conceitos demonstrativos</p>
           </div>
           <div className="shop-project-grid">
@@ -402,21 +382,6 @@ export default function ShopPage() {
               sua marca com clareza e gera novas possibilidades.
             </p>
           </div>
-          <div
-            className="shop-devices"
-            aria-label="Exemplo do site adaptado para computador e celular"
-            role="img"
-          >
-            <div className="shop-laptop">
-              <div className="shop-laptop-screen">
-                <SitePreview small />
-              </div>
-              <div className="shop-laptop-base" />
-            </div>
-            <div className="shop-phone">
-              <SitePreview small />
-            </div>
-          </div>
           <div className="shop-benefit-list">
             {benefits.map((benefit) => (
               <article key={benefit.title}>
@@ -433,7 +398,7 @@ export default function ShopPage() {
           <div className="shop-wrap">
             <span className="shop-blue-rule" />
             <h2 id="process-title">
-              Um processo simples. Do início ao site no ar.
+              Como funciona
             </h2>
             <ol>
               {steps.map(([title, text], index) => (
@@ -452,8 +417,7 @@ export default function ShopPage() {
           <div>
             <span className="shop-blue-rule" />
             <h2 id="faq-title">
-              Vamos esclarecer <br />
-              suas dúvidas.
+              Dúvidas frequentes
             </h2>
           </div>
           <div>

@@ -1,4 +1,4 @@
-.shop-page{--shop-ink:#181915;--shop-paper:#fcf5ec;--shop-muted:#5f5b54;--shop-blue:#1688ff;background:radial-gradient(ellipse at 65% 17%,#fffaf2,transparent 55%),var(--shop-paper);color:var(--shop-ink);font-family:'DM Sans',Arial,sans-serif;font-weight:400;line-height:1.4;min-height:100vh;overflow:clip}
+.shop-page{--shop-ink:#181915;--shop-paper:#fcf5ec;--shop-muted:#5f5b54;--shop-blue:#1688ff;background:#faf9f6;color:var(--shop-ink);font-family:'DM Sans',Arial,sans-serif;font-weight:400;line-height:1.4;min-height:100vh;overflow:clip}
 
 .shop-page *{box-sizing:border-box}
 .shop-page p{line-height:1.5}
@@ -31,28 +31,28 @@
 .shop-eyebrow span{width:42px;height:2px;background:var(--shop-blue)}
 .shop-hero h1{font-size:clamp(42px,4.5vw,66px);line-height:.99;letter-spacing:-.05em;margin-bottom:20px}
 .shop-hero-description{font-size:17px;margin-bottom:23px}
-.shop-wordpress{display:flex;align-items:center;gap:15px;font-size:11px;font-weight:600;margin-top:22px}
-.shop-wordpress>span{font-family:Georgia,serif;border:1.5px solid currentColor;outline:1px solid currentColor;outline-offset:2px;border-radius:50%;width:25px;height:25px;font-size:22px;display:grid;place-items:center;line-height:1;font-style:italic}
-.shop-wordpress i{height:20px;width:1px;background:#d1c8bb}
+
+
+
 .shop-site-preview{position:relative;isolation:isolate;aspect-ratio:1.61;border-radius:13px;overflow:hidden;container-type:inline-size;color:white;background:#353d3a;text-align:left}
 .shop-site-preview>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2}
 .shop-site-architecture>img{object-position:center 62%}
 .shop-preview-shade{position:absolute;inset:0;background:linear-gradient(90deg,#0a120bd6,#0a120b22 75%),linear-gradient(#11171140,transparent 45%);z-index:-1}
-.shop-preview-nav{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:5% 6%;font-size:2cqw;line-height:1.15}
-.shop-preview-nav>span{display:flex;gap:10px;align-items:center;max-width:25%;font-family:Georgia,serif}
-.shop-aurea-mark{font-size:8cqw;font-family:Georgia,serif;line-height:.65}
-.shop-preview-nav>div{display:flex;gap:4cqw;font-size:1.8cqw}
+
+
+
+
 .shop-preview-copy{position:absolute;left:7%;bottom:12%;width:68%}
 .shop-preview-copy h3{font-size:7cqw!important;line-height:.99;max-width:83%;letter-spacing:-.035em!important;color:inherit}
 .shop-preview-copy p{font-size:2.1cqw;line-height:1.4;max-width:75%;margin-top:3%}
-.shop-preview-cta{display:inline-flex;gap:20px;background:#fffaf0;color:#1d231b;border-radius:4px;padding:2% 4%;font-size:2cqw;font-weight:600;margin-top:4%}
+
 .shop-site-interior{color:#211a11}
 .shop-site-interior .shop-preview-shade{background:linear-gradient(90deg,#fff1ddef,#fff1dd08 95%)}
 .shop-site-interior>img{object-position:75% center}
-.shop-site-interior .shop-preview-nav>div{visibility:hidden}
+
 .shop-site-interior .shop-preview-copy{width:75%}
 .shop-site-interior .shop-preview-copy h3{max-width:80%}
-.shop-site-interior .shop-preview-cta{background:#fffcf7d9}
+
 .shop-hero-visual{animation:shop-arrive .8s ease both}
 .shop-services{padding-block:2px 35px}
 .shop-page h2{font-size:clamp(30px,3vw,43px)}
@@ -70,14 +70,14 @@
 .shop-project{background:none;border:0;text-align:left;width:100%}
 .shop-project .shop-site-preview{aspect-ratio:2.5;border-radius:12px;transition:transform .3s,box-shadow .3s}
 .shop-project:hover .shop-site-preview{transform:translateY(-4px);box-shadow:0 12px 24px #3a2e2126}
-.shop-site-small .shop-preview-nav{padding-block:4%}
+
 .shop-site-small .shop-preview-copy h3{font-size:6cqw!important;max-width:60%}
 .shop-site-small .shop-preview-copy p{font-size:2.1cqw;max-width:58%}
-.shop-site-small .shop-preview-nav>div{display:none}
+
 .shop-project-caption{display:flex;justify-content:space-between;align-items:center;margin-top:11px;font-size:12px;font-weight:600}
 .shop-project-caption>span{display:flex;align-items:center;gap:8px;font-weight:400;color:var(--shop-muted);font-size:11px}
 .shop-project-caption svg{width:14px;height:14px}
-.shop-benefits{display:grid;grid-template-columns:1fr 1.2fr .85fr;gap:24px;align-items:center;padding-block:75px 82px}
+.shop-benefits{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center;padding-block:75px 82px}
 .shop-blue-rule{display:block;width:48px;height:3px;background:var(--shop-blue);margin-bottom:25px}
 .shop-benefits h2{font-size:clamp(40px,4.2vw,60px);margin-bottom:25px}
 .shop-benefits-heading>p{font-size:15px;max-width:310px}
@@ -86,21 +86,21 @@
 .shop-benefit-list svg{width:30px;height:30px;flex-shrink:0}
 .shop-benefit-list h3{font-size:21px;letter-spacing:-.03em;margin-bottom:6px}
 .shop-benefit-list p{font-size:13px;line-height:1.4}
-.shop-devices{position:relative;height:265px;margin-inline:-25px 0;perspective:900px;transform:translateY(25px)}
-.shop-laptop{position:absolute;width:90%;left:0;bottom:10px;transform:rotate(-3deg)}
-.shop-laptop-screen{padding:9px 8px 12px;background:linear-gradient(135deg,#4a4e4b,#121613 40%);border-radius:12px 12px 5px 5px;border:2px solid #7b7d77;box-shadow:2px 5px 8px #2f332c26}
-.shop-laptop .shop-site-preview{border-radius:2px;aspect-ratio:1.48}
-.shop-laptop-base{height:11px;background:linear-gradient(#bfc1ba,#e7e6df 40%,#61655b);border-radius:0 0 65% 65%;width:118%;margin-left:-9%;box-shadow:0 12px 16px #34352e29}
-.shop-phone{position:absolute;width:28%;height:190px;right:0;bottom:-6px;background:#151915;border:2px solid #92948b;border-radius:18px;padding:6px;box-shadow:5px 6px 9px #252c2330;transform:rotate(2deg)}
-.shop-phone:after{content:'';position:absolute;top:6px;left:35%;width:30%;height:6px;background:#131713;border-radius:0 0 6px 6px}
-.shop-phone .shop-site-preview{height:100%;aspect-ratio:auto;border-radius:11px}
-.shop-phone .shop-site-preview>img{object-position:60%}
-.shop-phone .shop-preview-nav{padding-top:20%;font-size:9cqw}
-.shop-phone .shop-aurea-mark{font-size:14cqw}
-.shop-phone .shop-preview-copy{width:90%;bottom:10%}
-.shop-phone .shop-preview-copy h3{max-width:90%;font-size:17cqw!important}
-.shop-phone .shop-preview-copy p{display:none}
-.shop-phone .shop-preview-cta{font-size:6cqw;padding:5%;gap:4px;margin-top:15%}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 .shop-process{background:linear-gradient(110deg,#eadfd23d,#f0e6d96b);padding-block:44px 48px}
 .shop-process h2{margin-bottom:35px}
 .shop-process ol{list-style:none;display:grid;grid-template-columns:repeat(4,1fr);gap:26px}
@@ -165,8 +165,8 @@ to{opacity:1;transform:translateY(0)}
 .shop-benefit-list article{gap:12px}
 .shop-benefit-list h3{font-size:18px}
 .shop-benefit-list p{font-size:12px}
-.shop-devices{height:230px}
-.shop-phone{height:155px}
+
+
 .shop-faq{gap:40px}
 .shop-process h3{font-size:23px}
 .shop-process li{padding-right:0}
@@ -189,8 +189,8 @@ to{opacity:1;transform:translateY(0)}
 .shop-hero h1{font-size:clamp(43px,10.5vw,62px);max-width:520px;margin-bottom:15px}
 .shop-hero-description{font-size:15px;margin-bottom:18px}
 .shop-button{min-height:46px;font-size:14px;padding:11px 19px}
-.shop-wordpress{margin-top:17px;font-size:10px;gap:13px}
-.shop-wordpress>span{width:22px;height:22px;font-size:20px}
+
+
 .shop-hero-visual .shop-site-preview{border-radius:9px;aspect-ratio:1.67}
 .shop-page h2{font-size:31px}
 .shop-services{padding-block:0 32px}
@@ -212,9 +212,9 @@ to{opacity:1;transform:translateY(0)}
 .shop-benefits h2{font-size:39px;margin-bottom:16px}
 .shop-desktop-break{display:none}
 .shop-benefits-heading>p{font-size:14px;max-width:100%}
-.shop-devices{height:280px;width:100%;max-width:370px;margin:15px auto 35px;transform:translateY(0)}
-.shop-laptop{width:86%;bottom:5px;left:1%}
-.shop-phone{width:27%;height:183px;right:1%;bottom:0}
+
+
+
 .shop-benefit-list{gap:23px}
 .shop-benefit-list article{gap:17px}
 .shop-benefit-list svg{width:27px;height:27px}
@@ -267,7 +267,53 @@ to{opacity:1;transform:translateY(0)}
 
 @media(prefers-reduced-motion:reduce){html:has(.shop-page){scroll-behavior:auto}}
 /* Keep concept titles clear of their miniature navigation on wide screens. */
-.shop-project .shop-aurea-mark{font-size:5cqw}
+
 .shop-project .shop-preview-copy{bottom:10%}
 .shop-project .shop-preview-copy h3{font-size:5.2cqw!important;max-width:70%}
 .shop-project .shop-preview-copy p{display:none}
+
+/* Shared hierarchy for the shop's editorial sections. */
+.shop-page h2 {
+  font-family: inherit;
+  font-size: clamp(28px, 3vw, 42px);
+  font-weight: 600;
+  letter-spacing: -.045em;
+}
+.shop-services h3, .shop-benefits h3, .shop-process h3 {
+  font-family: inherit;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -.03em;
+}
+.shop-services, .shop-projects, .shop-benefits {
+  border-top: 1px solid #deded7;
+  padding-block: clamp(36px, 4vw, 72px);
+}
+.shop-page .shop-button { box-shadow: none; }
+.shop-button-dark { background: #20231f; }
+.shop-button-whatsapp { background: #08753d; }
+.shop-header-contact .shop-button {
+  background: transparent;
+  border: 1px solid #c9cec8;
+  color: var(--shop-ink) !important;
+}
+.shop-brand { width: fit-content; padding-right: 18px; }
+.shop-project-caption { font-size: 16px; margin-top: 14px; }
+.shop-project-caption > span { font-size: 13px; }
+.shop-project .shop-preview-shade { background: none; }
+.shop-preview-copy > span { display: block; margin-bottom: 12px; font-size: clamp(12px, 2cqw, 18px); }
+.shop-preview-copy h3 { font-size: clamp(22px, 5.5cqw, 54px) !important; }
+.shop-benefits-heading > p { max-width: 42ch; }
+.shop-benefit-list { gap: 18px; }
+.shop-benefit-list article + article { border-top: 1px solid #deded7; padding-top: 18px; }
+.shop-process { background: #eeefea; }
+.shop-process .shop-step-number { font: 600 18px/1.4 'DM Sans', sans-serif; color: #60685f; }
+.shop-contact { background: #202420; }
+@media (min-width: 701px) {
+  .shop-benefits { grid-template-columns: 1fr 1fr; }
+  .shop-hero { padding-block: clamp(48px, 5vw, 84px); }
+}
+@media (max-width: 700px) {
+  .shop-project-caption { flex-wrap: wrap; gap: 8px; }
+  .shop-benefits { grid-template-columns: 1fr; }
+}
