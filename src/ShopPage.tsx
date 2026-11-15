@@ -110,8 +110,8 @@ const examples = {
   },
   diner: {
     name: "Chapa 43", category: "Lanchonete",
-    title: "Direto da chapa.", action: "Ver cardápio",
-    image: "", section: "Monte seu pedido",
+    title: "Burger da casa.", action: "Ver cardápio",
+    image: "/shop/chapa-burger.webp", section: "Monte seu pedido",
     items: ["Burgers", "Porções", "Bebidas"],
     description: "Conceito de lanchonete com destaque para o lanche da casa e categorias do cardápio.",
   },
@@ -144,12 +144,31 @@ function PreviewNav({ kind }: { kind: Example }) {
 }
 function SitePreview({ kind = "architecture", eager = false }: { kind?: Example; eager?: boolean }) {
   const example = examples[kind]
+  if (kind === "realty") {
+    return <div className="shop-site-preview editorial-preview property-catalog" aria-hidden="true">
+      <PreviewNav kind={kind} />
+      <div className="property-search">
+        <strong>Imóveis em Ibiporã</strong>
+        <div><b>Comprar</b><span>Alugar</span></div>
+        <p><span>Casa ou apartamento</span><span>Cidade ou bairro</span><b>Buscar</b></p>
+      </div>
+      <div className="property-results"><b>Imóveis em destaque</b>
+        <div>{[
+          ["/shop/architecture.webp", "Venda", "Casa com jardim", "3 quartos · 150 m²"],
+          ["/shop/interior.webp", "Locação", "Apartamento no Centro", "2 quartos · 72 m²"],
+        ].map(([image, purpose, title, details]) => <div className="property-listing" key={title}>
+          <img src={image} alt="" loading="lazy" decoding="async" />
+          <div><small>{purpose}</small><strong>{title}</strong><span>{details}</span></div>
+        </div>)}</div>
+      </div>
+    </div>
+  }
   return (
     <div className={`shop-site-preview editorial-preview editorial-${kind}`} aria-hidden="true">
       <PreviewNav kind={kind} />
       <div className="editorial-cover">
         {example.image && <img src={example.image} alt="" loading={eager ? "eager" : "lazy"} fetchPriority={eager ? "high" : "auto"} decoding="async" />}
-        {kind === "diner" && <div className="shop-special"><small>Especial da casa</small><b>Smash<br />duplo</b><span>Cheddar · cebola tostada</span></div>}
+
         {kind === "clinic" && <div className="shop-appointment"><b>Agendamento</b><span>Segunda-feira</span><strong>09h00　14h30</strong></div>}
         <div className="editorial-copy" key={kind}><strong>{example.title}</strong><span className="editorial-action">{example.action}</span></div>
       </div>

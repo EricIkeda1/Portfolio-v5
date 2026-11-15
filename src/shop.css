@@ -606,3 +606,22 @@ to{opacity:1;transform:translateY(0)}
 .shop-appointment strong { background: #deecd9; padding: .6em; }
 .editorial-clinic .editorial-copy { color: #294a39; }
 .editorial-clinic .editorial-action { color: white; background: #365b49; padding: .45em .8em; border-radius: 2em; }
+
+.editorial-diner .editorial-cover { background: #3a1711; }
+.editorial-diner .editorial-cover img { width: 64%; left: auto; right: 0; object-position: center; }
+.editorial-diner .editorial-cover::before { display: block; background: linear-gradient(90deg,#35160f 25%,#35160fba 43%,transparent 68%); }
+.editorial-diner .editorial-copy { width: 50%; color: #ffedcf; }
+.property-catalog { text-align: left; }
+.property-search { background: #e4eee8; padding: 2% 5%; }
+.property-search > strong { font: 600 4.4cqw/1.1 Georgia,serif; color: #173d31; }
+.property-search > div { display: flex; gap: 1.5em; padding: 1% 0; font-size: 2cqw; }
+.property-search > div b { border-bottom: 2px solid #26664e; }
+.property-search p { display: grid; grid-template-columns: 1.25fr 1fr auto; align-items: center; background: white; padding-left: 2%; font-size: 1.85cqw; }
+.property-search p b { background: #20543f; color: white; padding: .45em 1em; }
+.property-results { flex: 1; min-height: 0; display: flex; flex-direction: column; padding: 2% 5%; background: #fbfcfa; font-size: 2.4cqw; }
+.property-results > div { display: grid; grid-template-columns: 1fr 1fr; min-height: 0; flex: 1; gap: 2%; margin-top: 1%; }
+.property-listing { min-height: 0; display: flex; flex-direction: column; border: 1px solid #d7dfd9; background: white; }
+.property-listing img { width: 100%; min-height: 0; flex: 1; object-fit: cover; }
+.property-listing > div { padding: 2% 4%; display: grid; }
+.property-listing small { font-size: 1.5cqw; color: #24583c; text-transform: uppercase; }
+.property-listing span { font-size: 1.8cqw; }
