@@ -1,11 +1,12 @@
 # Portfólio v5 · EricIkeda1
 
-Meu portfólio e minha página de links pessoais, reunidos em um projeto com React, TypeScript, APIs em Node.js e PostgreSQL na Neon. Aqui apresento meus projetos e minha trajetória e reúno minhas redes sociais.
+Este repositório reúne meu portfólio, minha página de links pessoais e a loja EYI, onde apresento meus serviços de desenvolvimento WordPress para negócios de Ibiporã, Londrina e região. As três páginas compartilham o projeto em React e TypeScript. O portfólio e os recadinhos usam APIs em Node.js e PostgreSQL na Neon.
 
 | Acesso | Endereço |
 | --- | --- |
 | Portfólio | [www.ericyikeda.com.br](https://www.ericyikeda.com.br/) |
 | Links pessoais | [links.ericyikeda.com.br](https://links.ericyikeda.com.br/) |
+| Loja EYI | [loja.ericyikeda.com.br](https://loja.ericyikeda.com.br/) |
 
 ## Funcionalidades
 
@@ -18,6 +19,17 @@ Meu portfólio e minha página de links pessoais, reunidos em um projeto com Rea
 - Layout responsivo para desktop e celular, com animações e suporte a movimento reduzido.
 - A página inicial e `/portfolio` apresentam o mesmo portfólio.
 - Português como idioma principal e inglês ou espanhol selecionado automaticamente conforme a preferência principal do navegador; seletor PT/EN/ES com escolha salva localmente. A opção “Detectar idioma” remove a escolha manual e reaplica a preferência do navegador. As traduções são locais, sem API externa. Textos novos sem tradução mantêm o original em português.
+
+### Loja EYI
+
+A loja apresenta meus serviços de criação de landing pages, sites institucionais e lojas virtuais em WordPress. O visitante pode conhecer meu trabalho na seção **Sobre a EYI**, explorar os modelos e pedir um orçamento pelo WhatsApp.
+
+- **Seis prévias demonstrativas** mostram como o design muda conforme o negócio: arquitetura, imobiliária, lanchonete, interiores, clínica e decoração. Cada prévia abre em tamanho maior e permite iniciar uma conversa sobre aquele modelo.
+- **Carrossel responsivo** com transição de cartas. No desktop, o cartão lateral desliza para a posição principal. No celular, o visitante pode deslizar entre as prévias ou usar os controles. As animações respeitam a preferência por movimento reduzido.
+- **Processo de desenvolvimento** apresentado em três etapas: conversa, criação e entrega do site revisado. A publicação fica a cargo do cliente.
+- **Busca local** com HTML pré-renderizado, endereço canônico da loja e dados estruturados que identificam o serviço e as cidades atendidas.
+
+Para abrir a loja durante o desenvolvimento, acesse `/loja` no servidor local. As prévias e as imagens da vitrine estão no próprio repositório.
 
 ### Links pessoais
 
@@ -127,7 +139,7 @@ npm run build
 
 O build gera os arquivos em `dist/`, pré-renderiza as páginas públicas e verifica os hashes dos scripts estáticos na Content Security Policy.
 
-O deploy está conectado à branch `main` do GitHub na Vercel. Configure as variáveis do servidor no projeto e associe os domínios antes de publicar uma instalação própria. O arquivo `middleware.ts` trata a página inicial do subdomínio de links; `vercel.json` contém os cabeçalhos de segurança e a inclusão do modelo nas funções que usam moderação.
+O deploy está conectado à branch `main` do GitHub na Vercel. Configure as variáveis do servidor no projeto e associe os domínios antes de publicar uma instalação própria. O arquivo `middleware.ts` trata as páginas iniciais dos subdomínios de links e da loja; `vercel.json` contém os cabeçalhos de segurança e a inclusão do modelo nas funções que usam moderação.
 
 ## Verificações
 
@@ -155,6 +167,8 @@ Os testes de integração que acessam o Neon, como `test-contact.mjs`, `test-sec
 
 ```text
 src/
+  ShopPage.tsx              Página da loja e prévias dos seis modelos
+  shop.css                  Layout e animações da loja
   sections/                 Seções do portfólio
   components/links/         Pixel, widget de vibe, QR Code e recadinhos
   game/                     Last Circle
@@ -166,11 +180,12 @@ api/
 public/                     Assets, capa social e worker de notificações
 scripts/                    Pré-renderização e verificações
   moderation/               Treinamento, avaliação e licença do modelo
-middleware.ts               Roteamento do subdomínio de links
+middleware.ts               Roteamento dos subdomínios de links e da loja
 ```
 
 ## Documentação complementar
 
+- [Configuração da loja EYI](docs/shop.md)
 - [Configuração do Neon](README-NEON.md)
 - [Proteção dos dados e credenciais](SECURITY.md)
 - [Moderação local, avaliação e limitações](MODERATION.md)
