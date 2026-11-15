@@ -374,13 +374,13 @@ export default function ShopPage() {
             aria-label="Navegação da loja"
           >
             <a href="#inicio" onClick={() => setMenuOpen(false)}>Início</a>
+            <a href="#sobre" onClick={() => setMenuOpen(false)}>Sobre</a>
             <a href="#servicos" onClick={() => setMenuOpen(false)}>
               Serviços
             </a>
             <a href="#projetos" onClick={() => setMenuOpen(false)}>
               Projetos
             </a>
-            <a href="#sobre" onClick={() => setMenuOpen(false)}>Sobre</a>
             <a href="#contato" onClick={() => setMenuOpen(false)}>
               Contato
             </a>
@@ -402,6 +402,14 @@ export default function ShopPage() {
           </div>
           <div className="shop-hero-visual">
             <DevicePreview />
+          </div>
+        </section>
+        <section id="sobre" className="shop-split shop-about shop-wrap" aria-labelledby="shop-about-title">
+          <h2 id="shop-about-title">Sobre a <em>EYI.</em></h2>
+          <div className="shop-letter">
+            <p>Sou Eric Ikeda, desenvolvedor de sites em Ibiporã. Pela EYI, crio landing pages, sites institucionais e lojas virtuais em WordPress para profissionais e empresas de Ibiporã, Londrina e região.</p>
+            <p>Você conversa diretamente comigo, da primeira ideia à revisão final. Começamos pelo que seu cliente precisa fazer no site, como conhecer um serviço, explorar um catálogo ou pedir um orçamento. A partir disso, organizo o conteúdo, desenho as páginas e desenvolvo o projeto para celular e computador.</p>
+            <p className="shop-letter-signature">Eric Y. Ikeda</p>
           </div>
         </section>
         <section id="projetos" className="shop-gallery shop-wrap" aria-labelledby="projects-title" aria-roledescription="carrossel">
@@ -441,13 +449,6 @@ export default function ShopPage() {
           <ol>{stages.map(([title, text, icon]) => <li key={title}>
             <span className="shop-stage-icon"><Icon name={icon} /></span><div><h3>{title}</h3><p>{text}</p></div>
           </li>)}</ol>
-        </section>
-        <section id="sobre" className="shop-split shop-about shop-wrap" aria-labelledby="shop-about-title">
-          <h2 id="shop-about-title">Sobre a <em>EYI.</em></h2>
-          <div>
-            <p>Sou Eric Ikeda, desenvolvedor de sites em Ibiporã. Pela EYI, crio landing pages, sites institucionais e lojas virtuais em WordPress para profissionais e empresas de Ibiporã, Londrina e região.</p>
-            <p>Você conversa diretamente comigo, da primeira ideia à revisão final. Começamos pelo que seu cliente precisa fazer no site, como conhecer um serviço, explorar um catálogo ou pedir um orçamento. A partir disso, organizo o conteúdo, desenho as páginas e desenvolvo o projeto para celular e computador.</p>
-          </div>
         </section>
         <section
           id="contato"
