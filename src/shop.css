@@ -644,3 +644,26 @@ to{opacity:1;transform:translateY(0)}
   .oliva-intro p, .oliva-schedule b, .oliva-schedule > span { font-size: 2.8cqw; }
   .oliva-schedule small { font-size: 2.4cqw; }
 }
+
+@media (min-width: 701px) and (prefers-reduced-motion: no-preference) {
+  /* A lateral começa após a coluna principal (74%) e o vão (2%).
+     A escala reproduz a largura da coluna lateral (56%) e sua inclinação. */
+  .shop-slides[data-direction] { --peek-position: translateX(102.7027%) scale(.756757) perspective(900px) rotateY(-10deg) scale(.94); }
+  .shop-slides[data-direction] .shop-feature > .shop-site-preview,
+  .shop-slides[data-direction] .shop-card-leaving { transform-origin: left center; animation-duration: .48s; }
+  .shop-slides[data-direction="forward"] .shop-feature > .shop-site-preview { animation-name: shop-promote-preview; }
+  .shop-slides[data-direction="back"] .shop-card-leaving { animation-name: shop-demote-preview; z-index: 2; }
+  .shop-slides[data-direction] .shop-peek > .shop-site-preview { animation: shop-next-peek .48s ease-out both; }
+  @keyframes shop-promote-preview {
+    from { transform: var(--peek-position); opacity: .72; }
+    to { transform: none; opacity: 1; }
+  }
+  @keyframes shop-demote-preview {
+    from { transform: none; opacity: 1; }
+    to { transform: var(--peek-position); opacity: .72; }
+  }
+  @keyframes shop-next-peek {
+    0%, 30% { opacity: 0; transform: translateX(10%); }
+    100% { opacity: 1; transform: none; }
+  }
+}
