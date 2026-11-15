@@ -215,7 +215,9 @@ export default function ShopPage() {
   const [selected, setSelected] = useState<Example | null>(null)
   const [slide, setSlide] = useState(0)
   const touch = useRef<{ x: number; y: number } | null>(null)
+  const [direction, setDirection] = useState<"forward" | "back" | undefined>()
   function moveSlide(offset: number) {
+    setDirection(offset > 0 ? "forward" : "back")
     setSlide(current => (current + offset + concepts.length) % concepts.length)
   }
   const current = concepts[slide]
@@ -311,6 +313,7 @@ export default function ShopPage() {
             className={menuOpen ? "is-open" : ""}
             aria-label="Navegação da loja"
           >
+            <a href="#inicio" onClick={() => setMenuOpen(false)}>Início</a>
             <a href="#servicos" onClick={() => setMenuOpen(false)}>
               Serviços
             </a>
@@ -342,7 +345,7 @@ export default function ShopPage() {
         </section>
         <section id="projetos" className="shop-gallery shop-wrap" aria-labelledby="projects-title" aria-roledescription="carrossel">
           <h2 id="projects-title">Imagine seu negócio <em>aqui.</em></h2>
-          <div className="shop-slides" onTouchStart={event => {
+          <div className="shop-slides" data-direction={direction} onTouchStart={event => {
             const point = event.touches[0]
             touch.current = { x: point.clientX, y: point.clientY }
           }} onTouchCancel={() => { touch.current = null }} onTouchEnd={event => {
@@ -352,8 +355,8 @@ export default function ShopPage() {
             touch.current = null
             if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) moveSlide(dx < 0 ? 1 : -1)
           }}>
-            <button className="shop-feature" onClick={() => setSelected(current)} aria-label={`Explorar conceito de ${examples[current].category}`}><SitePreview kind={current} /></button>
-            <button className="shop-peek" aria-label={`Mostrar conceito de ${examples[following].category}`} onClick={() => moveSlide(1)}><SitePreview kind={following} /></button>
+            <button className="shop-feature" onClick={() => setSelected(current)} aria-label={`Explorar conceito de ${examples[current].category}`}><SitePreview key={current} kind={current} /></button>
+            <button className="shop-peek" aria-label={`Mostrar conceito de ${examples[following].category}`} onClick={() => moveSlide(1)}><SitePreview key={following} kind={following} /></button>
           </div>
           <div className="shop-gallery-controls">
             <button aria-label="Projeto anterior" onClick={() => moveSlide(-1)}>Anterior</button>
