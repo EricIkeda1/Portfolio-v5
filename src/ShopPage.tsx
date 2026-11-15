@@ -144,6 +144,20 @@ function PreviewNav({ kind }: { kind: Example }) {
 }
 function SitePreview({ kind = "architecture", eager = false }: { kind?: Example; eager?: boolean }) {
   const example = examples[kind]
+  if (kind === "clinic") {
+    return <div className="shop-site-preview editorial-preview oliva-preview" aria-hidden="true">
+      <PreviewNav kind={kind} />
+      <div className="oliva-intro">
+        <div><strong>{example.title}</strong><p>Clínica geral e acompanhamento em cada fase da vida.</p></div>
+        <img src="/shop/oliva-consulta.webp" alt="" width="720" height="480" loading="lazy" decoding="async" />
+      </div>
+      <div className="oliva-schedule">
+        <div><small>Especialidade</small><b>Clínica geral</b></div>
+        <div><small>Segunda-feira</small><b>09h00 · 14h30</b></div>
+        <span>Agendar consulta</span>
+      </div>
+    </div>
+  }
   if (kind === "realty") {
     return <div className="shop-site-preview editorial-preview property-catalog" aria-hidden="true">
       <PreviewNav kind={kind} />
@@ -169,7 +183,6 @@ function SitePreview({ kind = "architecture", eager = false }: { kind?: Example;
       <div className="editorial-cover">
         {example.image && <img src={example.image} alt="" loading={eager ? "eager" : "lazy"} fetchPriority={eager ? "high" : "auto"} decoding="async" />}
 
-        {kind === "clinic" && <div className="shop-appointment"><b>Agendamento</b><span>Segunda-feira</span><strong>09h00　14h30</strong></div>}
         <div className="editorial-copy" key={kind}><strong>{example.title}</strong><span className="editorial-action">{example.action}</span></div>
       </div>
       <div className="editorial-collection"><b>{example.section}</b><div>{example.items.map(item => <span key={item}>{item}</span>)}</div></div>
