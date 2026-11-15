@@ -149,7 +149,7 @@ function SitePreview({ kind = "architecture", eager = false }: { kind?: Example;
       <PreviewNav kind={kind} />
       <div className="oliva-intro">
         <div><strong>{example.title}</strong><p>Clínica geral e acompanhamento em cada fase da vida.</p></div>
-        <img src="/shop/oliva-consulta.webp" alt="" width="720" height="480" loading="lazy" decoding="async" />
+        <img src="/shop/oliva-clinica.webp" alt="" width="800" height="535" loading="lazy" decoding="async" />
       </div>
       <div className="oliva-schedule">
         <div><small>Especialidade</small><b>Clínica geral</b></div>
