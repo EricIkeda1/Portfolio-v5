@@ -546,3 +546,13 @@ to{opacity:1;transform:translateY(0)}
   .shop-page main > section { transition: opacity .34s ease-out; }
   .shop-page main > section.shop-out-of-view:not(:focus-within) { opacity: 0; }
 }
+
+.shop-button .shop-whatsapp-glyph { filter: brightness(0) invert(1); }
+.shop-stage-icon .shop-whatsapp-glyph { filter: none; }
+.editorial-preview .editorial-collection { padding-block: 2.2%; border-top: 1px solid #27282220; }
+.editorial-collection div { gap: 0; }
+.editorial-collection div span { padding-inline: 1.4cqw; }
+.editorial-collection div span + span { border-inline-start: 1px solid #8887; }
+.editorial-architecture .editorial-cover::before { background: linear-gradient(90deg,#09151ce8, #15202855 53%, transparent 85%); }
+.editorial-interior .editorial-copy strong { font-style: italic; font-weight: 400; }
+.editorial-store .editorial-copy strong { font-family: 'DM Sans', sans-serif; font-weight: 650; letter-spacing: -.055em; }

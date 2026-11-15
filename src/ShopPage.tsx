@@ -28,12 +28,7 @@ function Icon({ name, className = "" }: { name: IconName; className?: string }) 
         <path d="m16 3 5 5M3 21l5-1L22 6l-5-5L3 15v6Z" />
       </>
     ),
-    whatsapp: (
-      <>
-        <path d="M21 11.5A9 9 0 0 1 7.6 19.4L2 21l1.6-5.5A9 9 0 1 1 21 11.5Z" />
-        <path d="M8 7c-2 3 3 8 6 8l2-2-3-1-1 1-2-2 1-1-1-3H8Z" />
-      </>
-    ),
+    whatsapp: <image href="/shop/whatsapp.svg" width="24" height="24" className="shop-whatsapp-glyph" />,
     arrow: (
       <>
         <path d="M4 12h16m-6-6 6 6-6 6" />
@@ -335,7 +330,7 @@ export default function ShopPage() {
         <section className="shop-hero shop-wrap" aria-labelledby="shop-title">
           <div className="shop-hero-text">
             <IntroHeadline />
-            <p className="shop-hero-description">Mostre seus serviços e facilite o primeiro contato.</p>
+            <p className="shop-hero-description">Desenvolvo sites WordPress para negócios de Ibiporã, Londrina e região. Conheça os modelos e peça seu orçamento.</p>
             <div className="shop-hero-actions">
               <ContactLink dark>Quero meu site</ContactLink>
               <a href="#projetos">Ver exemplos</a>

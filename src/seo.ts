@@ -7,13 +7,13 @@ export function seoHead(pathname: string) {
   const portfolio = pathname === '/' || pathname.replace(/\/+$/, '') === '/portfolio'
   const privatePage = pathname === '/admin' || pathname === '/404' || pathname === '/arena'
   const links = pathname.replace(/\/+$/, '') === '/links'
-  const title = shop ? 'Sites WordPress sob medida | Eric Y. Ikeda' : links ? 'Eric Yuji Ikeda · Me encontre por aqui' : privatePage
+  const title = shop ? 'Criação de sites WordPress em Ibiporã e Londrina | Eric Ikeda' : links ? 'Eric Yuji Ikeda · Me encontre por aqui' : privatePage
     ? `${pathname === '/admin' ? 'Administração' : pathname === '/arena' ? 'Last Circle — Minigame' : 'Página não encontrada'} | Eric Y. Ikeda`
     : 'Eric Yuji Ikeda | Portfólio de desenvolvimento web e mobile'
-  const description = shop ? 'Criação de landing pages, sites institucionais e lojas virtuais em WordPress. Design responsivo e desenvolvimento sob medida para o seu negócio.' : links ? 'Tecnologia, games e vida real. Minhas redes, recadinhos privados e um Pixel esperando seu carinho.' : 'Conheça os projetos de Eric Yuji Ikeda: desenvolvimento web e mobile com React, Flutter, TypeScript, APIs REST e PostgreSQL.'
+  const description = shop ? 'Eric Ikeda desenvolve landing pages, sites institucionais e lojas WordPress para negócios de Ibiporã, Londrina e região. Veja os modelos e peça um orçamento.' : links ? 'Tecnologia, games e vida real. Minhas redes, recadinhos privados e um Pixel esperando seu carinho.' : 'Conheça os projetos de Eric Yuji Ikeda: desenvolvimento web e mobile com React, Flutter, TypeScript, APIs REST e PostgreSQL.'
   const url = shop ? 'https://loja.ericyikeda.com.br/' : links ? 'https://links.ericyikeda.com.br/' : `${origin}/`
   const image = shop ? 'https://loja.ericyikeda.com.br/shop/logo.webp' : links ? 'https://links.ericyikeda.com.br/links-preview.png' : `${origin}/api/logo-image`
-  const imageAlt = shop ? 'Conceito demonstrativo de site para arquitetura — Eric Y. Ikeda' : links ? 'Eric Yuji Ikeda: tecnologia, games e vida real, com o cachorrinho Pixel' : 'Eric Y. Ikeda — Portfólio'
+  const imageAlt = shop ? 'Marca EYI de Eric Y. Ikeda' : links ? 'Eric Yuji Ikeda: tecnologia, games e vida real, com o cachorrinho Pixel' : 'Eric Y. Ikeda — Portfólio'
   const escape = (value: string) => value.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;')
   const meta = (name: string, content: string, property = false) => `<meta ${property ? 'property' : 'name'}="${name}" content="${escape(content)}" />`
   const graph: Record<string, unknown>[] = [
@@ -21,6 +21,14 @@ export function seoHead(pathname: string) {
     { '@type': 'WebSite', '@id': websiteId, url: `${origin}/`, name: 'Eric Y. Ikeda — Portfólio', inLanguage: 'pt-BR', publisher: { '@id': personId } },
     { '@type': portfolio ? 'ProfilePage' : 'WebPage', '@id': `${url}#webpage`, url, name: title, description, inLanguage: 'pt-BR', isPartOf: { '@id': websiteId }, ...(portfolio ? { mainEntity: { '@id': personId } } : {}) },
   ]
+  if (shop) {
+    graph.push({
+      '@type': 'Service', '@id': `${url}#desenvolvimento`, name: 'Desenvolvimento de sites WordPress',
+      provider: { '@id': personId }, mainEntityOfPage: { '@id': `${url}#webpage` },
+      areaServed: ['Ibiporã', 'Londrina'].map(name => ({ '@type': 'City', name, containedInPlace: { '@type': 'State', name: 'Paraná' } })),
+      serviceType: ['Landing pages', 'Sites institucionais', 'Lojas virtuais'],
+    })
+  }
   return [
     `<title>${escape(title)}</title>`,
     meta('description', description), meta('author', 'Eric Yuji Ikeda'),
