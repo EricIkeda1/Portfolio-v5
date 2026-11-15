@@ -6,7 +6,6 @@ Este repositório reúne meu portfólio, minha página de links pessoais e a loj
 | --- | --- |
 | Portfólio | [www.ericyikeda.com.br](https://www.ericyikeda.com.br/) |
 | Links pessoais | [links.ericyikeda.com.br](https://links.ericyikeda.com.br/) |
-| Loja EYI | [loja.ericyikeda.com.br](https://loja.ericyikeda.com.br/) |
 
 ## Funcionalidades
 
