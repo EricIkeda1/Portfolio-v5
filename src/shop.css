@@ -667,3 +667,6 @@ to{opacity:1;transform:translateY(0)}
     100% { opacity: 1; transform: none; }
   }
 }
+
+.shop-about p { max-width: 62ch; font-size: clamp(16px, 1.2vw, 20px); line-height: 1.65; }
+.shop-about p + p { margin-top: 1em; }
