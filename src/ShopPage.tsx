@@ -101,9 +101,33 @@ const examples = {
     items: ["Iluminação", "Objetos", "Mobiliário"],
     description: "Landing page de uma coleção de decoração com destaques por categoria.",
   },
+  realty: {
+    name: "Rua Norte Imóveis", category: "Imobiliária",
+    title: "Onde começa sua próxima história?", action: "Buscar imóveis",
+    image: "/shop/architecture.webp", section: "Encontre seu imóvel",
+    items: ["Comprar", "Alugar", "Agendar visita"],
+    description: "Conceito de imobiliária com busca por finalidade e chamada para agendar uma visita.",
+  },
+  diner: {
+    name: "Chapa 43", category: "Lanchonete",
+    title: "Direto da chapa.", action: "Ver cardápio",
+    image: "", section: "Monte seu pedido",
+    items: ["Burgers", "Porções", "Bebidas"],
+    description: "Conceito de lanchonete com destaque para o lanche da casa e categorias do cardápio.",
+  },
+  clinic: {
+    name: "Clínica Oliva", category: "Clínica",
+    title: "Tempo para cuidar de você.", action: "Escolher horário",
+    image: "", section: "Consultas",
+    items: ["Especialidades", "Equipe", "Contato"],
+    description: "Conceito de clínica com apresentação das especialidades e uma prévia de agendamento.",
+  },
 }
 type Example = keyof typeof examples
 function PreviewNav({ kind }: { kind: Example }) {
+  if (kind === "realty") return <div className="editorial-nav nav-realty"><b>Rua Norte Imóveis</b><span>Comprar　 Alugar</span></div>
+  if (kind === "diner") return <div className="editorial-nav nav-diner"><b>CHAPA 43</b><span>Cardápio　 Pedidos</span></div>
+  if (kind === "clinic") return <div className="editorial-nav nav-clinic"><b>Clínica Oliva</b><span>Consultas</span></div>
   if (kind === "interior") {
     return <div className="editorial-nav nav-studio">
       <span>Ambientes</span><b>Lume <i>Interiores</i></b><span>Estúdio</span>
@@ -124,7 +148,9 @@ function SitePreview({ kind = "architecture", eager = false }: { kind?: Example;
     <div className={`shop-site-preview editorial-preview editorial-${kind}`} aria-hidden="true">
       <PreviewNav kind={kind} />
       <div className="editorial-cover">
-        <img src={example.image} alt="" loading={eager ? "eager" : "lazy"} fetchPriority={eager ? "high" : "auto"} decoding="async" />
+        {example.image && <img src={example.image} alt="" loading={eager ? "eager" : "lazy"} fetchPriority={eager ? "high" : "auto"} decoding="async" />}
+        {kind === "diner" && <div className="shop-special"><small>Especial da casa</small><b>Smash<br />duplo</b><span>Cheddar · cebola tostada</span></div>}
+        {kind === "clinic" && <div className="shop-appointment"><b>Agendamento</b><span>Segunda-feira</span><strong>09h00　14h30</strong></div>}
         <div className="editorial-copy" key={kind}><strong>{example.title}</strong><span className="editorial-action">{example.action}</span></div>
       </div>
       <div className="editorial-collection"><b>{example.section}</b><div>{example.items.map(item => <span key={item}>{item}</span>)}</div></div>
@@ -153,7 +179,7 @@ const services = [
     text: "E-commerce em WordPress e WooCommerce para vender seus produtos com autonomia.",
   },
 ]
-const concepts: Example[] = ["architecture", "interior", "store"]
+const concepts: Example[] = ["architecture", "realty", "diner", "interior", "clinic", "store"]
 const stages = [
   ["Conversa", "Entendemos sua ideia, seus objetivos e o que seu público precisa encontrar.", "whatsapp"],
   ["Criação", "Desenhamos e desenvolvemos seu site em WordPress com conteúdo e estrutura sob medida.", "screen"],
