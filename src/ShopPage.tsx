@@ -215,8 +215,10 @@ export default function ShopPage() {
   const [selected, setSelected] = useState<Example | null>(null)
   const [slide, setSlide] = useState(0)
   const touch = useRef<{ x: number; y: number } | null>(null)
+  const [outgoing, setOutgoing] = useState<Example | null>(null)
   const [direction, setDirection] = useState<"forward" | "back" | undefined>()
   function moveSlide(offset: number) {
+    setOutgoing(window.matchMedia("(prefers-reduced-motion: reduce)").matches ? null : concepts[slide])
     setDirection(offset > 0 ? "forward" : "back")
     setSlide(current => (current + offset + concepts.length) % concepts.length)
   }
@@ -355,7 +357,12 @@ export default function ShopPage() {
             touch.current = null
             if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) moveSlide(dx < 0 ? 1 : -1)
           }}>
-            <button className="shop-feature" onClick={() => setSelected(current)} aria-label={`Explorar conceito de ${examples[current].category}`}><SitePreview key={current} kind={current} /></button>
+            <button className="shop-feature" onClick={() => setSelected(current)} aria-label={`Explorar conceito de ${examples[current].category}`}><SitePreview key={current} kind={current} />
+              {outgoing && <div key={`out-${current}`} className="shop-card-leaving" aria-hidden="true"
+                onAnimationEnd={event => { if (event.target === event.currentTarget) setOutgoing(null) }}>
+                <SitePreview kind={outgoing} />
+              </div>}
+            </button>
             <button className="shop-peek" aria-label={`Mostrar conceito de ${examples[following].category}`} onClick={() => moveSlide(1)}><SitePreview key={following} kind={following} /></button>
           </div>
           <div className="shop-gallery-controls">
@@ -392,7 +399,7 @@ export default function ShopPage() {
         </section>
       </main>
       <footer className="shop-footer shop-wrap">
-        <a href="https://www.ericyikeda.com.br/">Eric Y. Ikeda</a>
+        <span>Eric Y. Ikeda</span>
         <a href="#inicio">loja.ericyikeda.com.br</a>
       </footer>
       {selected && (
