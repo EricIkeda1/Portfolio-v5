@@ -1,11 +1,10 @@
 import { burnPasswordCheck, createSessionToken, setSessionCookie, verifyPassword } from './_lib/auth.js'
 import { ensureSchema, getSql } from './_lib/db.js'
 import {
-  checkLoginRateLimit,
+  reserveLoginAttempt,
   cleanupOldLoginAttempts,
   clearLoginFailures,
   loginRateLimitKeys,
-  recordFailedLogin,
 } from './_lib/login-rate-limit.js'
 import { allowMethods, noStore } from './_lib/http.js'
 import { enforceSameOrigin, requireJson } from './_lib/security.js'
@@ -36,8 +35,8 @@ export default async function handler(req: any, res: any) {
     }
 
     const keys = loginRateLimitKeys(req, email)
-    const currentLimit = await checkLoginRateLimit(keys)
-    if (currentLimit.limited) return rateLimited(res, currentLimit.retryAfterSeconds)
+    const currentLimit = await reserveLoginAttempt(keys)
+    if (currentLimit.denied) return rateLimited(res, currentLimit.delay)
 
     const sql = getSql()
     const rows = await sql`SELECT id, email, password_hash FROM admins WHERE lower(email) = ${email} LIMIT 1`
@@ -48,12 +47,11 @@ export default async function handler(req: any, res: any) {
     else burnPasswordCheck(password)
 
     if (!admin?.id || !admin.email || !validPassword) {
-      const nextLimit = await recordFailedLogin(keys)
-      if (nextLimit.limited) return rateLimited(res, nextLimit.retryAfterSeconds)
+      if (currentLimit.delay) return rateLimited(res, currentLimit.delay)
       return res.status(401).json({ error: 'E-mail ou senha inválidos.' })
     }
 
-    await clearLoginFailures(keys)
+    await clearLoginFailures(currentLimit.reservations)
     setSessionCookie(res, await createSessionToken({ id: Number(admin.id), email: admin.email, password_hash: admin.password_hash! }))
 
     // Limpeza oportunista para a tabela de tentativas, sem afetar o login caso falhe.

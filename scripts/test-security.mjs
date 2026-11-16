@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { createHmac } from 'node:crypto'
 import { createServer } from 'vite'
-import { seedSecurityAdmin } from './security-fixtures.mjs'
+import { createTestSocket, seedSecurityAdmin } from './security-fixtures.mjs'
 
 if (process.env.CONTACT_TEST_DATABASE !== '1' || !process.env.DATABASE_URL || !process.env.CONTACT_ENCRYPTION_KEY) {
   throw new Error('Use somente uma branch isolada com CONTACT_TEST_DATABASE=1 e segredos de teste.')
@@ -20,9 +20,10 @@ try {
   const sql = getSql()
   const user = await seedSecurityAdmin(server)
   const origin = 'https://portfolio.test'
-  const request = (token, method = 'GET', body) => ({ method, body, headers: {
+  const socket = createTestSocket()
+  const request = (token, method = 'GET', body) => ({ socket, method, body, headers: {
     host: 'portfolio.test', origin, 'content-type': 'application/json',
-    'x-forwarded-for': `security-test-${user.id}`, cookie: token ? `portfolio_admin_session=${token}` : '',
+    cookie: token ? `portfolio_admin_session=${token}` : '',
   } })
   const call = async (handler, req) => {
     const res = { statusCode: 200, headers: {}, setHeader(k, v) { this.headers[k] = v }, status(code) { this.statusCode = code; return this }, json(body) { this.body = body; return this } }
@@ -48,6 +49,11 @@ try {
   const signedLegacy = Buffer.from(JSON.stringify({ id: user.id, email: user.email, exp: Math.floor(Date.now() / 1000) + 3600 })).toString('base64url')
   const legacyToken = `${signedLegacy}.${createHmac('sha256', process.env.SESSION_SECRET).update(signedLegacy).digest('base64url')}`
   assert.equal((await call(session, request(legacyToken))).statusCode, 401)
+  const { reserveLoginAttempt, loginRateLimitKeys } = await server.ssrLoadModule('/api/_lib/login-rate-limit.ts')
+  const burstKeys = loginRateLimitKeys({ socket: createTestSocket() }, user.email)
+  const burst = await Promise.all(Array.from({ length: 20 }, () => reserveLoginAttempt(burstKeys)))
+  assert.equal(burst.filter(result => !result.denied).length, 5)
+  assert.ok(burst.filter(result => result.denied).every(result => result.delay > 0))
   const authenticated = await call(login, request(null, 'POST', { email: user.email, password: user.password }))
   assert.equal(authenticated.statusCode, 200)
   const token = cookieToken(authenticated)
