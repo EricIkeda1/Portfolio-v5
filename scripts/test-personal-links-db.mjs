@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { randomBytes } from 'node:crypto'
 import { createServer } from 'vite'
 import webpush from 'web-push'
-import { seedSecurityAdmin } from './security-fixtures.mjs'
+import { createTestSocket, seedSecurityAdmin } from './security-fixtures.mjs'
 if (process.env.CONTACT_TEST_DATABASE !== '1' || !process.env.DATABASE_URL) throw new Error('Use a preview database.')
 process.env.CONTACT_ENCRYPTION_KEY = randomBytes(32).toString('hex')
 process.env.SESSION_SECRET = randomBytes(32).toString('hex')
@@ -21,10 +21,11 @@ try {
   const admin = await seedSecurityAdmin(server)
   const cookie = `portfolio_admin_session=${await createSessionToken(admin)}`
   process.env.NODE_ENV = 'production'
-  const headers = { origin: 'https://links.test', host: 'links.test', 'content-type': 'application/json', 'x-forwarded-for': `test-${randomBytes(8).toString('hex')}` }
+  const socket = createTestSocket()
+  const headers = { origin: 'https://links.test', host: 'links.test', 'content-type': 'application/json' }
   async function call(handler, method, body, options = {}) {
     const res = { statusCode: 200, headers: {}, setHeader(k,v) { this.headers[k]=v }, status(code) { this.statusCode=code; return this }, json(data) { this.body=data; return this } }
-    await handler({ method, body, headers: { ...headers, ...options.headers }, url: options.url, query: options.query || {} }, res)
+    await handler({ socket, method, body, headers: { ...headers, ...options.headers }, url: options.url, query: options.query || {} }, res)
     return res
   }
   const note = { kind: 'anonymous', website: '', message: `Recado de teste isolado ${randomBytes(8).toString('hex')}` }
@@ -35,7 +36,7 @@ try {
   const rows = await sql`SELECT name, email, message, private_payload FROM contact_messages ORDER BY id DESC LIMIT 1`
   assert.equal(rows[0].name, '[protegido]'); assert.equal(rows[0].email, '[protegido]'); assert.equal(rows[0].message, '[conteúdo protegido]')
   assert.deepEqual(decryptContact(rows[0].private_payload), { name: 'Recado anônimo', email: '', message: note.message })
-  const burst = await Promise.all(Array.from({ length: 6 }, () => call(contact, 'POST', note)))
+  const burst = await Promise.all(Array.from({ length: 6 }, (_, i) => call(contact, 'POST', note, { headers: { 'x-forwarded-for': `192.0.2.${i + 1}` } })))
   assert.equal(burst.filter(r => r.statusCode === 201).length, 4); assert.equal(burst.filter(r => r.statusCode === 429).length, 2)
   const regular = { name: 'Teste', email: 'test@example.test', message: 'Contato normal de teste.', website: '' }
   assert.equal((await call(contact, 'POST', regular)).statusCode, 429, 'shared quota prevents switching forms to bypass limits')

@@ -1,15 +1,15 @@
+import { isIP } from 'node:net'
+
 function firstHeaderValue(value: unknown) {
   if (Array.isArray(value)) return String(value[0] ?? '').trim()
   return String(value ?? '').split(',')[0]?.trim() ?? ''
 }
 
 export function getClientIp(req: any) {
-  return (
-    firstHeaderValue(req.headers?.['x-forwarded-for']) ||
-    firstHeaderValue(req.headers?.['x-real-ip']) ||
-    firstHeaderValue(req.socket?.remoteAddress) ||
-    'unknown'
-  )
+  const value = process.env.VERCEL === '1'
+    ? req.headers?.['x-vercel-forwarded-for']
+    : req.socket?.remoteAddress
+  return typeof value === 'string' && isIP(value) ? value : 'unknown'
 }
 
 export function requireJson(req: any, res: any) {

@@ -25,32 +25,10 @@ export function loginRateLimitKeys(req: any, email: string): LimitKey[] {
   ]
 }
 
-export async function checkLoginRateLimit(keys: LimitKey[]) {
+export async function reserveLoginAttempt(keys: LimitKey[]) {
   const sql = getSql()
-  let retryAfterSeconds = 0
-
-  for (const limit of keys) {
-    const rows = await sql`
-      SELECT blocked_until
-      FROM admin_login_attempts
-      WHERE key = ${limit.key}
-      LIMIT 1
-    `
-    const blockedUntil = rows[0]?.blocked_until ? new Date(String(rows[0].blocked_until)).getTime() : 0
-    const remaining = Math.ceil((blockedUntil - Date.now()) / 1000)
-    if (remaining > retryAfterSeconds) retryAfterSeconds = remaining
-  }
-
-  return {
-    limited: retryAfterSeconds > 0,
-    retryAfterSeconds: Math.max(0, retryAfterSeconds),
-  }
-}
-
-export async function recordFailedLogin(keys: LimitKey[]) {
-  const sql = getSql()
-  let retryAfterSeconds = 0
-
+  const reservations: { key: string; version: string }[] = []
+  let failureDelay = 0
   for (const limit of keys) {
     const rows = await sql`
       INSERT INTO admin_login_attempts (key, attempt_count, window_started_at, blocked_until, updated_at)
@@ -75,24 +53,27 @@ export async function recordFailedLogin(keys: LimitKey[]) {
             ELSE NULL
           END,
           updated_at = now()
-      RETURNING blocked_until
+      WHERE admin_login_attempts.blocked_until IS NULL OR admin_login_attempts.blocked_until <= now()
+      RETURNING updated_at::text AS version, blocked_until
     `
-
-    const blockedUntil = rows[0]?.blocked_until ? new Date(String(rows[0].blocked_until)).getTime() : 0
-    const remaining = Math.ceil((blockedUntil - Date.now()) / 1000)
-    if (remaining > retryAfterSeconds) retryAfterSeconds = remaining
+    if (!rows.length) {
+      const [row] = await sql`
+        SELECT ceil(extract(epoch FROM blocked_until - now())) AS remaining
+        FROM admin_login_attempts WHERE key = ${limit.key}
+      `
+      return { reservations, denied: true, delay: Math.max(1, Number(row?.remaining || 1)) }
+    }
+    reservations.push({ key: limit.key, version: String(rows[0].version) })
+    if (rows[0].blocked_until) failureDelay = Math.max(failureDelay, limit.blockSeconds)
   }
-
-  return {
-    limited: retryAfterSeconds > 0,
-    retryAfterSeconds: Math.max(0, retryAfterSeconds),
-  }
+  return { reservations, denied: false, delay: failureDelay }
 }
 
-export async function clearLoginFailures(keys: LimitKey[]) {
+export async function clearLoginFailures(reservations: { key: string; version: string }[]) {
   const sql = getSql()
-  for (const limit of keys) {
-    await sql`DELETE FROM admin_login_attempts WHERE key = ${limit.key}`
+  for (const { key, version } of reservations) {
+    // Preserve attempts that another request reserved after this successful login.
+    await sql`DELETE FROM admin_login_attempts WHERE key = ${key} AND updated_at = ${version}::timestamptz`
   }
 }
 

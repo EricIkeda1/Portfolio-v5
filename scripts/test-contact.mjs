@@ -1,6 +1,6 @@
 // Execute somente com DATABASE_URL de uma branch isolada de teste.
 import assert from 'node:assert/strict'
-import { seedSecurityAdmin } from './security-fixtures.mjs'
+import { createTestSocket, seedSecurityAdmin } from './security-fixtures.mjs'
 import { createServer } from 'vite'
 import webpush from 'web-push'
 
@@ -28,11 +28,12 @@ try {
   process.env.NODE_ENV = 'production'
   const adminUser = await seedSecurityAdmin(server)
   const cookie = `portfolio_admin_session=${await createSessionToken(adminUser)}`
-  const headers = { origin: 'https://portfolio.test', host: 'portfolio.test', 'content-type': 'application/json', 'x-forwarded-for': `test-${Date.now()}` }
+  const socket = createTestSocket()
+  const headers = { origin: 'https://portfolio.test', host: 'portfolio.test', 'content-type': 'application/json' }
   const valid = { name: 'Contato de teste', email: 'visitor@example.test', message: 'Mensagem de teste de integração, sem envio externo.', website: '' }
   const call = async (handler, method, body, options = {}) => {
     const res = { statusCode: 200, headers: {}, status(code) { this.statusCode = code; return this }, setHeader(key, value) { this.headers[key] = value }, json(value) { this.body = value; return this } }
-    await handler({ method, body, headers: { ...headers, ...options.headers }, query: options.query ?? {} }, res)
+    await handler({ socket, method, body, headers: { ...headers, ...options.headers }, query: options.query ?? {} }, res)
     return res
   }
 

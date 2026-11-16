@@ -12,3 +12,8 @@ export async function seedSecurityAdmin(server) {
   const rows = await sql`INSERT INTO admins (email, password_hash) VALUES (${email}, ${password_hash}) RETURNING id`
   return { id: Number(rows[0].id), email, password_hash, password }
 }
+
+export function createTestSocket() {
+  const groups = randomBytes(8).toString('hex').match(/.{4}/g)
+  return { remoteAddress: `2001:db8::${groups.join(':')}` }
+}
