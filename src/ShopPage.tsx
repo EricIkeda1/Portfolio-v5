@@ -218,6 +218,7 @@ const stages = [
   ["Entrega", "Você revisa o site, faço os ajustes combinados e entrego o projeto desenvolvido. A publicação fica por sua conta.", "screen"],
 ] as const
 const headlines = [
+  ["Um site para ", "o seu negócio", " em Ibiporã."],
   ["Você pode estar ", "perdendo clientes", " por não ter um site."],
   ["Sua marca merece ", "ser encontrada", " online."],
   ["Seu próximo cliente pode ", "chegar pelo site", "."],
@@ -394,10 +395,10 @@ export default function ShopPage() {
         <section className="shop-hero shop-wrap" aria-labelledby="shop-title">
           <div className="shop-hero-text">
             <IntroHeadline />
-            <p className="shop-hero-description">Desenvolvo sites WordPress para negócios de Ibiporã, Londrina e região. Conheça os modelos e peça seu orçamento.</p>
+            <p className="shop-hero-description">Sou Eric Ikeda, desenvolvedor aqui de Ibiporã. Crio sites em WordPress para seus clientes conhecerem seus serviços e falarem com você pelo WhatsApp.</p>
             <div className="shop-hero-actions">
-              <ContactLink dark>Quero meu site</ContactLink>
-              <a href="#projetos">Ver exemplos</a>
+              <ContactLink dark>Pedir orçamento</ContactLink>
+              <a href="#projetos">Ver exemplos de sites</a>
             </div>
           </div>
           <div className="shop-hero-visual">
