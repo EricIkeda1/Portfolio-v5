@@ -7,10 +7,10 @@ export function seoHead(pathname: string) {
   const portfolio = pathname === '/' || pathname.replace(/\/+$/, '') === '/portfolio'
   const privatePage = pathname === '/admin' || pathname === '/404' || pathname === '/arena'
   const links = pathname.replace(/\/+$/, '') === '/links'
-  const title = shop ? 'Criação de sites WordPress em Ibiporã e Londrina | Eric Ikeda' : links ? 'Eric Yuji Ikeda · Me encontre por aqui' : privatePage
+  const title = shop ? 'Criação de sites em Ibiporã | Eric Ikeda' : links ? 'Eric Yuji Ikeda · Me encontre por aqui' : privatePage
     ? `${pathname === '/admin' ? 'Administração' : pathname === '/arena' ? 'Last Circle — Minigame' : 'Página não encontrada'} | Eric Y. Ikeda`
     : 'Eric Yuji Ikeda | Portfólio de desenvolvimento web e mobile'
-  const description = shop ? 'Eric Ikeda desenvolve landing pages, sites institucionais e lojas WordPress para negócios de Ibiporã, Londrina e região. Veja os modelos e peça um orçamento.' : links ? 'Tecnologia, games e vida real. Minhas redes, recadinhos privados e um Pixel esperando seu carinho.' : 'Conheça os projetos de Eric Yuji Ikeda: desenvolvimento web e mobile com React, Flutter, TypeScript, APIs REST e PostgreSQL.'
+  const description = shop ? 'Precisa de um site para sua empresa em Ibiporã? Veja exemplos para clínicas, restaurantes e imobiliárias e peça um orçamento pelo WhatsApp.' : links ? 'Tecnologia, games e vida real. Minhas redes, recadinhos privados e um Pixel esperando seu carinho.' : 'Conheça os projetos de Eric Yuji Ikeda: desenvolvimento web e mobile com React, Flutter, TypeScript, APIs REST e PostgreSQL.'
   const url = shop ? 'https://loja.ericyikeda.com.br/' : links ? 'https://links.ericyikeda.com.br/' : `${origin}/`
   const image = shop ? 'https://loja.ericyikeda.com.br/shop/logo.webp' : links ? 'https://links.ericyikeda.com.br/links-preview.png' : `${origin}/api/logo-image`
   const imageAlt = shop ? 'Marca EYI de Eric Y. Ikeda' : links ? 'Eric Yuji Ikeda: tecnologia, games e vida real, com o cachorrinho Pixel' : 'Eric Y. Ikeda — Portfólio'
