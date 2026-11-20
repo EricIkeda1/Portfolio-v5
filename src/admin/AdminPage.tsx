@@ -15,6 +15,7 @@ import {
 import { DEFAULT_CONTENT, type PortfolioContent, type PortfolioProject } from '@/lib/portfolio'
 import ProtectedLogo from '@/components/ProtectedLogo'
 import MessagesInbox from './MessagesInbox'
+import ProfileImagePreview from './ProfileImagePreview'
 
 type IconName =
   | 'dashboard'
@@ -212,7 +213,7 @@ function ProfileEditor({ content, onUpdated }: { content: PortfolioContent; onUp
               <button className="admin-ghost-action" onClick={() => setAbout(DEFAULT_CONTENT.about_text)}>Restaurar texto padrão</button>
             </div>
           </div>
-          <div className="admin-profile-preview"><span>PRÉ-VISUALIZAÇÃO</span><div className="admin-profile-photo-wrap"><img src={imageUrl} alt="Pré-visualização do perfil" referrerPolicy="no-referrer" /></div><h3>Quem sou <b>eu</b></h3><p>{about.split(/\n\s*\n/)[0]}</p></div>
+          <div className="admin-profile-preview"><span>PRÉ-VISUALIZAÇÃO</span><ProfileImagePreview value={imageUrl} savedValue={content.profile_image_url} /><h3>Quem sou <b>eu</b></h3><p>{about.split(/\n\s*\n/)[0]}</p></div>
         </div>
       </section>
     </>
