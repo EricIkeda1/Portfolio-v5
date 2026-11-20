@@ -923,3 +923,14 @@ a {
 .language-selector select:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
 @media (max-width: 768px) { .language-selector { margin-left: auto; margin-right: .75rem; } }
 @media (max-width: 390px) { header .font-display { font-size: .75rem !important; letter-spacing: .08em !important; } }
+/* Direct scroll feedback, without easing or extra motion, including reduced motion. */
+.scroll-progress {
+  position: fixed;
+  inset: 0 0 auto;
+  height: 3px;
+  z-index: 101;
+  background: #4285ff;
+  transform: scaleX(0);
+  transform-origin: left;
+  pointer-events: none;
+}

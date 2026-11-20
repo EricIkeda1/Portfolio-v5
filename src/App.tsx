@@ -2,6 +2,7 @@ import { useTranslation } from '@/i18n/LanguageContext'
 import { lazy, Suspense, useState, type CSSProperties, type PointerEvent } from 'react'
 import { LanguageProvider } from '@/i18n/LanguageContext'
 import Nav from '@/components/Nav'
+import ScrollProgress from '@/components/ScrollProgress'
 import Hero from '@/sections/Hero'
 import About from '@/sections/About'
 import Skills from '@/sections/Skills'
@@ -66,6 +67,7 @@ function PortfolioPage() {
 
         <div style={{ position: 'relative', zIndex: 1 }}>
           <Nav />
+          <ScrollProgress />
           <main>
             <Hero />
             <About />
