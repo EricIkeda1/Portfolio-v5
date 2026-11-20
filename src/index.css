@@ -923,14 +923,29 @@ a {
 .language-selector select:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
 @media (max-width: 768px) { .language-selector { margin-left: auto; margin-right: .75rem; } }
 @media (max-width: 390px) { header .font-display { font-size: .75rem !important; letter-spacing: .08em !important; } }
-/* Direct scroll feedback, without easing or extra motion, including reduced motion. */
-.scroll-progress {
+/* The track stays visible at the top; the fill follows document scrolling. */
+.scroll-progress-track {
   position: fixed;
   inset: 0 0 auto;
-  height: 3px;
+  height: 4px;
   z-index: 101;
+  background: rgba(66, 133, 255, .18);
+  pointer-events: none;
+}
+.scroll-progress {
+  width: 100%;
+  height: 100%;
   background: #4285ff;
   transform: scaleX(0);
   transform-origin: left;
-  pointer-events: none;
+}
+@supports (animation-timeline: scroll(root block)) {
+  .scroll-progress {
+    animation: portfolio-scroll-progress linear both;
+    animation-timeline: scroll(root block);
+  }
+}
+@keyframes portfolio-scroll-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
 }

@@ -4,6 +4,8 @@ export default function ScrollProgress() {
   const bar = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    if (CSS.supports('animation-timeline', 'scroll(root block)')) return
+
     let frame = 0
     const update = () => {
       frame = 0
@@ -32,5 +34,5 @@ export default function ScrollProgress() {
     }
   }, [])
 
-  return <div ref={bar} className="scroll-progress" aria-hidden="true" />
+  return <div className="scroll-progress-track" aria-hidden="true"><div ref={bar} className="scroll-progress" /></div>
 }
