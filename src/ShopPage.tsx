@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react"
 import { DEFAULT_WHATSAPP } from "./lib/portfolio"
 import "./shop.css"
+import ScrollProgress from "./components/ScrollProgress"
 
 type IconName = "screen" | "layers" | "cart" | "pen" | "whatsapp" | "arrow" | "menu" | "close"
 function Icon({ name, className = "" }: { name: IconName; className?: string }) {
@@ -339,6 +340,7 @@ export default function ShopPage() {
   }, [selected])
   return (
     <div className="shop-page" id="inicio">
+      <ScrollProgress />
       <header className="shop-header shop-wrap">
         <a
           className="shop-brand"
