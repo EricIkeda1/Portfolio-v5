@@ -7,6 +7,8 @@ export function seoHead(pathname: string) {
   const portfolio = pathname === '/' || pathname.replace(/\/+$/, '') === '/portfolio'
   const privatePage = pathname === '/admin' || pathname === '/404' || pathname === '/arena'
   const links = pathname.replace(/\/+$/, '') === '/links'
+  // Solid colors matching each page's header (browser UI may override these).
+  const themeColor = shop ? '#06132d' : links ? '#142233' : pathname === '/admin' ? '#080811' : pathname === '/arena' ? '#102119' : '#07070f'
   const title = shop ? 'Criação de sites em Ibiporã | Eric Ikeda' : links ? 'Eric Yuji Ikeda · Me encontre por aqui' : privatePage
     ? `${pathname === '/admin' ? 'Administração' : pathname === '/arena' ? 'Last Circle — Minigame' : 'Página não encontrada'} | Eric Y. Ikeda`
     : 'Eric Yuji Ikeda | Portfólio de desenvolvimento web e mobile'
@@ -33,7 +35,7 @@ export function seoHead(pathname: string) {
     `<title>${escape(title)}</title>`,
     meta('description', description), meta('author', 'Eric Yuji Ikeda'),
     meta('robots', privatePage ? 'noindex, nofollow, noarchive' : 'index, follow, max-image-preview:large'),
-    meta('theme-color', shop ? '#fcf5ec' : '#07070f'),
+    meta('theme-color', themeColor),
     ...(!privatePage ? [`<link rel="canonical" href="${url}" />`, meta('og:type', 'website', true), meta('og:locale', 'pt_BR', true), meta('og:site_name', links ? 'Eric Yuji Ikeda' : 'Eric Y. Ikeda', true), meta('og:url', url, true), meta('og:title', title, true), meta('og:description', description, true), meta('og:image', image, true), meta('og:image:alt', imageAlt, true), ...(links ? [meta('og:image:type', 'image/png', true), meta('og:image:width', '1200', true), meta('og:image:height', '630', true)] : []), meta('twitter:card', 'summary_large_image'), meta('twitter:title', title), meta('twitter:description', description), meta('twitter:image', image), `<script type="application/ld+json">${JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }).replace(/</g, '\\u003c')}</script>`] : []),
   ].join('\n    ')
 }
