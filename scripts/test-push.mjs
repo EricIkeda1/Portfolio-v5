@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { seedSecurityAdmin } from './security-fixtures.mjs'
+import { createTestSocket, seedSecurityAdmin } from './security-fixtures.mjs'
 import { createECDH, randomBytes } from 'node:crypto'
 import webpush from 'web-push'
 import { createServer } from 'vite'
@@ -34,7 +34,7 @@ try {
   const cookie = `portfolio_admin_session=${await createSessionToken(adminUser)}`
   const call = async (handler, method, body, query = {}, authenticated = true) => {
     const res = { statusCode: 200, headers: {}, status(code) { this.statusCode = code; return this }, setHeader(k,v) { this.headers[k] = v }, json(body) { this.body = body; return this } }
-    await handler({ method, body, query, headers: { host: 'portfolio.test', origin: 'https://portfolio.test', 'content-type': 'application/json', 'x-forwarded-for': `push-test-${Date.now()}`, ...(authenticated ? { cookie } : {}) } }, res)
+    await handler({ socket: createTestSocket(), method, body, query, headers: { host: 'portfolio.test', origin: 'https://portfolio.test', 'content-type': 'application/json', ...(authenticated ? { cookie } : {}) } }, res)
     return res
   }
   assert.equal((await call(admin, 'GET', undefined, { notifications: '1' }, false)).statusCode, 401)
