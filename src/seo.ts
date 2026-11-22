@@ -8,7 +8,7 @@ export function seoHead(pathname: string) {
   const privatePage = pathname === '/admin' || pathname === '/404' || pathname === '/arena'
   const links = pathname.replace(/\/+$/, '') === '/links'
   // Solid colors matching each page's header (browser UI may override these).
-  const themeColor = shop ? '#06132d' : links ? '#142233' : pathname === '/admin' ? '#080811' : pathname === '/arena' ? '#102119' : '#07070f'
+  const themeColor = shop ? '#06132d' : links ? '#142233' : pathname === '/admin' ? '#080811' : pathname === '/arena' ? '#102119' : portfolio ? '#d9cec2' : '#07070f'
   const title = shop ? 'Criação de sites em Ibiporã | Eric Ikeda' : links ? 'Eric Yuji Ikeda · Me encontre por aqui' : privatePage
     ? `${pathname === '/admin' ? 'Administração' : pathname === '/arena' ? 'Last Circle — Minigame' : 'Página não encontrada'} | Eric Y. Ikeda`
     : 'Eric Yuji Ikeda | Portfólio de desenvolvimento web e mobile'

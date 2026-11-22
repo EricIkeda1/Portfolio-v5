@@ -1,108 +1,11 @@
-import { useTranslation } from '@/i18n/LanguageContext'
-import { lazy, Suspense, useState, type CSSProperties, type PointerEvent } from 'react'
-import { LanguageProvider } from '@/i18n/LanguageContext'
-import Nav from '@/components/Nav'
-import ScrollProgress from '@/components/ScrollProgress'
-import Hero from '@/sections/Hero'
-import About from '@/sections/About'
-import Skills from '@/sections/Skills'
-import Highlights from '@/sections/Highlights'
-import Experience from '@/sections/Experience'
-import Versions from '@/sections/Versions'
-import Contact from '@/sections/Contact'
-import { PortfolioContentProvider } from '@/context/PortfolioContentContext'
-import AdminPage from '@/admin/AdminPage'
-import NotFoundPage from '@/NotFoundPage'
+import { lazy, Suspense } from 'react'
+import { LanguageProvider } from './i18n/LanguageContext'
+import PortfolioHome from './PortfolioHome'
+import AdminPage from './admin/AdminPage'
+import NotFoundPage from './NotFoundPage'
 import LinksPage from './LinksPage'
 import ShopPage from './ShopPage'
-
 const ArenaPage = lazy(() => import('./game/ArenaPage'))
-
-function PortfolioPage() {
-  const { t } = useTranslation()
-  const [hovering, setHovering] = useState(false)
-  const [cursor, setCursor] = useState({ x: 0, y: 0 })
-
-  const handlePointerMove = (event: PointerEvent<HTMLDivElement>) => {
-    const rect = event.currentTarget.getBoundingClientRect()
-    setCursor({ x: event.clientX - rect.left, y: event.clientY - rect.top })
-  }
-
-  const mask = `radial-gradient(circle at ${cursor.x}px ${cursor.y}px, #000 80px, transparent 140px)`
-
-  const dotsBase: CSSProperties = {
-    position: 'fixed',
-    inset: 0,
-    backgroundImage:
-      'radial-gradient(circle at center, rgba(66, 133, 255, 0.18) 1px, transparent 1.2px)',
-    backgroundSize: '22px 22px',
-    pointerEvents: 'none',
-    zIndex: 0,
-  }
-
-  const dotsHover: CSSProperties = {
-    position: 'fixed',
-    inset: 0,
-    backgroundImage:
-      'radial-gradient(circle at center, rgba(66, 133, 255, 0.5) 1.8px, transparent 2px)',
-    backgroundSize: '22px 22px',
-    opacity: hovering ? 1 : 0,
-    maskImage: mask,
-    WebkitMaskImage: mask,
-    transition: 'opacity 0.15s',
-    pointerEvents: 'none',
-    zIndex: 0,
-  }
-
-  return (
-    <PortfolioContentProvider>
-      <div
-        style={{ backgroundColor: 'var(--bg)', minHeight: '100vh', position: 'relative' }}
-        onPointerEnter={() => setHovering(true)}
-        onPointerMove={handlePointerMove}
-        onPointerLeave={() => setHovering(false)}
-      >
-        <div style={dotsBase} />
-        <div style={dotsHover} />
-
-        <div style={{ position: 'relative', zIndex: 1 }}>
-          <Nav />
-          <ScrollProgress />
-          <main>
-            <Hero />
-            <Experience />
-            <About />
-            <Highlights />
-            <Skills />
-            <Versions />
-            <Contact />
-          </main>
-          <footer className="site-footer">
-            <div className="site-footer-inner">
-              <div className="site-footer-main">
-                <div className="site-footer-signature">
-                  <span className="site-footer-monogram" aria-hidden="true">EI</span>
-                  <div>
-                    <span className="site-footer-name">Eric Y. Ikeda</span>
-                    <p className="site-footer-tagline">{t("Ideias, código e atenção aos detalhes.")}</p>
-                  </div>
-                </div>
-                <nav className="site-footer-nav" aria-label={t("Navegação do rodapé")}>
-                  <a href="#sobre">{t("Sobre")}</a>
-                  <a href="#contato">{t("Contato")}</a>
-                </nav>
-              </div>
-              <div className="site-footer-bottom">
-                <span>© {new Date().getFullYear()}  {t("· Desenvolvido por Eric Y. Ikeda")}</span>
-                <a href="https://www.ericyikeda.com.br/" className="site-footer-domain">ericyikeda<span>.com.br</span></a>
-              </div>
-            </div>
-          </footer>
-        </div>
-      </div>
-    </PortfolioContentProvider>
-  )
-}
 
 export default function App({ pathname = window.location.pathname }: { pathname?: string } = {}) {
   const normalizedPath = pathname.replace(/\/+$/, '') || '/'
@@ -121,5 +24,5 @@ export default function App({ pathname = window.location.pathname }: { pathname?
     return <NotFoundPage />
   }
 
-  return <LanguageProvider><PortfolioPage /></LanguageProvider>
+  return <LanguageProvider><PortfolioHome /></LanguageProvider>
 }
