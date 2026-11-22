@@ -72,3 +72,9 @@
   .pf-menu-button[aria-expanded=true] span:nth-child(2){opacity:0;transform:scaleX(.3)}
   .pf-menu-button[aria-expanded=true] span:last-child{transform:rotate(-45deg)}
 }
+
+/* Portrait from the existing server-side profile image endpoint. */
+.pf-about{display:flow-root}
+.pf-about-photo{float:right;width:clamp(110px,11vw,160px);height:auto;aspect-ratio:1;object-fit:cover;object-position:center;border-radius:24px;margin:0 0 20px 24px;border:1px solid var(--pf-line);box-shadow:0 8px 24px #00000012}
+@media(max-width:760px){.pf-about-photo{width:112px;border-radius:20px;margin:0 0 16px 18px}}
+@media(max-width:360px){.pf-about-photo{width:88px;margin-left:12px}}
