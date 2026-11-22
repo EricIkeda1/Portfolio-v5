@@ -53,3 +53,22 @@
 @keyframes pf-backdrop-in{from{background:#17141200;backdrop-filter:blur(0)}to{background:#171412aa;backdrop-filter:blur(6px)}}
 @media(max-width:760px){.pf-reveal{transform:translateY(16px)}.pf-reveal.pf-visible{transform:none}.pf-project-card:nth-child(n){transition-delay:0s}}
 @media(prefers-reduced-motion:reduce){.pf-home .pf-hero-art,.pf-home .pf-reveal{transform:none!important;opacity:1}.pf-home *,.pf-home *::before,.pf-home *::after{animation:none!important;transition:none!important}.pf-home .pf-project-image,.pf-home .pf-concept{scale:1!important}}
+
+/* Keep both menu states mounted so closing can animate too. */
+.pf-menu-inner{display:contents}
+@media(max-width:760px){
+  .pf-nav{row-gap:0}
+  .pf-nav nav,.pf-nav nav.is-open{display:grid;grid-template-columns:1fr;grid-template-rows:0fr;gap:0;padding:0;border:0;animation:none;opacity:0;visibility:hidden;pointer-events:none;transition:grid-template-rows .5s var(--pf-ease),opacity .3s ease,visibility 0s .5s}
+  .pf-nav nav.is-open{grid-template-rows:1fr;opacity:1;visibility:visible;pointer-events:auto;transition:grid-template-rows .55s var(--pf-ease),opacity .35s ease,visibility 0s}
+  .pf-menu-inner{display:grid;grid-template-columns:1fr 1fr;gap:6px;min-height:0;overflow:hidden}
+  .pf-nav nav a{margin:0;transform:translateY(-8px);transition:transform .45s var(--pf-ease),background-color .2s}
+  .pf-nav nav a:nth-child(-n+2){margin-top:14px}.pf-nav nav a:nth-last-child(-n+2){margin-bottom:4px}
+  .pf-nav nav.is-open a{transform:translateY(0)}
+  .pf-menu-button{position:relative;width:40px;height:40px;display:block}
+  .pf-menu-button span{position:absolute;left:9px;top:19px;border-radius:2px;transform-origin:center;transition:transform .45s var(--pf-ease),opacity .2s ease}
+  .pf-menu-button span:first-child{transform:translateY(-6px)}
+  .pf-menu-button span:last-child{transform:translateY(6px)}
+  .pf-menu-button[aria-expanded=true] span:first-child{transform:rotate(45deg)}
+  .pf-menu-button[aria-expanded=true] span:nth-child(2){opacity:0;transform:scaleX(.3)}
+  .pf-menu-button[aria-expanded=true] span:last-child{transform:rotate(-45deg)}
+}
