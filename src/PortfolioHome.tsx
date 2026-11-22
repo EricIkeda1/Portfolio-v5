@@ -6,6 +6,7 @@ import ScrollProgress from './components/ScrollProgress'
 import type { PortfolioProject } from './lib/portfolio'
 import './portfolio-home.css'
 
+const imageRequests = new Map<string, Promise<string | null>>()
 const stack = [['React','react'],['TypeScript','typescript'],['Flutter','flutter'],['Node.js','nodejs'],['PostgreSQL','postgresql'],['Django','django'],['Python','python'],['HTML','html5'],['CSS','css3'],['WordPress','wordpress']]
 const versions = ['https://ericikedaportfolio.vercel.app/','https://ericyikedaportfolio.vercel.app/','https://ericyikedaportfolio32.vercel.app/','https://ericyikedaportfolio4.vercel.app/', '#inicio']
 function ThemeIcon({ dark }: { dark: boolean }) { return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">{dark ? <><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></> : <path d="M20 15.5A8.5 8.5 0 0 1 8.5 4 8.5 8.5 0 1 0 20 15.5Z"/>}</svg> }
@@ -21,10 +22,27 @@ function FoodPreview() {
 function ProjectPreview({ project }: { project: PortfolioProject }) {
   const { t } = useTranslation()
   const [broken, setBroken] = useState(false)
+  const [discovered, setDiscovered] = useState<string | null>(null)
+  const preview = useRef<HTMLDivElement>(null)
+  useEffect(()=>{
+    setDiscovered(null)
+    if(project.image_url || !preview.current)return
+    let active=true
+    const key=String(project.id)+':'+project.github
+    const load=()=>{
+      if(!imageRequests.has(key))imageRequests.set(key,fetch(`/api/content?view=project-image&id=${encodeURIComponent(project.id)}`)
+        .then(r=>r.ok?r.json():null).then(data=>data?.image_url || null).catch(()=>null))
+      void imageRequests.get(key)!.then(url=>{if(active)setDiscovered(url)})
+    }
+    if(!('IntersectionObserver' in window)){load();return()=>{active=false}}
+    const observer=new IntersectionObserver(entries=>{if(entries.some(e=>e.isIntersecting)){load();observer.disconnect()}},{rootMargin:'250px'})
+    observer.observe(preview.current)
+    return()=>{active=false;observer.disconnect()}
+  },[project.id,project.github,project.image_url])
   useEffect(()=>setBroken(false),[project.image_url])
-  if (project.image_url && !broken) return <img className="pf-project-image" src={project.image_url} alt={project.name} loading="lazy" onError={()=>setBroken(true)}/>
+  if ((project.image_url || discovered) && !broken) return <img className="pf-project-image" src={project.image_url || discovered!} alt={project.name} loading="lazy" onError={()=>setBroken(true)}/>
   const mobile = /mobile|flutter|ademicon/i.test(`${project.type} ${project.name} ${project.tags.join(' ')}`)
-  return <div className={`pf-concept ${mobile ? 'pf-mobile-concept' : ''}`} aria-hidden="true">
+  return <div ref={preview} className={`pf-concept ${mobile ? 'pf-mobile-concept' : ''}`} aria-hidden="true">
     {[0,...(mobile ? [1] : [])].map(n=><div className={mobile ? 'pf-phone' : 'pf-laptop'} key={n}>
       <div className="pf-concept-top"><b>{project.name}</b><span>•••</span></div>
       <div className="pf-concept-body"><span className="pf-concept-kicker">{project.type}</span><strong>{n ? t('Tudo organizado.') : project.name}</strong>{mobile ? <><div className="pf-mobile-summary"><small>{t(n ? 'Próxima visita' : 'Minha agenda')}</small><b>{n ? '14:30' : '03'}</b><span>{t(n ? 'Visita agendada' : 'Atividades do dia')}</span></div><div className="pf-mobile-tabs"><b>{t('Hoje')}</b><span>{t('Clientes')}</span></div>{[t('Visita agendada'),t('Acompanhamento'),t('Novo contato')].map((label,i)=><div className="pf-mobile-row" key={label}><i>{i+1}</i><span>{label}<small>{t('Ver detalhes')}</small></span></div>)}</> : <><div className="pf-web-feature"><div><strong>{/webshop/i.test(project.name) ? t('Tecnologia para o seu dia.') : t('Tudo em um só lugar.')}</strong><span>{t('Conheça o projeto')}</span></div><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="8"><path d="M20 60V45a30 30 0 0 1 60 0v15"/><rect x="12" y="48" width="18" height="35" rx="8" fill="currentColor"/><rect x="70" y="48" width="18" height="35" rx="8" fill="currentColor"/></svg></div><div className="pf-web-products">{project.tags.slice(0,3).map(tag=><span key={tag}>{tag}</span>)}</div></>}</div>
@@ -58,19 +76,31 @@ function GitHubNumbers({ github }: { github: string }) {
 function PortfolioView(){
   const {content}=usePortfolioContent(); const {t}=useTranslation()
   const [dark,setDark]=useState(false);const [menu,setMenu]=useState(false);const [selected,setSelected]=useState<PortfolioProject|null>(null)
-  const nav=useRef<HTMLElement>(null);const dialog=useRef<HTMLDialogElement>(null);const toggle=useRef<HTMLButtonElement>(null)
+  const root=useRef<HTMLDivElement>(null);const nav=useRef<HTMLElement>(null);const dialog=useRef<HTMLDialogElement>(null);const toggle=useRef<HTMLButtonElement>(null)
   const projects=content.projects.filter(p=>p.published!==false).sort((a,b)=>a.sort_order-b.sort_order)
   useEffect(()=>{try{const stored=localStorage.getItem('portfolio-theme');setDark(stored?stored==='dark':matchMedia('(prefers-color-scheme: dark)').matches)}catch{/* optional storage */}},[])
   useEffect(()=>{const meta=document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');const old=meta?.content;if(meta)meta.content=dark?'#27231f':'#d9cec2';return()=>{if(meta&&old)meta.content=old}},[dark])
   useEffect(()=>{if(!menu)return;const close=(e:KeyboardEvent)=>{if(e.key==='Escape'){setMenu(false);toggle.current?.focus()}};const outside=(e:PointerEvent)=>{if(!nav.current?.contains(e.target as Node))setMenu(false)};document.addEventListener('keydown',close);document.addEventListener('pointerdown',outside);return()=>{document.removeEventListener('keydown',close);document.removeEventListener('pointerdown',outside)}},[menu])
   useEffect(()=>{if(!selected)return;dialog.current?.showModal();const old=document.body.style.overflow;document.body.style.overflow='hidden';return()=>{document.body.style.overflow=old}},[selected])
   const changeTheme=()=>{setDark(!dark);try{localStorage.setItem('portfolio-theme',dark?'light':'dark')}catch{/* optional storage */}}
-  return <div className="pf-home" data-theme={dark?'dark':'light'} id="inicio">
+  useEffect(()=>{
+    const media=matchMedia('(prefers-reduced-motion: reduce)')
+    if(media.matches || !('IntersectionObserver' in window))return
+    const elements=root.current?.querySelectorAll<HTMLElement>('main > section, .pf-project-card, .pf-tech, .pf-contact')
+    const observer=new IntersectionObserver(entries=>{entries.forEach(entry=>{
+      entry.target.classList.toggle('pf-visible',entry.isIntersecting)
+    })},{threshold:0,rootMargin:'0px 0px -24px 0px'})
+    elements?.forEach(element=>{element.classList.add('pf-reveal');observer.observe(element)})
+    const restore=()=>{if(media.matches){observer.disconnect();elements?.forEach(element=>element.classList.remove('pf-reveal'))}}
+    media.addEventListener('change',restore)
+    return()=>{observer.disconnect();media.removeEventListener('change',restore);elements?.forEach(element=>element.classList.remove('pf-reveal'))}
+  },[projects.map(p=>p.id).join(',')])
+  return <div ref={root} className="pf-home" data-theme={dark?'dark':'light'} id="inicio">
     <ScrollProgress/>
     <header className="pf-nav" ref={nav}><a className="pf-brand" href="#inicio" onClick={()=>setMenu(false)}>Eric Ikeda</a><nav id="pf-menu" className={menu?'is-open':''} aria-label={t('Navegação principal')}>{[['Início','#inicio'],['Projetos','#experiencia'],['Sobre','#sobre'],['Contato','#contato']].map(([label,href])=><a key={href} href={href} onClick={()=>setMenu(false)}>{t(label)}</a>)}</nav><div className="pf-nav-tools"><LanguageSelector/><button className="pf-theme" onClick={changeTheme} aria-label={t(dark?'Ativar tema claro':'Ativar tema escuro')}><ThemeIcon dark={dark}/></button><button ref={toggle} className="pf-menu-button" onClick={()=>setMenu(!menu)} aria-expanded={menu} aria-controls="pf-menu" aria-label={t(menu?'Fechar menu':'Abrir menu')}><span/><span/><span/></button></div></header>
     <main className="pf-content">
       <section className="pf-hero"><div><span className="pf-eyebrow">{t('PORTFÓLIO • WEB & MOBILE')}</span><h1>Eric Ikeda</h1><p>{t('Desenvolvedor front-end')}</p><a className="pf-button" href="#experiencia">{t('Ver projetos')}</a></div><div className="pf-hero-art"><FoodPreview/><span className="pf-art-caption">{t('EYI Food • conceito de interface')}</span></div></section>
-      <section className="pf-about-row" id="sobre"><div className="pf-about"><h2>{t('Sobre')}</h2><p>{t('Sou de Ibiporã, PR. Crio interfaces web e mobile com React, TypeScript e Flutter.')}</p><details><summary>{t('Mais sobre meu trabalho')}</summary>{content.about_text.split(/\n\s*\n/).map((paragraph,i)=><p key={i}>{t(paragraph)}</p>)}<a href={content.resume_url} target="_blank" rel="noreferrer">{t('Ver currículo')}</a></details><span className="pf-signature" aria-label="Eric">Eric.</span></div><GitHubNumbers github={content.github}/></section>
+      <section className="pf-about-row" id="sobre"><div className="pf-about"><h2>{t('Sobre')}</h2><p>{t('Sou de Ibiporã, PR. Crio interfaces web e mobile com React, TypeScript e Flutter.')}</p><details><summary>{t('Mais sobre meu trabalho')}</summary>{content.about_text.split(/\n\s*\n/).map((paragraph,i)=><p key={i}>{t(paragraph)}</p>)}</details><span className="pf-signature" aria-label="Eric">Eric.</span></div><GitHubNumbers github={content.github}/></section>
       <section className="pf-projects" id="experiencia"><div className="pf-section-title"><h2>{t('Projetos')}</h2><span>{t('Ideias que viraram experiências.')}</span></div><div className="pf-project-grid">{projects.map(project=><button className="pf-project-card" key={project.id} onClick={()=>setSelected(project)}><ProjectPreview project={project}/><div className="pf-project-info"><div><h3>{project.name}</h3><p>{t(project.type)}{project.tags.length ? ` · ${project.tags.slice(0,2).join(' / ')}`:''}</p></div><span className="pf-project-plus" aria-hidden="true">+</span></div></button>)}</div>{!projects.length&&<p>{t('Nenhum projeto cadastrado.')}</p>}</section>
       <section className="pf-stack" id="habilidades"><h2>{t('Stack técnica')}</h2><div>{stack.map(([name,slug])=><div className="pf-tech" key={name}><img src={`/tech/${slug}.svg`} alt="" width="38" height="38" loading="lazy"/><span>{name}</span></div>)}</div></section>
       <section className="pf-academic"><div><h2>{t('Trajetória acadêmica')}</h2><h3>{t('Engenharia de Software')}</h3><p>UniSenaiPR · Londrina</p></div><dl><div><dt>{t('Ingresso')}</dt><dd>{t('Julho de 2021')}</dd></div><div><dt>{t('Conclusão')}</dt><dd>{t('Agosto de 2026')}</dd></div></dl><svg className="pf-building" viewBox="0 0 400 260" fill="none" stroke="currentColor" strokeWidth=".8" aria-hidden="true"><path d="M40 260V120L370 10v250M40 120l200 35 130-75M40 155l200 35 130-75M40 195l200 35 130-75M240 155v105M40 120v-20L370 0v10M80 107v153M120 94v166M160 81v179M200 68v192M280 40v220M320 27v233M360 14v246"/></svg></section>
