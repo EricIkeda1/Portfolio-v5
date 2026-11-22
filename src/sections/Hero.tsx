@@ -4,7 +4,7 @@ import ProtectedLogo from '@/components/ProtectedLogo'
 import { usePortfolioContent } from '@/context/PortfolioContentContext'
 
 const roles = [
-  'Desenvolvedor de Software Júnior',
+  'Desenvolvedor de Software',
   'Web & Mobile',
   'React • Flutter • TypeScript',
 ]
@@ -160,7 +160,7 @@ export default function Hero() {
                   marginBottom: '1.25rem',
                 }}
               >
-                {t("Disponível para oportunidades Júnior")}</div>
+                {t("Projetos web e mobile")}</div>
             </div>
 
             <div style={anim(80)}>
@@ -242,7 +242,7 @@ export default function Hero() {
                   fontWeight: 400,
                 }}
               >
-                {t("Desenvolvedor de Software Júnior com formação em Engenharia de Software e experiência prática em aplicações web e mobile. Trabalho com React, Flutter, TypeScript, Dart, APIs REST e PostgreSQL para transformar requisitos em soluções funcionais, responsivas e bem estruturadas.")}</p>
+                {t("Crio sites, aplicações web e experiências mobile. Explore meus projetos, conheça as tecnologias que uso e veja como transformo ideias em interfaces e funcionalidades.")}</p>
             </div>
 
             <div style={anim(320)}>
@@ -286,9 +286,7 @@ export default function Hero() {
 
 
                 <a
-                  href={content.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href="#contato"
                   className="font-mono"
                   style={{
                     background: 'transparent',
@@ -317,12 +315,7 @@ export default function Hero() {
                     el.style.color = 'var(--text)'
                   }}
                 >
-                  LinkedIn
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden="true">
-                    <path d="M14 3h7v7" />
-                    <path d="M10 14 21 3" />
-                    <path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5" />
-                  </svg>
+                  {t("Vamos conversar")}
                 </a>
               </div>
             </div>
@@ -421,7 +414,7 @@ export default function Hero() {
           }}
           onClick={() =>
             document
-              .getElementById('sobre')
+              .getElementById('experiencia')
               ?.scrollIntoView({ behavior: 'smooth' })
           }
         >

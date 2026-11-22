@@ -5,9 +5,9 @@ import ProtectedLogo from '@/components/ProtectedLogo'
 
 const links = [
   { label: 'Início', href: '#' },
+  { label: 'Projetos', href: '#experiencia' },
   { label: 'Sobre', href: '#sobre' },
   { label: 'Habilidades', href: '#habilidades' },
-  { label: 'Projetos', href: '#experiencia' },
   { label: 'Contato', href: '#contato' },
 ]
 

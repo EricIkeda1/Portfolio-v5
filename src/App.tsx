@@ -70,10 +70,10 @@ function PortfolioPage() {
           <ScrollProgress />
           <main>
             <Hero />
+            <Experience />
             <About />
             <Highlights />
             <Skills />
-            <Experience />
             <Versions />
             <Contact />
           </main>
