@@ -5,6 +5,7 @@ import ContactForm from './components/ContactForm'
 import ScrollProgress from './components/ScrollProgress'
 import type { PortfolioProject } from './lib/portfolio'
 import './portfolio-home.css'
+import { usePortfolioMotion } from './usePortfolioMotion'
 
 const imageRequests = new Map<string, Promise<string | null>>()
 const stack = [['React','react'],['TypeScript','typescript'],['Flutter','flutter'],['Node.js','nodejs'],['PostgreSQL','postgresql'],['Django','django'],['Python','python'],['HTML','html5'],['CSS','css3'],['WordPress','wordpress']]
@@ -77,6 +78,7 @@ function PortfolioView(){
   const {content}=usePortfolioContent(); const {t}=useTranslation()
   const [dark,setDark]=useState(false);const [menu,setMenu]=useState(false);const [selected,setSelected]=useState<PortfolioProject|null>(null)
   const root=useRef<HTMLDivElement>(null);const nav=useRef<HTMLElement>(null);const dialog=useRef<HTMLDialogElement>(null);const toggle=useRef<HTMLButtonElement>(null)
+  usePortfolioMotion(root)
   const projects=content.projects.filter(p=>p.published!==false).sort((a,b)=>a.sort_order-b.sort_order)
   useEffect(()=>{try{const stored=localStorage.getItem('portfolio-theme');setDark(stored?stored==='dark':matchMedia('(prefers-color-scheme: dark)').matches)}catch{/* optional storage */}},[])
   useEffect(()=>{const meta=document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');const old=meta?.content;if(meta)meta.content=dark?'#27231f':'#d9cec2';return()=>{if(meta&&old)meta.content=old}},[dark])
