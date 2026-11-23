@@ -91,3 +91,19 @@
  .pf-nav nav a:nth-child(n){margin:0}
  .pf-menu-button span{transition:transform .2s ease-out,opacity .12s ease-out}
 }
+
+/* Readable about disclosure and public metrics on every screen. */
+.pf-about details{font-size:16px;line-height:1.7}
+.pf-about summary{font-size:17px;font-weight:600;padding-block:8px}
+.pf-stats span{font-size:16px;line-height:1.45;max-width:none}
+.pf-stats strong{font-size:38px;line-height:1.15;min-height:44px}
+.pf-numbers>small{font-size:13px;line-height:1.5;margin-top:12px}
+@media(max-width:760px){
+ .pf-about summary{font-size:16px}
+ .pf-stats{grid-template-columns:38px minmax(0,1fr) minmax(0,1fr);gap:10px;padding:20px 12px}
+ .pf-stats svg{width:34px;height:34px}
+ .pf-stats>div{padding-left:10px;min-width:0}
+ .pf-stats span{font-size:15px;overflow-wrap:anywhere}
+ .pf-stats strong{font-size:34px;min-height:40px}
+ .pf-numbers>small{font-size:13px}
+}
