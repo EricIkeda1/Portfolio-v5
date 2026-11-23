@@ -49,9 +49,9 @@ export async function ratingsHandler(req: any, res: any) {
         WITH allowed AS (
           INSERT INTO portfolio_rating_limits (key, attempts) VALUES (${ip}, 1)
           ON CONFLICT (key) DO UPDATE SET
-            attempts = CASE WHEN portfolio_rating_limits.started_at < now() - interval '1 day' THEN 1 ELSE portfolio_rating_limits.attempts + 1 END,
-            started_at = CASE WHEN portfolio_rating_limits.started_at < now() - interval '1 day' THEN now() ELSE portfolio_rating_limits.started_at END
-          WHERE portfolio_rating_limits.attempts < 20 OR portfolio_rating_limits.started_at < now() - interval '1 day'
+            attempts = CASE WHEN portfolio_rating_limits.started_at < now() - interval '1 minute' THEN 1 ELSE portfolio_rating_limits.attempts + 1 END,
+            started_at = CASE WHEN portfolio_rating_limits.started_at < now() - interval '1 minute' THEN now() ELSE portfolio_rating_limits.started_at END
+          WHERE portfolio_rating_limits.attempts < 10 OR portfolio_rating_limits.started_at < now() - interval '1 minute'
           RETURNING key
         ), migrated AS (
           DELETE FROM portfolio_ratings WHERE voter_key = ${legacyVoter}
@@ -60,7 +60,10 @@ export async function ratingsHandler(req: any, res: any) {
         INSERT INTO portfolio_ratings (voter_key, rating, hidden) SELECT ${voter}, ${req.body.rating}, false FROM allowed
         ON CONFLICT (voter_key) DO UPDATE SET rating = EXCLUDED.rating, hidden = false, updated_at = now() RETURNING rating
       `
-      if (!rows.length) return res.status(429).json({ error: 'rate_limited' })
+      if (!rows.length) {
+        res.setHeader('Retry-After', '60')
+        return res.status(429).json({ error: 'rate_limited', retryAfter: 60 })
+      }
       await sql`DELETE FROM portfolio_rating_limits WHERE started_at < now() - interval '2 days'`.catch(() => {})
     }
     const [summary] = await sql`SELECT count(*)::int AS total, round(avg(rating), 1)::float AS average FROM portfolio_ratings WHERE hidden = false`

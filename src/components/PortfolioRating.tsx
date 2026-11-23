@@ -25,7 +25,7 @@ export default function PortfolioRating() {
       const response = await fetch('/api/content?view=ratings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ rating: score }) })
       if (!response.ok) { const data = await response.json(); throw Error(data.error) }
       setSummary(await response.json()); setNotice('Obrigado! Sua avaliação foi salva.')
-    } catch(error) { setNotice(error instanceof Error && error.message === 'rate_limited' ? 'Muitas tentativas. Tente novamente amanhã.' : 'Não foi possível salvar. Verifique os cookies e tente novamente.') }
+    } catch(error) { setNotice(error instanceof Error && error.message === 'rate_limited' ? 'Você enviou várias notas seguidas. Aguarde 1 minuto e tente novamente.' : 'Não foi possível salvar. Verifique os cookies e tente novamente.') }
     finally { setBusy(false) }
   }
   return <section className="pf-rating" aria-labelledby="rating-title">

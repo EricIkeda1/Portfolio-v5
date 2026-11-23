@@ -184,5 +184,6 @@
   "Não foi possível salvar. Verifique os cookies e tente novamente.": "No se pudo guardar. Revisa las cookies e inténtalo de nuevo.",
   "Muitas tentativas. Tente novamente amanhã.": "Demasiados intentos. Inténtalo mañana.",
   "Tentar novamente": "Intentar de nuevo",
-  "Uma avaliação por IP. Uma nova nota na mesma rede substitui a anterior. O IP é convertido em um identificador protegido; não guardamos o endereço em texto.": "Una valoración por IP. Una nueva nota en la misma red sustituye la anterior. Guardamos un identificador protegido derivado de la IP, no la dirección en texto."
+  "Uma avaliação por IP. Uma nova nota na mesma rede substitui a anterior. O IP é convertido em um identificador protegido; não guardamos o endereço em texto.": "Una valoración por IP. Una nueva nota en la misma red sustituye la anterior. Guardamos un identificador protegido derivado de la IP, no la dirección en texto.",
+  "Você enviou várias notas seguidas. Aguarde 1 minuto e tente novamente.": "Enviaste varias notas seguidas. Espera 1 minuto e inténtalo de nuevo."
 }
