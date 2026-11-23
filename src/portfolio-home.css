@@ -150,3 +150,6 @@
 .pf-nav-xp{display:inline-flex;align-items:center;justify-content:center;gap:4px;min-width:64px;padding:9px 11px;border:1px solid var(--pf-line);border-radius:22px;background:var(--pf-card);text-decoration:none;font-variant-numeric:tabular-nums;white-space:nowrap}.pf-nav-xp span{font-size:15px;font-weight:800;animation:pf-soft-rise .35s var(--pf-ease)}.pf-nav-xp small{font-size:11px;font-weight:700;color:var(--pf-muted)}#jornada{scroll-margin-top:120px}
 @media(max-width:760px){.pf-nav-xp{min-width:50px;padding:8px 7px}.pf-nav-xp span{font-size:13px}.pf-nav-xp small{font-size:10px}.pf-nav-tools{gap:5px}.pf-nav .pf-brand{min-width:0;flex-shrink:1}.pf-nav .pf-brand-logo{max-width:100%;object-fit:contain}}
 @media(max-width:380px){.pf-nav{padding-inline:10px;gap:5px}.pf-nav .pf-brand-logo{width:65px}.pf-nav-tools{gap:3px}}
+
+.pf-roles{min-height:2.5em;line-height:1.25}.pf-type-cursor{display:inline-block;margin-left:3px;font-weight:300;animation:pf-caret 1s steps(1) infinite}@keyframes pf-caret{50%{opacity:0}}
+@media(prefers-reduced-motion:reduce){.pf-type-cursor{display:none}.pf-roles{font-size:clamp(1rem,1.5vw,1.3rem)!important}}

@@ -188,5 +188,8 @@
   "Você enviou várias notas seguidas. Aguarde 1 minuto e tente novamente.": "Enviaste varias notas seguidas. Espera 1 minuto e inténtalo de nuevo.",
   "Avaliação enviada": "Valoración enviada",
   "Você já avaliou. A nota não pode ser alterada.": "Ya has valorado. La nota no se puede cambiar.",
-  "Uma avaliação por IP. Depois do envio, a nota não pode ser alterada. O IP é convertido em um identificador protegido; não guardamos o endereço em texto.": "Una valoración por IP. Una vez enviada, la nota no se puede cambiar. La IP se convierte en un identificador protegido; no guardamos la dirección en texto."
+  "Uma avaliação por IP. Depois do envio, a nota não pode ser alterada. O IP é convertido em um identificador protegido; não guardamos o endereço em texto.": "Una valoración por IP. Una vez enviada, la nota no se puede cambiar. La IP se convierte en un identificador protegido; no guardamos la dirección en texto.",
+  "Desenvolvedor mobile": "Desarrollador móvil",
+  "Desenvolvedor full stack": "Desarrollador full stack",
+  "Desenvolvedor back-end": "Desarrollador back-end"
 }
