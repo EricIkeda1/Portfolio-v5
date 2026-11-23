@@ -23,6 +23,6 @@ export default function ProjectCarousel({ children, count }: { children: ReactNo
   }
   return <div className="pf-carousel" role="region" aria-roledescription="carrossel" aria-label={t('Projetos')}>
     <div ref={track} id="project-carousel-track" className="pf-project-grid pf-carousel-track">{children}</div>
-    {count > 1 && <div className="pf-carousel-controls"><button type="button" onClick={()=>move(-1)} disabled={position.start} aria-controls="project-carousel-track">{t('Anterior')}</button><span>{count} {t('Projetos')}</span><button type="button" onClick={()=>move(1)} disabled={position.end} aria-controls="project-carousel-track">{t('Próximo')}</button></div>}
+    {count > 1 && <div className="pf-carousel-controls"><button type="button" onClick={()=>move(-1)} disabled={position.start} aria-controls="project-carousel-track">{t('Anterior')}</button><button type="button" onClick={()=>move(1)} disabled={position.end} aria-controls="project-carousel-track">{t('Próximo')}</button></div>}
   </div>
 }
