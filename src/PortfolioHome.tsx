@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { PortfolioContentProvider, usePortfolioContent } from './context/PortfolioContentContext'
 import { LanguageSelector, useTranslation } from './i18n/LanguageContext'
+import ProtectedLogo from './components/ProtectedLogo'
 import ContactForm from './components/ContactForm'
 import ScrollProgress from './components/ScrollProgress'
 import type { PortfolioProject } from './lib/portfolio'
@@ -50,6 +51,35 @@ function ProjectPreview({ project }: { project: PortfolioProject }) {
     </div>)}<span className="pf-concept-caption">{t('Prévia ilustrativa')}</span>
   </div>
 }
+function AnimatedNumber({ value }: { value: number | undefined }) {
+  const element = useRef<HTMLElement>(null)
+  const [display, setDisplay] = useState<number | undefined>(undefined)
+  useEffect(() => {
+    if (value === undefined) return
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)')
+    let timer: ReturnType<typeof setTimeout> | undefined
+    let current = 0, started = false
+    const tick = () => {
+      current = Math.min(value, current + 1)
+      setDisplay(current)
+      if (current < value) timer = setTimeout(tick, Math.max(16, Math.min(65, 1800 / Math.max(1, value))))
+    }
+    const start = () => {
+      if (started) return
+      started = true
+      if (reduced.matches) setDisplay(value)
+      else { setDisplay(0); tick() }
+    }
+    const observer = new IntersectionObserver(entries => {
+      if (entries.some(entry => entry.isIntersecting)) { start(); observer.disconnect() }
+    }, { threshold: .5 })
+    if (element.current) observer.observe(element.current)
+    const stop = () => { if(reduced.matches){clearTimeout(timer);setDisplay(value)} }
+    reduced.addEventListener('change', stop)
+    return () => { clearTimeout(timer); observer.disconnect(); reduced.removeEventListener('change', stop) }
+  }, [value])
+  return <strong ref={element} aria-label={value === undefined ? undefined : String(value)}><span aria-hidden="true">{display ?? '—'}</span></strong>
+}
 function GitHubNumbers({ github }: { github: string }) {
   const {t}=useTranslation()
   const [stats,setStats]=useState<{repos:number;languages:number}|null>(null)
@@ -72,7 +102,7 @@ function GitHubNumbers({ github }: { github: string }) {
     void fetchStats().catch(()=>{})
     return ()=>controller.abort()
   },[github])
-  return <div className="pf-numbers"><h2>{t('Números reais')}</h2><div className="pf-stats"><a href={github} target="_blank" rel="noreferrer" aria-label="GitHub"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1a11 11 0 0 0-3.48 21.44c.55.1.75-.24.75-.53v-2.05c-3.06.67-3.71-1.3-3.71-1.3-.5-1.27-1.22-1.61-1.22-1.61-1-.69.08-.67.08-.67 1.1.08 1.68 1.13 1.68 1.13.98 1.68 2.57 1.19 3.2.91.1-.71.38-1.19.69-1.46-2.44-.28-5.01-1.22-5.01-5.44 0-1.2.43-2.18 1.13-2.95-.11-.28-.49-1.4.11-2.91 0 0 .92-.3 3.03 1.13a10.5 10.5 0 0 1 5.5 0c2.1-1.43 3.02-1.13 3.02-1.13.6 1.51.22 2.63.11 2.91.7.77 1.13 1.75 1.13 2.95 0 4.23-2.58 5.16-5.03 5.43.4.35.75 1.02.75 2.06v3c0 .29.2.64.76.53A11 11 0 0 0 12 1Z"/></svg></a><div><span>{t('Repositórios públicos')}</span><strong>{stats?.repos ?? '—'}</strong></div><div><span>{t('Linguagens principais')}</span><strong>{stats?.languages ?? '—'}</strong></div></div><small>{t('Dados públicos do GitHub. As contagens aparecem quando disponíveis.')}</small></div>
+  return <div className="pf-numbers"><h2>{t('Números reais')}</h2><div className="pf-stats"><a href={github} target="_blank" rel="noreferrer" aria-label="GitHub"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1a11 11 0 0 0-3.48 21.44c.55.1.75-.24.75-.53v-2.05c-3.06.67-3.71-1.3-3.71-1.3-.5-1.27-1.22-1.61-1.22-1.61-1-.69.08-.67.08-.67 1.1.08 1.68 1.13 1.68 1.13.98 1.68 2.57 1.19 3.2.91.1-.71.38-1.19.69-1.46-2.44-.28-5.01-1.22-5.01-5.44 0-1.2.43-2.18 1.13-2.95-.11-.28-.49-1.4.11-2.91 0 0 .92-.3 3.03 1.13a10.5 10.5 0 0 1 5.5 0c2.1-1.43 3.02-1.13 3.02-1.13.6 1.51.22 2.63.11 2.91.7.77 1.13 1.75 1.13 2.95 0 4.23-2.58 5.16-5.03 5.43.4.35.75 1.02.75 2.06v3c0 .29.2.64.76.53A11 11 0 0 0 12 1Z"/></svg></a><div><span>{t('Repositórios públicos')}</span><AnimatedNumber value={stats?.repos}/></div><div><span>{t('Linguagens principais')}</span><AnimatedNumber value={stats?.languages}/></div></div><small>{t('Dados públicos do GitHub. As contagens aparecem quando disponíveis.')}</small></div>
 }
 function PortfolioView(){
   const {content}=usePortfolioContent(); const {t}=useTranslation()
@@ -100,16 +130,16 @@ function PortfolioView(){
   },[projects.map(p=>p.id).join(',')])
   return <div ref={root} className="pf-home" data-theme={dark?'dark':'light'} id="inicio">
     <ScrollProgress/>
-    <header className="pf-nav" ref={nav}><a className="pf-brand" href="#inicio" onClick={()=>setMenu(false)}>Eric Ikeda</a><nav id="pf-menu" className={menu?'is-open':''} aria-label={t('Navegação principal')} inert={mobileMenu && !menu}><div className="pf-menu-inner">{[['Início','#inicio'],['Projetos','#experiencia'],['Sobre','#sobre'],['Contato','#contato']].map(([label,href])=><a key={href} href={href} onClick={()=>setMenu(false)}>{t(label)}</a>)}</div></nav><div className="pf-nav-tools"><LanguageSelector/><button className="pf-theme" onClick={changeTheme} aria-label={t(dark?'Ativar tema claro':'Ativar tema escuro')}><ThemeIcon dark={dark}/></button><button ref={toggle} className="pf-menu-button" onClick={()=>setMenu(!menu)} aria-expanded={menu} aria-controls="pf-menu" aria-label={t(menu?'Fechar menu':'Abrir menu')}><span/><span/><span/></button></div></header>
+    <header className="pf-nav" ref={nav}><a className="pf-brand" href="#inicio" onClick={()=>setMenu(false)}><ProtectedLogo className="pf-brand-logo"/></a><nav id="pf-menu" className={menu?'is-open':''} aria-label={t('Navegação principal')} inert={mobileMenu && !menu}><div className="pf-menu-inner">{[['Início','#inicio'],['Projetos','#experiencia'],['Sobre','#sobre'],['Contato','#contato']].map(([label,href])=><a key={href} href={href} onClick={()=>setMenu(false)}>{t(label)}</a>)}</div></nav><div className="pf-nav-tools"><LanguageSelector/><button className="pf-theme" onClick={changeTheme} aria-label={t(dark?'Ativar tema claro':'Ativar tema escuro')}><ThemeIcon dark={dark}/></button><button ref={toggle} className="pf-menu-button" onClick={()=>setMenu(!menu)} aria-expanded={menu} aria-controls="pf-menu" aria-label={t(menu?'Fechar menu':'Abrir menu')}><span/><span/><span/></button></div></header>
     <main className="pf-content">
       <section className="pf-hero"><div><span className="pf-eyebrow">{t('PORTFÓLIO • WEB & MOBILE')}</span><h1>Eric Ikeda</h1><p>{t('Desenvolvedor front-end')}</p><a className="pf-button" href="#experiencia">{t('Ver projetos')}</a></div><div className="pf-hero-art"><FoodPreview/><span className="pf-art-caption">{t('EYI Food • conceito de interface')}</span></div></section>
-      <section className="pf-about-row" id="sobre"><div className="pf-about"><img className="pf-about-photo" src="/api/profile-image?size=avatar" alt="Eric Ikeda" width="160" height="160" loading="lazy" decoding="async"/><h2>{t('Sobre')}</h2><p>{t('Sou de Ibiporã, PR. Crio interfaces web e mobile com React, TypeScript e Flutter.')}</p><details><summary>{t('Mais sobre meu trabalho')}</summary>{content.about_text.split(/\n\s*\n/).map((paragraph,i)=><p key={i}>{t(paragraph)}</p>)}</details><span className="pf-signature" aria-label="Eric">Eric.</span></div><GitHubNumbers github={content.github}/></section>
+      <section className="pf-about-row" id="sobre"><div className="pf-about"><img className="pf-about-photo" src="/api/profile-image?size=avatar" alt="Eric Ikeda" width="160" height="160" loading="eager" decoding="async"/><h2>{t('Sobre')}</h2><p>{t('Sou de Ibiporã, PR. Crio interfaces web e mobile com React, TypeScript e Flutter.')}</p><details><summary>{t('Mais sobre meu trabalho')}</summary>{content.about_text.split(/\n\s*\n/).map((paragraph,i)=><p key={i}>{t(paragraph)}</p>)}</details><span className="pf-signature" aria-label="Eric">Eric.</span></div><GitHubNumbers github={content.github}/></section>
       <section className="pf-projects" id="experiencia"><div className="pf-section-title"><h2>{t('Projetos')}</h2><span>{t('Ideias que viraram experiências.')}</span></div><div className="pf-project-grid">{projects.map(project=><button className="pf-project-card" key={project.id} onClick={()=>setSelected(project)}><ProjectPreview project={project}/><div className="pf-project-info"><div><h3>{project.name}</h3><p>{t(project.type)}{project.tags.length ? ` · ${project.tags.slice(0,2).join(' / ')}`:''}</p></div><span className="pf-project-plus" aria-hidden="true">+</span></div></button>)}</div>{!projects.length&&<p>{t('Nenhum projeto cadastrado.')}</p>}</section>
       <section className="pf-stack" id="habilidades"><h2>{t('Stack técnica')}</h2><div>{stack.map(([name,slug])=><div className="pf-tech" key={name}><img src={`/tech/${slug}.svg`} alt="" width="38" height="38" loading="lazy"/><span>{name}</span></div>)}</div></section>
       <section className="pf-academic"><div><h2>{t('Trajetória acadêmica')}</h2><h3>{t('Engenharia de Software')}</h3><p>UniSenaiPR · Londrina</p></div><dl><div><dt>{t('Ingresso')}</dt><dd>{t('Julho de 2021')}</dd></div><div><dt>{t('Conclusão')}</dt><dd>{t('Agosto de 2026')}</dd></div></dl><svg className="pf-building" viewBox="0 0 400 260" fill="none" stroke="currentColor" strokeWidth=".8" aria-hidden="true"><path d="M40 260V120L370 10v250M40 120l200 35 130-75M40 155l200 35 130-75M40 195l200 35 130-75M240 155v105M40 120v-20L370 0v10M80 107v153M120 94v166M160 81v179M200 68v192M280 40v220M320 27v233M360 14v246"/></svg></section>
       <section className="pf-evolution"><h2>{t('Evolução do portfólio')}</h2><ol>{versions.map((url,i)=><li key={url}><a href={url} target={i<4?'_blank':undefined} rel={i<4?'noreferrer':undefined} aria-label={`${t('Portfólio')} V${i+1}`}><div className={`pf-version-preview pf-version-${i}`} aria-hidden="true"><i/><div><b/><b/><b/></div></div><span className="pf-version-dot"/><strong>V{i+1}</strong>{i===4&&<small>{t('Atual')}</small>}</a></li>)}</ol></section>
     </main>
-    <footer className="pf-footer" id="contato"><div className="pf-contact"><h2>{t('Vamos conversar')}</h2><ContactForm/></div><div className="pf-footer-bottom"><a href="#inicio">Eric Ikeda</a><span>{t('Desenvolvido por Eric Y. Ikeda')}</span></div></footer>
+    <footer className="pf-footer" id="contato"><div className="pf-contact"><h2>{t('Vamos conversar')}</h2><ContactForm/></div><div className="pf-footer-bottom"><a href="#inicio"><ProtectedLogo className="pf-brand-logo" loading="lazy"/></a><span>{t('Desenvolvido por Eric Y. Ikeda')}</span></div></footer>
     {selected&&<dialog ref={dialog} className="pf-dialog" aria-labelledby="pf-project-title" onCancel={()=>setSelected(null)} onClick={e=>{if(e.target===e.currentTarget)setSelected(null)}}><button className="pf-dialog-close" aria-label={t('Fechar')} onClick={()=>setSelected(null)}>×</button><ProjectPreview project={selected}/><div className="pf-dialog-copy"><span className="pf-eyebrow">{t(selected.type)}</span><h2 id="pf-project-title">{selected.name}</h2><p>{t(selected.description)}</p><div className="pf-tags">{selected.tags.map(tag=><span key={tag}>{tag}</span>)}</div><ul>{selected.highlights.map(item=><li key={item}>{t(item)}</li>)}</ul>{/^https?:\/\//i.test(selected.github)&&<a className="pf-button" href={selected.github} target="_blank" rel="noreferrer">{t('Acessar projeto')}</a>}</div></dialog>}
   </div>
 }

@@ -78,3 +78,16 @@
 .pf-about-photo{float:right;width:clamp(110px,11vw,160px);height:auto;aspect-ratio:1;object-fit:cover;object-position:center;border-radius:24px;margin:0 0 20px 24px;border:1px solid var(--pf-line);box-shadow:0 8px 24px #00000012}
 @media(max-width:760px){.pf-about-photo{width:112px;border-radius:20px;margin:0 0 16px 18px}}
 @media(max-width:360px){.pf-about-photo{width:88px;margin-left:12px}}
+
+.pf-brand-logo{display:block;width:112px;height:48px;object-fit:contain;border-radius:6px}
+.pf-stats strong{font-variant-numeric:tabular-nums;min-height:30px}
+/* Composite-only menu animation: no changing grid height or page relayout. */
+@media(max-width:760px){
+ .pf-nav{backdrop-filter:none;background:var(--pf-bg)}
+ .pf-brand-logo{width:92px;height:38px}
+ .pf-nav nav,.pf-nav nav.is-open{position:absolute;top:calc(100% + 8px);left:0;width:100%;display:block;grid-template-rows:none;padding:12px;border:1px solid var(--pf-line);border-radius:18px;background:var(--pf-bg);box-shadow:0 12px 24px #0002;transform:translateY(-6px);opacity:0;visibility:hidden;pointer-events:none;transition:transform .2s ease-out,opacity .16s ease-out,visibility 0s .2s}
+ .pf-nav nav.is-open{transform:translateY(0);opacity:1;visibility:visible;pointer-events:auto;transition:transform .2s ease-out,opacity .16s ease-out,visibility 0s}
+ .pf-nav nav a,.pf-nav nav.is-open a{transform:none;transition:background-color .15s}
+ .pf-nav nav a:nth-child(n){margin:0}
+ .pf-menu-button span{transition:transform .2s ease-out,opacity .12s ease-out}
+}
