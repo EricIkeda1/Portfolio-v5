@@ -15,14 +15,24 @@ const versions = ['https://ericikedaportfolio.vercel.app/','https://ericyikedapo
 function ThemeIcon({ dark }: { dark: boolean }) { return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">{dark ? <><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></> : <path d="M20 15.5A8.5 8.5 0 0 1 8.5 4 8.5 8.5 0 1 0 20 15.5Z"/>}</svg> }
 function WebShopPreview() {
   const { t } = useTranslation()
-  return <a className="pf-browser pf-webshop" href="https://webshopeyi.vercel.app/" target="_blank" rel="noopener noreferrer" aria-label={t('Abrir WebShop')}>
+  const viewport = useRef<HTMLDivElement>(null)
+  const [scale, setScale] = useState(0)
+  useEffect(() => {
+    const element = viewport.current
+    if (!element) return
+    const resize = () => setScale(element.clientWidth / 1200)
+    resize()
+    const observer = new ResizeObserver(resize)
+    observer.observe(element)
+    return () => observer.disconnect()
+  }, [])
+  return <div className="pf-browser pf-webshop">
     <div className="pf-browser-bar"><i/><i/><i/><span>webshopeyi.vercel.app</span></div>
-    <div className="pf-store-top">Seu próximo favorito está aqui.</div>
-    <div className="pf-store-nav"><b>EYI <span>STORE</span></b><span className="pf-store-search">Buscar produtos</span><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M5 7h14l1 14H4L5 7Z M9 8V6a3 3 0 0 1 6 0v2"/></svg></div>
-    <div className="pf-store-categories">Tecnologia　 Beleza　 Casa　 Moda</div>
-    <div className="pf-store-hero"><div><small>ESCOLHAS QUE INSPIRAM</small><strong>Design que você vê.<br/>Qualidade que você sente.</strong><p>Descubra os favoritos que combinam com você.</p><span className="pf-store-cta">Explorar coleção</span></div><img src="https://raw.githubusercontent.com/EricIkeda1/webshop/main/server/data/product-images/101-thumbnail.webp" alt="Apple AirPods Max, produto em destaque no WebShop" fetchPriority="high" width="500" height="500"/><span className="pf-store-tag">SELEÇÃO EYI<br/><b>Apple AirPods Max</b></span></div>
-    <div className="pf-store-bottom"><span>● ○ ○</span><span>Tecnologia, beleza, casa e moda.</span></div>
-  </a>
+    <div ref={viewport} className="pf-live-preview">
+      {scale > 0 && <iframe src="https://webshopeyi.vercel.app/" title="WebShop — site real" width="1200" height="780" tabIndex={-1} style={{ transform: `scale(${scale})` }} referrerPolicy="strict-origin-when-cross-origin"/>}
+      <a href="https://webshopeyi.vercel.app/" target="_blank" rel="noopener noreferrer" aria-label={t('Abrir WebShop')}><span>{t('Abrir WebShop')}</span></a>
+    </div>
+  </div>
 }
 function ProjectPreview({ project }: { project: PortfolioProject }) {
   const { t } = useTranslation()
