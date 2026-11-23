@@ -1,3 +1,4 @@
+import RatingsPanel from './RatingsPanel'
 import { useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from 'react'
 import {
   adminLogin,
@@ -130,6 +131,7 @@ const navigation = [
   { id: 'projects', label: 'Projetos', icon: 'projects' as IconName },
   { id: 'contact', label: 'Contato', icon: 'contact' as IconName },
   { id: 'personal-messages', label: 'Recados pessoais', icon: 'contact' as IconName },
+  { id: 'ratings', label: 'Avaliações', icon: 'contact' as IconName },
   { id: 'messages', label: 'Contatos do portfólio', icon: 'contact' as IconName },
   { id: 'settings', label: 'Configurações', icon: 'settings' as IconName },
 ]
@@ -508,6 +510,7 @@ function Dashboard({ user, onUserUpdated, onLogout }: { user: AdminUser; onUserU
           {!loading && !loadError && active === 'profile' && <ProfileEditor content={content} onUpdated={setContent} />}
           {!loading && !loadError && active === 'projects' && <ProjectsEditor projects={content.projects} onProjectsChange={updateProjects} />}
           {!loading && !loadError && active === 'contact' && <ContactEditor content={content} onUpdated={setContent} />}
+          {!loading && !loadError && active === 'ratings' && <RatingsPanel/>}
           {!loading && !loadError && active === 'messages' && <MessagesInbox key="portfolio" source="portfolio" />}
           {!loading && !loadError && active === 'personal-messages' && <MessagesInbox key="personal" source="personal" />}
           {!loading && !loadError && active === 'settings' && <SettingsPanel user={user} onUserUpdated={onUserUpdated} />}

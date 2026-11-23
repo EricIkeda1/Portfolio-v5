@@ -1,3 +1,4 @@
+import CookieConsent from './components/CookieConsent'
 import { useEffect, useRef, useState } from 'react'
 import { PortfolioContentProvider, usePortfolioContent } from './context/PortfolioContentContext'
 import { LanguageSelector, useTranslation } from './i18n/LanguageContext'
@@ -142,6 +143,7 @@ function PortfolioView(){
       <PortfolioRating/>
     </main>
     <footer className="pf-footer" id="contato"><div className="pf-contact"><h2>{t('Vamos conversar')}</h2><ContactForm/></div><div className="pf-footer-bottom"><a href="#inicio"><ProtectedLogo className="pf-brand-logo" loading="lazy"/></a><span>{t('Desenvolvido por Eric Y. Ikeda')}</span></div></footer>
+    <CookieConsent/>
     {selected&&<dialog ref={dialog} className="pf-dialog" aria-labelledby="pf-project-title" onCancel={()=>setSelected(null)} onClick={e=>{if(e.target===e.currentTarget)setSelected(null)}}><button className="pf-dialog-close" aria-label={t('Fechar')} onClick={()=>setSelected(null)}>×</button><ProjectPreview project={selected}/><div className="pf-dialog-copy"><span className="pf-eyebrow">{t(selected.type)}</span><h2 id="pf-project-title">{selected.name}</h2><p>{t(selected.description)}</p><div className="pf-tags">{selected.tags.map(tag=><span key={tag}>{tag}</span>)}</div><ul>{selected.highlights.map(item=><li key={item}>{t(item)}</li>)}</ul>{/^https?:\/\//i.test(selected.github)&&<a className="pf-button" href={selected.github} target="_blank" rel="noreferrer">{t('Acessar projeto')}</a>}</div></dialog>}
   </div>
 }

@@ -1,3 +1,4 @@
+import { ensureRatings, validRating } from './_lib/ratings.js'
 import { requireAdmin } from './_lib/auth.js'
 import { readContact } from './_lib/contact-crypto.js'
 import { ensureContactSchema, parseMessageSource } from './_lib/contact.js'
@@ -16,6 +17,27 @@ export function createAdminMessagesHandler(deps = { requireAdmin, getSql, ensure
     if (req.method !== 'GET' && !requireJson(req, res)) return
 
     try {
+      if (req.query?.view === 'ratings') {
+        await ensureRatings()
+        const sql = database()
+        if (req.method === 'GET') {
+          const before = Number(req.query?.before || 9007199254740991)
+          if (!Number.isSafeInteger(before) || before < 1) return res.status(400).json({error:'Página inválida.'})
+          const rows = await sql`SELECT id, rating, updated_at FROM portfolio_ratings WHERE hidden = false AND id < ${before} ORDER BY id DESC LIMIT 51`
+          return res.status(200).json({ratings: rows.slice(0,50), next: rows.length > 50 ? rows[49].id : null})
+        }
+        const id = req.body?.id
+        if (!Number.isSafeInteger(id) || id < 1) return res.status(400).json({error:'Avaliação inválida.'})
+        if (req.method === 'PUT' && validRating(req.body?.rating)) {
+          const rows = await sql`UPDATE portfolio_ratings SET rating = ${req.body.rating}, updated_at = now() WHERE id = ${id} AND hidden = false RETURNING id`
+          return res.status(rows.length ? 200 : 404).json({ok: !!rows.length})
+        }
+        if (req.method === 'DELETE') {
+          const rows = await sql`UPDATE portfolio_ratings SET hidden = true WHERE id = ${id} AND hidden = false RETURNING id`
+          return res.status(rows.length ? 200 : 404).json({ok: !!rows.length})
+        }
+        return res.status(400).json({error:'Nota deve ser um inteiro de 0 a 5.'})
+      }
       if (req.method === 'GET' && req.query?.notifications === '1') {
         const keys = await getPushKeys()
         return res.status(200).json({ publicKey: keys.publicKey })

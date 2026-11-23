@@ -1,3 +1,4 @@
+import { ratingCookiesAccepted } from './CookieConsent'
 import { useEffect, useState } from 'react'
 import { useTranslation } from '../i18n/LanguageContext'
 type Summary = { average: number | null; total: number; mine: number | null }
@@ -5,6 +6,7 @@ export default function PortfolioRating() {
   const { t } = useTranslation()
   const [summary, setSummary] = useState<Summary | null>(null)
   const [score, setScore] = useState<number | null>(null)
+  const [consent,setConsent]=useState(false)
   const [busy, setBusy] = useState(false)
   const [notice, setNotice] = useState('')
   const load = async () => {
@@ -14,10 +16,10 @@ export default function PortfolioRating() {
       const data = await response.json(); setSummary(data); setScore(data.mine); setNotice('')
     } catch { setNotice('Não foi possível carregar as avaliações. Tente novamente.') }
   }
-  useEffect(() => { void load() }, [])
+  useEffect(() => { const refresh=()=>{setConsent(ratingCookiesAccepted());void load()};refresh();window.addEventListener('portfolio-consent-change',refresh);return()=>window.removeEventListener('portfolio-consent-change',refresh) }, [])
   async function submit(event: React.FormEvent) {
     event.preventDefault()
-    if (score === null || busy) return
+    if (score === null || busy || !consent) return
     setBusy(true); setNotice('')
     try {
       const response = await fetch('/api/content?view=ratings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ rating: score }) })
@@ -28,10 +30,10 @@ export default function PortfolioRating() {
   }
   return <section className="pf-rating" aria-labelledby="rating-title">
     <div><h2 id="rating-title">{t('O que achou do portfólio?')}</h2><p>{t('De 0 a 5, quantas estrelas você dá?')}</p>
-      <div className="pf-rating-result"><strong>{summary ? summary.average === null ? '—' : summary.average.toFixed(1).replace('.', ',') : '…'}</strong><span>/ 5 <span aria-hidden="true">★</span><small>{summary ? `${summary.total} ${t('avaliações')}` : t('Carregando…')}</small></span></div>
+      <p className="pf-rating-note">{t('Avaliações moderadas pelo responsável do site.')}</p><div className="pf-rating-result"><strong>{summary ? summary.average === null ? '—' : summary.average.toFixed(1).replace('.', ',') : '…'}</strong><span>/ 5 <span aria-hidden="true">★</span><small>{summary ? `${summary.total} ${t('avaliações')}` : t('Carregando…')}</small></span></div>
       {summary?.total === 0 && <p>{t('Seja a primeira pessoa a avaliar.')}</p>}
     </div>
-    <form onSubmit={submit}><fieldset disabled={busy || !summary}><legend>{t('Sua avaliação')}</legend><div className="pf-rating-options">
+    <form onSubmit={submit}>{!consent&&<button type="button" className="pf-button" onClick={()=>window.dispatchEvent(new Event('portfolio-cookie-settings'))}>Permitir cookie para avaliar</button>}<fieldset disabled={busy || !summary || !consent}><legend>{t('Sua avaliação')}</legend><div className="pf-rating-options">
       {[0,1,2,3,4,5].map(value => <label key={value}><input type="radio" name="portfolio-rating" value={value} checked={score === value} onChange={()=>setScore(value)}/><span className={score !== null && value > 0 && value <= score ? 'filled' : ''}><b aria-hidden="true">{value === 0 ? '0' : '★'}</b><small>{value}</small><span className="pf-rating-sr">{value} {t('estrelas')}</span></span></label>)}
       </div><button className="pf-button" type="submit" disabled={score === null || busy}>{t(busy ? 'Salvando…' : summary?.mine !== null && summary?.mine !== undefined ? 'Atualizar avaliação' : 'Enviar avaliação')}</button></fieldset>
       <p className="pf-rating-note">{t('Sem nome ou e-mail. Usamos um cookie para reconhecer seu voto; uma nova nota substitui a anterior neste navegador.')}</p>
