@@ -31,5 +31,5 @@ export default function DeveloperRoles() {
     document.addEventListener('visibilitychange', sync)
     return () => { clearTimeout(timer); media.removeEventListener('change', sync); document.removeEventListener('visibilitychange', sync) }
   }, [serialized])
-  return <p className="pf-roles"><span className="pf-rating-sr">{roles.join(', ')}</span><span aria-hidden="true">{text}<span className="pf-type-cursor">|</span></span></p>
+  return <p className="pf-roles"><span className="pf-rating-sr">{roles.join(', ')}</span><span aria-hidden="true">{text}<span className="pf-type-cursor"/></span></p>
 }

@@ -153,3 +153,12 @@
 
 .pf-roles{min-height:2.5em;line-height:1.25}.pf-type-cursor{display:inline-block;margin-left:3px;font-weight:300;animation:pf-caret 1s steps(1) infinite}@keyframes pf-caret{50%{opacity:0}}
 @media(prefers-reduced-motion:reduce){.pf-type-cursor{display:none}.pf-roles{font-size:clamp(1rem,1.5vw,1.3rem)!important}}
+
+/* Keep the introduction aligned while the role is being typed. */
+.pf-hero>div:first-child{min-width:0}.pf-hero h1{margin:12px 0 16px;line-height:1.05;letter-spacing:-.055em}
+.pf-hero>div>.pf-roles{margin:0;min-height:2.6em;line-height:1.3;font-size:clamp(1.25rem,2vw,2rem);letter-spacing:-.035em;max-width:100%}
+.pf-type-cursor{width:2px;height:.85em;background:currentColor;vertical-align:baseline;margin-left:5px}
+.pf-carousel-track.pf-project-grid{display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-inline:2px;padding:8px 2px 18px;overscroll-behavior-x:contain;scrollbar-width:thin;scrollbar-color:var(--pf-line) transparent}
+.pf-carousel-track>.pf-project-card{flex:0 0 calc((100% - 40px)/3);min-width:0;scroll-snap-align:start}.pf-carousel-track>.pf-project-card:focus-visible{outline-offset:-3px}.pf-carousel-controls{display:flex;justify-content:center;align-items:center;gap:20px;margin-top:12px}.pf-carousel-controls button{border:1px solid var(--pf-line);background:var(--pf-card);color:var(--pf-text);border-radius:30px;padding:11px 18px;font-size:14px}.pf-carousel-controls button:disabled{opacity:.4;cursor:default}.pf-carousel-controls>span{font-size:13px;color:var(--pf-muted)}
+@media(max-width:1100px){.pf-carousel-track>.pf-project-card{flex-basis:calc((100% - 20px)/2)}}
+@media(max-width:760px){.pf-hero h1{font-size:clamp(2.8rem,10.5vw,4.5rem)}.pf-hero>div>.pf-roles{font-size:clamp(1.15rem,5.1vw,1.6rem)}.pf-carousel-track.pf-project-grid{gap:14px}.pf-carousel-track>.pf-project-card{flex-basis:90%}.pf-carousel-controls{gap:14px}}
