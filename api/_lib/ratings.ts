@@ -1,3 +1,4 @@
+import { isIP } from 'node:net'
 import { createHmac, randomUUID, timingSafeEqual } from 'node:crypto'
 import { getSql } from './db.js'
 import { getSessionSecret } from './auth.js'
@@ -35,9 +36,16 @@ export async function ratingsHandler(req: any, res: any) {
       res.setHeader('Set-Cookie', `portfolio_voter=${id}.${hash(`rating-cookie:${id}`)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=31536000`)
     }
     await ensureRatings()
-    const sql = getSql(), voter = hash(`rating-voter:${id}`)
+    const sql = getSql()
+    const rawIp = getClientIp(req)
+    const ipVersion = isIP(rawIp)
+    if (req.method === 'POST' && !ipVersion) return res.status(400).json({error:'ip_unavailable'})
+    // Canonicalize IPv6 so equivalent spellings cannot create extra votes.
+    const normalizedIp = ipVersion === 6 ? new URL(`http://[${rawIp}]/`).hostname : rawIp
+    const voter = hash(`rating-ip:${normalizedIp}`)
+    const legacyVoter = valid ? hash(`rating-voter:${id}`) : null
     if (req.method === 'POST') {
-      const ip = hash(`rating-limit:${getClientIp(req)}`)
+      const ip = hash(`rating-limit:${normalizedIp}`)
       const rows = await sql`
         WITH allowed AS (
           INSERT INTO portfolio_rating_limits (key, attempts) VALUES (${ip}, 1)
@@ -46,8 +54,11 @@ export async function ratingsHandler(req: any, res: any) {
             started_at = CASE WHEN portfolio_rating_limits.started_at < now() - interval '1 day' THEN now() ELSE portfolio_rating_limits.started_at END
           WHERE portfolio_rating_limits.attempts < 20 OR portfolio_rating_limits.started_at < now() - interval '1 day'
           RETURNING key
+        ), migrated AS (
+          DELETE FROM portfolio_ratings WHERE voter_key = ${legacyVoter}
+            AND EXISTS (SELECT 1 FROM allowed) RETURNING hidden
         )
-        INSERT INTO portfolio_ratings (voter_key, rating) SELECT ${voter}, ${req.body.rating} FROM allowed
+        INSERT INTO portfolio_ratings (voter_key, rating, hidden) SELECT ${voter}, ${req.body.rating}, COALESCE((SELECT bool_or(hidden) FROM migrated), false) FROM allowed
         ON CONFLICT (voter_key) DO UPDATE SET rating = EXCLUDED.rating, updated_at = now() RETURNING rating
       `
       if (!rows.length) return res.status(429).json({ error: 'rate_limited' })

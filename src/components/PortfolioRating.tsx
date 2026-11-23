@@ -36,7 +36,7 @@ export default function PortfolioRating() {
     <form onSubmit={submit}>{!consent&&<button type="button" className="pf-button" onClick={()=>window.dispatchEvent(new Event('portfolio-cookie-settings'))}>Permitir cookie para avaliar</button>}<fieldset disabled={busy || !summary || !consent}><legend>{t('Sua avaliação')}</legend><div className="pf-rating-options">
       {[0,1,2,3,4,5].map(value => <label key={value}><input type="radio" name="portfolio-rating" value={value} checked={score === value} onChange={()=>setScore(value)}/><span className={score !== null && value > 0 && value <= score ? 'filled' : ''}><b aria-hidden="true">{value === 0 ? '0' : '★'}</b><small>{value}</small><span className="pf-rating-sr">{value} {t('estrelas')}</span></span></label>)}
       </div><button className="pf-button" type="submit" disabled={score === null || busy}>{t(busy ? 'Salvando…' : summary?.mine !== null && summary?.mine !== undefined ? 'Atualizar avaliação' : 'Enviar avaliação')}</button></fieldset>
-      <p className="pf-rating-note">{t('Sem nome ou e-mail. Usamos um cookie para reconhecer seu voto; uma nova nota substitui a anterior neste navegador.')}</p>
+      <p className="pf-rating-note">{t('Uma avaliação por IP. Uma nova nota na mesma rede substitui a anterior. O IP é convertido em um identificador protegido; não guardamos o endereço em texto.')}</p>
       <p role="status">{t(notice)}</p>{!summary && notice && <button type="button" className="pf-button" onClick={()=>void load()}>{t('Tentar novamente')}</button>}
     </form>
   </section>

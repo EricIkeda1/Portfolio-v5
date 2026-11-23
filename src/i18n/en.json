@@ -183,5 +183,6 @@
   "Não foi possível carregar as avaliações. Tente novamente.": "Unable to load ratings. Please try again.",
   "Não foi possível salvar. Verifique os cookies e tente novamente.": "Unable to save. Check cookies and try again.",
   "Muitas tentativas. Tente novamente amanhã.": "Too many attempts. Try again tomorrow.",
-  "Tentar novamente": "Try again"
+  "Tentar novamente": "Try again",
+  "Uma avaliação por IP. Uma nova nota na mesma rede substitui a anterior. O IP é convertido em um identificador protegido; não guardamos o endereço em texto.": "One rating per IP. A new score on the same network replaces the previous one. We store a protected identifier derived from the IP, not the address in plain text."
 }
