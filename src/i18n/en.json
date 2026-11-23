@@ -185,5 +185,8 @@
   "Muitas tentativas. Tente novamente amanhã.": "Too many attempts. Try again tomorrow.",
   "Tentar novamente": "Try again",
   "Uma avaliação por IP. Uma nova nota na mesma rede substitui a anterior. O IP é convertido em um identificador protegido; não guardamos o endereço em texto.": "One rating per IP. A new score on the same network replaces the previous one. We store a protected identifier derived from the IP, not the address in plain text.",
-  "Você enviou várias notas seguidas. Aguarde 1 minuto e tente novamente.": "You submitted several ratings in a row. Wait 1 minute and try again."
+  "Você enviou várias notas seguidas. Aguarde 1 minuto e tente novamente.": "You submitted several ratings in a row. Wait 1 minute and try again.",
+  "Avaliação enviada": "Rating submitted",
+  "Você já avaliou. A nota não pode ser alterada.": "You have already rated. Your rating cannot be changed.",
+  "Uma avaliação por IP. Depois do envio, a nota não pode ser alterada. O IP é convertido em um identificador protegido; não guardamos o endereço em texto.": "One rating per IP. Once submitted, the rating cannot be changed. The IP is converted into a protected identifier; we do not store the address in plain text."
 }

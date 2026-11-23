@@ -53,22 +53,23 @@ export async function ratingsHandler(req: any, res: any) {
             started_at = CASE WHEN portfolio_rating_limits.started_at < now() - interval '1 minute' THEN now() ELSE portfolio_rating_limits.started_at END
           WHERE portfolio_rating_limits.attempts < 10 OR portfolio_rating_limits.started_at < now() - interval '1 minute'
           RETURNING key
-        ), migrated AS (
-          DELETE FROM portfolio_ratings WHERE voter_key = ${legacyVoter}
-            AND EXISTS (SELECT 1 FROM allowed) RETURNING hidden
         )
-        INSERT INTO portfolio_ratings (voter_key, rating, hidden) SELECT ${voter}, ${req.body.rating}, false FROM allowed
-        ON CONFLICT (voter_key) DO UPDATE SET rating = EXCLUDED.rating, hidden = false, updated_at = now() RETURNING rating
+        INSERT INTO portfolio_ratings (voter_key, rating, hidden)
+        SELECT ${voter}, ${req.body.rating}, false FROM allowed
+        WHERE NOT EXISTS (SELECT 1 FROM portfolio_ratings WHERE voter_key = ${legacyVoter})
+        ON CONFLICT (voter_key) DO NOTHING RETURNING rating
       `
       if (!rows.length) {
+        const existing = await sql`SELECT rating FROM portfolio_ratings WHERE voter_key = ${voter} OR voter_key = ${legacyVoter} LIMIT 1`
+        if (existing.length) return res.status(409).json({ error: 'already_rated' })
         res.setHeader('Retry-After', '60')
         return res.status(429).json({ error: 'rate_limited', retryAfter: 60 })
       }
       await sql`DELETE FROM portfolio_rating_limits WHERE started_at < now() - interval '2 days'`.catch(() => {})
     }
     const [summary] = await sql`SELECT count(*)::int AS total, round(avg(rating), 1)::float AS average FROM portfolio_ratings WHERE hidden = false`
-    const mineRows = consent ? await sql`SELECT rating FROM portfolio_ratings WHERE voter_key = ${voter} AND hidden = false` : []
+    const mineRows = consent ? await sql`SELECT rating FROM portfolio_ratings WHERE voter_key = ${voter} OR voter_key = ${legacyVoter} LIMIT 1` : []
     const mine = mineRows[0]
-    return res.status(200).json({ total: summary.total, average: summary.average, mine: mine?.rating ?? null })
+    return res.status(200).json({ total: summary.total, average: summary.average, mine: mine?.rating ?? null, hasRated: Boolean(mine) })
   } catch { return res.status(503).json({ error: 'unavailable' }) }
 }
