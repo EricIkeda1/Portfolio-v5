@@ -1,3 +1,4 @@
+import { ratingsHandler } from './_lib/ratings.js'
 import { findProjectImage } from './_lib/project-images.js'
 import { getModerationStatus } from './_lib/moderation/index.js'
 import { readPersonalRun } from './_lib/personal-run.js'
@@ -7,10 +8,11 @@ import { allowMethods, noStore } from './_lib/http.js'
 
 export default async function handler(req: any, res: any) {
   noStore(res)
-  if (!allowMethods(req, res, ['GET'])) return
 
   // Reuse this function so the Hobby deployment stays within its function limit.
   const view = new URL(req.url || '/', 'https://portfolio.invalid').searchParams.get('view')
+  if (view === 'ratings') return ratingsHandler(req, res)
+  if (!allowMethods(req, res, ['GET'])) return
   if (view === 'project-image') {
     const id = new URL(req.url || '/', 'https://portfolio.invalid').searchParams.get('id')
     if (!id || !/^\d+$/.test(id)) return res.status(400).json({ image_url: null })

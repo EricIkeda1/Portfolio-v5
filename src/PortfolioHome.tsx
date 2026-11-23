@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { PortfolioContentProvider, usePortfolioContent } from './context/PortfolioContentContext'
 import { LanguageSelector, useTranslation } from './i18n/LanguageContext'
 import ProtectedLogo from './components/ProtectedLogo'
+import PortfolioRating from './components/PortfolioRating'
 import ContactForm from './components/ContactForm'
 import ScrollProgress from './components/ScrollProgress'
 import type { PortfolioProject } from './lib/portfolio'
@@ -138,6 +139,7 @@ function PortfolioView(){
       <section className="pf-stack" id="habilidades"><h2>{t('Stack técnica')}</h2><div>{stack.map(([name,slug])=><div className="pf-tech" key={name}><img src={`/tech/${slug}.svg`} alt="" width="38" height="38" loading="lazy"/><span>{name}</span></div>)}</div></section>
       <section className="pf-academic"><div><h2>{t('Trajetória acadêmica')}</h2><h3>{t('Engenharia de Software')}</h3><p>UniSenaiPR · Londrina</p></div><dl><div><dt>{t('Ingresso')}</dt><dd>{t('Julho de 2021')}</dd></div><div><dt>{t('Conclusão')}</dt><dd>{t('Agosto de 2026')}</dd></div></dl><svg className="pf-building" viewBox="0 0 400 260" fill="none" stroke="currentColor" strokeWidth=".8" aria-hidden="true"><path d="M40 260V120L370 10v250M40 120l200 35 130-75M40 155l200 35 130-75M40 195l200 35 130-75M240 155v105M40 120v-20L370 0v10M80 107v153M120 94v166M160 81v179M200 68v192M280 40v220M320 27v233M360 14v246"/></svg></section>
       <section className="pf-evolution"><h2>{t('Evolução do portfólio')}</h2><ol>{versions.map((url,i)=><li key={url}><a href={url} target={i<4?'_blank':undefined} rel={i<4?'noreferrer':undefined} aria-label={`${t('Portfólio')} V${i+1}`}><div className={`pf-version-preview pf-version-${i}`} aria-hidden="true"><i/><div><b/><b/><b/></div></div><span className="pf-version-dot"/><strong>V{i+1}</strong>{i===4&&<small>{t('Atual')}</small>}</a></li>)}</ol></section>
+      <PortfolioRating/>
     </main>
     <footer className="pf-footer" id="contato"><div className="pf-contact"><h2>{t('Vamos conversar')}</h2><ContactForm/></div><div className="pf-footer-bottom"><a href="#inicio"><ProtectedLogo className="pf-brand-logo" loading="lazy"/></a><span>{t('Desenvolvido por Eric Y. Ikeda')}</span></div></footer>
     {selected&&<dialog ref={dialog} className="pf-dialog" aria-labelledby="pf-project-title" onCancel={()=>setSelected(null)} onClick={e=>{if(e.target===e.currentTarget)setSelected(null)}}><button className="pf-dialog-close" aria-label={t('Fechar')} onClick={()=>setSelected(null)}>×</button><ProjectPreview project={selected}/><div className="pf-dialog-copy"><span className="pf-eyebrow">{t(selected.type)}</span><h2 id="pf-project-title">{selected.name}</h2><p>{t(selected.description)}</p><div className="pf-tags">{selected.tags.map(tag=><span key={tag}>{tag}</span>)}</div><ul>{selected.highlights.map(item=><li key={item}>{t(item)}</li>)}</ul>{/^https?:\/\//i.test(selected.github)&&<a className="pf-button" href={selected.github} target="_blank" rel="noreferrer">{t('Acessar projeto')}</a>}</div></dialog>}

@@ -167,5 +167,21 @@
   "Ver detalhes": "View details",
   "Tecnologia para o seu dia.": "Technology for your day.",
   "Tudo em um só lugar.": "Everything in one place.",
-  "Conheça o projeto": "Explore the project"
+  "Conheça o projeto": "Explore the project",
+  "O que achou do portfólio?": "How did you like the portfolio?",
+  "De 0 a 5, quantas estrelas você dá?": "From 0 to 5, how many stars would you give?",
+  "avaliações": "ratings",
+  "estrelas": "stars",
+  "Sua avaliação": "Your rating",
+  "Seja a primeira pessoa a avaliar.": "Be the first to rate.",
+  "Enviar avaliação": "Submit rating",
+  "Atualizar avaliação": "Update rating",
+  "Salvando…": "Saving…",
+  "Carregando…": "Loading…",
+  "Sem nome ou e-mail. Usamos um cookie para reconhecer seu voto; uma nova nota substitui a anterior neste navegador.": "No name or email. A cookie recognizes your vote; a new rating replaces your previous one in this browser.",
+  "Obrigado! Sua avaliação foi salva.": "Thank you! Your rating was saved.",
+  "Não foi possível carregar as avaliações. Tente novamente.": "Unable to load ratings. Please try again.",
+  "Não foi possível salvar. Verifique os cookies e tente novamente.": "Unable to save. Check cookies and try again.",
+  "Muitas tentativas. Tente novamente amanhã.": "Too many attempts. Try again tomorrow.",
+  "Tentar novamente": "Try again"
 }
