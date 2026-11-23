@@ -1,4 +1,4 @@
-import { ratingCookiesAccepted } from './CookieConsent'
+import CookieConsent, { ratingCookiesAccepted } from './CookieConsent'
 import { useEffect, useState } from 'react'
 import { useTranslation } from '../i18n/LanguageContext'
 type Summary = { average: number | null; total: number; mine: number | null }
@@ -33,7 +33,7 @@ export default function PortfolioRating() {
       <p className="pf-rating-note">{t('Avaliações moderadas pelo responsável do site.')}</p><div className="pf-rating-result"><strong>{summary ? summary.average === null ? '—' : summary.average.toFixed(1).replace('.', ',') : '…'}</strong><span>/ 5 <span aria-hidden="true">★</span><small>{summary ? `${summary.total} ${t('avaliações')}` : t('Carregando…')}</small></span></div>
       {summary?.total === 0 && <p>{t('Seja a primeira pessoa a avaliar.')}</p>}
     </div>
-    <form onSubmit={submit}>{!consent&&<button type="button" className="pf-button" onClick={()=>window.dispatchEvent(new Event('portfolio-cookie-settings'))}>Permitir cookie para avaliar</button>}<fieldset disabled={busy || !consent}><legend>{t('Sua avaliação')}</legend><div className="pf-rating-options">
+    <form onSubmit={submit}><CookieConsent/>{!consent&&<button type="button" className="pf-button" onClick={()=>window.dispatchEvent(new Event('portfolio-cookie-settings'))}>Permitir cookie para avaliar</button>}<fieldset disabled={busy || !consent}><legend>{t('Sua avaliação')}</legend><div className="pf-rating-options">
       {[0,1,2,3,4,5].map(value => <label key={value}><input type="radio" name="portfolio-rating" value={value} checked={score === value} onChange={()=>setScore(value)}/><span className={score !== null && value > 0 && value <= score ? 'filled' : ''}><b aria-hidden="true">{value === 0 ? '0' : '★'}</b><small>{value}</small><span className="pf-rating-sr">{value} {t('estrelas')}</span></span></label>)}
       </div><button className="pf-button" type="submit" disabled={score === null || busy}>{t(busy ? 'Salvando…' : summary?.mine !== null && summary?.mine !== undefined ? 'Atualizar avaliação' : 'Enviar avaliação')}</button></fieldset>
       <p className="pf-rating-note">{t('Uma avaliação por IP. Uma nova nota na mesma rede substitui a anterior. O IP é convertido em um identificador protegido; não guardamos o endereço em texto.')}</p>
