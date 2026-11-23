@@ -31,7 +31,6 @@ export async function ratingsHandler(req: any, res: any) {
     const valid = /^[a-f0-9-]{36}$/.test(id) && /^[a-f0-9]{64}$/.test(signature) && timingSafeEqual(Buffer.from(signature), Buffer.from(hash(`rating-cookie:${id}`)))
     if (!consent) res.setHeader('Set-Cookie', 'portfolio_voter=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0')
     if (!valid && consent) {
-      if (req.method === 'POST') return res.status(403).json({ error: 'cookies_required' })
       id = randomUUID()
       res.setHeader('Set-Cookie', `portfolio_voter=${id}.${hash(`rating-cookie:${id}`)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=31536000`)
     }
@@ -58,8 +57,8 @@ export async function ratingsHandler(req: any, res: any) {
           DELETE FROM portfolio_ratings WHERE voter_key = ${legacyVoter}
             AND EXISTS (SELECT 1 FROM allowed) RETURNING hidden
         )
-        INSERT INTO portfolio_ratings (voter_key, rating, hidden) SELECT ${voter}, ${req.body.rating}, COALESCE((SELECT bool_or(hidden) FROM migrated), false) FROM allowed
-        ON CONFLICT (voter_key) DO UPDATE SET rating = EXCLUDED.rating, updated_at = now() RETURNING rating
+        INSERT INTO portfolio_ratings (voter_key, rating, hidden) SELECT ${voter}, ${req.body.rating}, false FROM allowed
+        ON CONFLICT (voter_key) DO UPDATE SET rating = EXCLUDED.rating, hidden = false, updated_at = now() RETURNING rating
       `
       if (!rows.length) return res.status(429).json({ error: 'rate_limited' })
       await sql`DELETE FROM portfolio_rating_limits WHERE started_at < now() - interval '2 days'`.catch(() => {})
