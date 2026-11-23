@@ -29,7 +29,7 @@ function WebShopPreview() {
   return <div className="pf-browser pf-webshop">
     <div className="pf-browser-bar"><i/><i/><i/><span>webshopeyi.vercel.app</span></div>
     <div ref={viewport} className="pf-live-preview">
-      {scale > 0 && <iframe src="https://webshopeyi.vercel.app/" title="WebShop — site real" width="1200" height="780" tabIndex={-1} style={{ transform: `scale(${scale})` }} referrerPolicy="strict-origin-when-cross-origin"/>}
+      {scale > 0 && <iframe src="https://webshopeyi.vercel.app/?portfolioPreview=1" title="WebShop — site real" width="1200" height="675" tabIndex={-1} style={{ transform: `scale(${scale})` }} referrerPolicy="strict-origin-when-cross-origin"/>}
       <a href="https://webshopeyi.vercel.app/" target="_blank" rel="noopener noreferrer" aria-label={t('Abrir WebShop')}><span>{t('Abrir WebShop')}</span></a>
     </div>
   </div>

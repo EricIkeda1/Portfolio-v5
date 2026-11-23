@@ -135,7 +135,7 @@
 @media(prefers-reduced-motion:reduce){.pf-hero-art{animation:none;translate:none}}
 
 .pf-webshop{display:block;text-decoration:none;color:#191b20;background:#fff;font-family:Arial,sans-serif}
-.pf-live-preview{position:relative;width:100%;aspect-ratio:1200/780;overflow:hidden;background:#f4f5f7}
+.pf-live-preview{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;background:#f4f5f7}
 .pf-live-preview iframe{position:absolute;inset:0;border:0;transform-origin:top left;pointer-events:none;max-width:none}
 .pf-live-preview>a{position:absolute;inset:0;z-index:1;text-decoration:none;display:flex;align-items:flex-end;justify-content:flex-end;padding:14px}
 .pf-live-preview>a span{background:#191b20;color:#fff;padding:10px 16px;border-radius:20px;font-size:12px;box-shadow:0 3px 14px #0002}
