@@ -49,7 +49,11 @@ try {
       // Only the portfolio owner's non-binding demo notice has an explicit capture action.
       if(site.hostname==='webshopeyi.vercel.app') {
         const demo=page.getByRole('button',{name:'Entendi, entrar na loja',exact:true})
-        if(await demo.isVisible()){await demo.click();await page.waitForLoadState('networkidle',{timeout:12000}).catch(()=>{});await page.evaluate(()=>document.fonts.ready)}
+        if(await demo.isVisible())await demo.click()
+        await page.getByText('Carregando seus próximos favoritos...', {exact:true}).waitFor({state:'hidden',timeout:45000})
+        await page.locator('h1').first().waitFor({state:'visible',timeout:45000})
+        await page.waitForLoadState('networkidle',{timeout:12000}).catch(()=>{})
+        await page.evaluate(()=>document.fonts.ready)
       }
       // Never sign in, submit forms, or accept third-party agreements.
       const title=await page.title()
