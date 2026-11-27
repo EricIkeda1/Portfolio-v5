@@ -12,6 +12,10 @@ void main() {
     tester.view.physicalSize = const Size(430, 900);
     tester.view.devicePixelRatio = 1;
     SharedPreferences.setMockInitialValues({});
+    // Deep-link platform channels are not used by this isolated screenshot.
+    for (final channel in ['com.llfbandit.app_links/events', 'com.llfbandit.app_links/messages']) {
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(MethodChannel(channel), (_) async => null);
+    }
     final font = FontLoader('Roboto');
     font.addFont(Future.value(ByteData.sublistView(File('test/Roboto-Regular.ttf').readAsBytesSync())));
     await font.load();
