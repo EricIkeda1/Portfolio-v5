@@ -1,0 +1,26 @@
+{
+  "ericikeda1/ademiconnect": {
+    "image_url": "/project-previews/ademiconnect.jpg",
+    "kind": "mobile",
+    "label": "Tela de entrada · Flutter original",
+    "captured_at": "2026-11-27T12:49:22.856626+00:00"
+  },
+  "ericikeda1/temperlights-mobile": {
+    "image_url": "/project-previews/temperlights.jpg",
+    "kind": "mobile",
+    "label": "Captura do vídeo original",
+    "captured_at": "2026-11-27T12:49:22.856626+00:00"
+  },
+  "ericikeda1/x4glass": {
+    "image_url": "/project-previews/x4glass.jpg",
+    "kind": "desktop",
+    "label": "Tela de entrada · Django original",
+    "captured_at": "2026-11-27T12:49:22.856626+00:00"
+  },
+  "https://www.passeidireto.com/arquivo/149832995/2024-manual-de-normas-uni-senai?": {
+    "image_url": "/project-previews/manual-unisenai.jpg",
+    "kind": "document",
+    "label": "Capa original · Manual UniSenai 2024",
+    "captured_at": "2026-11-27T12:49:22.856626+00:00"
+  }
+}
