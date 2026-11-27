@@ -219,3 +219,32 @@
 @media(max-width:760px){.pf-coverflow-track{--slide-width:76vw;gap:8px;padding-top:12px}.pf-coverflow .pf-project-image,.pf-coverflow .pf-concept{height:250px;padding:20px 14px;border-radius:18px}.pf-coverflow .pf-laptop{height:165px}.pf-coverflow .pf-phone{width:90px;height:175px}.pf-coverflow .pf-project-info h3{font-size:24px}.pf-coverflow .pf-project-info p{font-size:12px}.pf-coverflow-controls{padding-inline:6px}.pf-projects .pf-section-title>span{font-size:14px}.pf-projects .pf-section-title{margin-bottom:16px}}
 @media(prefers-reduced-motion:reduce){.pf-coverflow-slide .pf-project-image,.pf-coverflow-slide .pf-concept{transform:none!important;transition:none}}
 .pf-carousel-pause{background:none;border:0;color:var(--pf-muted);font-size:12px!important;padding:6px 12px;text-decoration:underline;text-underline-offset:3px}
+/* Sculpted surfaces, campus photography and a browsable portfolio archive. */
+.pf-stack>div{padding:18px;border:1px solid var(--pf-line);border-radius:28px;background:linear-gradient(135deg,var(--pf-card),transparent);box-shadow:inset 0 1px 0 #ffffff60,0 18px 38px -28px #241b1680;gap:10px}
+.pf-stack .pf-tech{border:0!important;border-radius:18px;padding:22px 12px;background:var(--pf-card);box-shadow:inset 0 1px 0 #ffffff35,0 5px 12px -8px #241b1670;transition:transform .25s ease,box-shadow .25s ease}
+.pf-stack .pf-tech:hover{transform:translateY(-4px);box-shadow:0 12px 20px -12px #241b1680}
+.pf-academic{display:grid;grid-template-columns:1.1fr .65fr 1.25fr;gap:32px;align-items:center;padding:36px 0;background:none;border-radius:0;overflow:visible}
+.pf-academic>div,.pf-academic dl{position:relative;z-index:1}
+.pf-academic h3{font-size:clamp(32px,3.4vw,58px)}
+.pf-campus{position:relative;min-width:0;margin:0;align-self:stretch;min-height:300px;border-radius:24px;overflow:hidden;box-shadow:0 16px 28px -20px #241b1680}
+.pf-campus img{width:100%;height:100%;position:absolute;inset:0;object-fit:cover}
+.pf-campus figcaption{position:absolute;inset:auto 0 0;padding:48px 22px 20px;background:linear-gradient(transparent,#000b);color:#fff;display:grid;gap:5px}
+.pf-campus figcaption span{font-size:24px;font-weight:650}.pf-campus figcaption a{font-size:12px;color:#fff;text-decoration:none}
+.pf-evolution-intro{color:var(--pf-muted);margin:12px 0 28px}
+.pf-evolution ol{gap:18px;padding:0;align-items:stretch}.pf-evolution ol:before{display:none}
+.pf-evolution li{min-width:0}.pf-evolution li a{display:flex;align-items:flex-start;text-align:left;gap:8px;padding:0 0 16px;position:relative;text-decoration:none;transition:transform .3s ease}
+.pf-evolution li a:hover{transform:translateY(-6px)}
+.pf-evolution .pf-version-preview{position:relative;width:100%;height:150px;border-radius:14px;border:1px solid var(--pf-line);padding:26px 14px 14px;opacity:1;background:linear-gradient(130deg,#f0ece6,#c8c1b7);box-shadow:0 12px 18px -14px #0008;overflow:hidden;transform:none}
+.pf-version-preview header{position:absolute;top:0;left:0;right:0;height:18px;display:flex;gap:3px;align-items:center;padding:0 8px;border-bottom:1px solid #0002;background:#fff3}
+.pf-version-preview header span{width:4px;height:4px;border-radius:50%;background:currentColor;opacity:.4}
+.pf-version-preview em{position:absolute;left:14px;top:35px;font-size:18px;font-style:normal;font-weight:750;color:inherit}
+.pf-version-preview i{margin-top:42px!important;opacity:.5}.pf-version-preview>div{margin-top:12px;opacity:.45}
+.pf-evolution .pf-version-1{background:linear-gradient(145deg,#c5d8e3,#597482);color:white}.pf-evolution .pf-version-2{background:linear-gradient(145deg,#ebd6bc,#b38e69)}.pf-evolution .pf-version-3{background:linear-gradient(135deg,#171d31,#3d4266);color:white}.pf-evolution .pf-version-4{background:linear-gradient(130deg,#ecd9bf,#a69c8f)}
+.pf-evolution .pf-version-dot{display:none}.pf-evolution li strong{font-size:22px;margin-top:8px}.pf-version-invite{color:var(--pf-muted);font-size:13px;border-bottom:1px solid var(--pf-line);padding-bottom:3px}.pf-evolution li small{position:absolute;right:8px;top:110px;border-radius:20px;padding:4px 9px}
+@media(max-width:760px){.pf-stack>div{padding:12px;gap:8px;border-radius:22px}.pf-stack .pf-tech{padding:16px 5px}.pf-academic{grid-template-columns:1fr;gap:24px}.pf-academic dl{display:flex;gap:28px;border:0;padding:0}.pf-campus{min-height:260px}.pf-evolution ol{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;padding:8px 2px 24px;gap:16px}.pf-evolution li{flex:0 0 66%;scroll-snap-align:start}.pf-evolution .pf-version-preview{height:170px}.pf-evolution li small{top:130px}}
+@media(prefers-reduced-motion:reduce){.pf-stack .pf-tech,.pf-evolution li a{transition:none}.pf-stack .pf-tech:hover,.pf-evolution li a:hover{transform:none}}
+
+.pf-home[data-theme=dark] .pf-tech img[src*="django"],.pf-home[data-theme=dark] .pf-tech img[src*="wordpress"]{filter:brightness(0) invert(.9)}
+.pf-evolution li:before,.pf-evolution li:after,.pf-evolution li a:before,.pf-evolution li a:after{display:none}
+.pf-evolution li small{bottom:auto;height:auto;min-height:0;line-height:1.3}
+.pf-evolution .pf-version-0,.pf-evolution .pf-version-2,.pf-evolution .pf-version-4{color:#302a23}

@@ -5,7 +5,6 @@ export default function ProjectCarousel({ children, count }: { children: ReactNo
   const track = useRef<HTMLDivElement>(null)
   const current = useRef(count)
   const [physical, setPhysical] = useState(count)
-  const [paused, setPaused] = useState(false)
   const [hover, setHover] = useState(false)
   const [focus, setFocus] = useState(false)
   const [touch, setTouch] = useState(false)
@@ -45,7 +44,12 @@ export default function ProjectCarousel({ children, count }: { children: ReactNo
     const scroll = () => { if(!frame)frame=requestAnimationFrame(sync);clearTimeout(settle);settle=setTimeout(recenter,180) }
     current.current=count>1?count:0;setPhysical(current.current);go(current.current,true)
     const resize = new ResizeObserver(()=>go(current.current,true));resize.observe(node)
-    const observer = new IntersectionObserver(entries=>setVisible(entries.some(e=>e.isIntersecting)),{threshold:.2});observer.observe(node)
+    let entered = false
+    const observer = new IntersectionObserver(entries=>{
+      const inView=entries.some(e=>e.intersectionRatio>=.65)
+      if(inView && !entered){entered=true;current.current=count>1?count:0;setPhysical(current.current);go(current.current,true)}
+      setVisible(inView)
+    },{threshold:[0,.65]});observer.observe(node)
     const media=matchMedia('(prefers-reduced-motion: reduce)')
     const preference=()=>setReduced(media.matches)
     const visibility=()=>setHidden(document.hidden)
@@ -54,7 +58,7 @@ export default function ProjectCarousel({ children, count }: { children: ReactNo
     node.addEventListener('scroll',scroll,{passive:true})
     return()=>{resize.disconnect();observer.disconnect();node.removeEventListener('scroll',scroll);media.removeEventListener('change',preference);document.removeEventListener('visibilitychange',visibility);cancelAnimationFrame(frame);clearTimeout(settle)}
   },[count])
-  const playing=count>1 && !paused && !hover && !focus && !touch && visible && !reduced && !hidden
+  const playing=count>1 && !hover && !focus && !touch && visible && !reduced && !hidden
   useEffect(()=>{
     if(!playing)return
     const timer=setInterval(()=>{if(!document.querySelector('dialog[open]'))go(current.current+1)},3000)
@@ -64,6 +68,6 @@ export default function ProjectCarousel({ children, count }: { children: ReactNo
     <div ref={track} id="project-carousel-track" className="pf-coverflow-track" onPointerDown={()=>setTouch(true)} onPointerUp={()=>setTouch(false)} onPointerCancel={()=>setTouch(false)} onPointerLeave={()=>setTouch(false)}>
       {slides.map((child,index)=><div className="pf-coverflow-slide" key={index} data-side={index===physical?'active':index<physical?'left':'right'} inert={index!==physical} role="group" aria-label={`${index%count+1} / ${count}`}>{child}</div>)}
     </div>
-    {count>1&&<div className="pf-coverflow-controls"><button type="button" onClick={()=>go(current.current-1)} aria-label={t('Anterior')}>‹</button><div><span aria-live={playing?'off':'polite'}>{String(active+1).padStart(2,'0')} / {String(count).padStart(2,'0')}</span><div className="pf-coverflow-dots">{items.map((_,index)=><button type="button" key={index} onClick={()=>go(count+index)} aria-label={`${t('Projetos')} ${index+1}`} aria-current={index===active?'true':undefined}/>)}</div>{!reduced&&<button className="pf-carousel-pause" type="button" onClick={()=>setPaused(!paused)}>{t(paused?'Retomar':'Pausar')}</button>}</div><button type="button" onClick={()=>go(current.current+1)} aria-label={t('Próximo')}>›</button></div>}
+    {count>1&&<div className="pf-coverflow-controls"><button type="button" onClick={()=>go(current.current-1)} aria-label={t('Anterior')}>‹</button><div><span aria-live={playing?'off':'polite'}>{String(active+1).padStart(2,'0')} / {String(count).padStart(2,'0')}</span><div className="pf-coverflow-dots">{items.map((_,index)=><button type="button" key={index} onClick={()=>go(count+index)} aria-label={`${t('Projetos')} ${index+1}`} aria-current={index===active?'true':undefined}/>)}</div></div><button type="button" onClick={()=>go(current.current+1)} aria-label={t('Próximo')}>›</button></div>}
   </div>
 }
