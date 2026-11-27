@@ -52,6 +52,19 @@ try {
         if(await demo.isVisible())await demo.click()
         await page.getByText('Carregando seus próximos favoritos...', {exact:true}).waitFor({state:'hidden',timeout:45000})
         await page.locator('h1').first().waitFor({state:'visible',timeout:45000})
+        const pause=page.getByRole('button',{name:'Pausar troca automática',exact:true})
+        if(await pause.isVisible())await pause.click()
+        await page.getByRole('button',{name:'Destaque 1',exact:true}).click()
+        // The heading exists before the product API resolves. Require the actual image.
+        await page.waitForFunction(()=>{
+          const img=document.querySelector('.hero-img')
+          return img instanceof HTMLImageElement && img.complete && img.naturalWidth>100
+            && !img.currentSrc.includes('product-unavailable')
+        },null,{timeout:90000})
+        await page.locator('.hero-img').evaluate(async img=>{
+          await img.decode()
+          await Promise.all(img.getAnimations().map(animation=>animation.finished))
+        })
         await page.waitForLoadState('networkidle',{timeout:12000}).catch(()=>{})
         await page.evaluate(()=>document.fonts.ready)
       }
