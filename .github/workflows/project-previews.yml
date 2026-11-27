@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
     paths:
+      - public/project-previews/.gitattributes
       - scripts/capture-project-previews.mjs
       - .github/workflows/project-previews.yml
 permissions:
