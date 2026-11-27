@@ -27,6 +27,8 @@ for key,args in [('linha',(sales,products)),('barras',(sales,products)),('disper
     ctx['fig_'+key]=fig.to_html(full_html=False,include_plotlyjs=True)
 ctx['estoque_baixo']=[{'nome':'Chá natural','descricao':'Exemplo para demonstração','quantidade_comprado':25,'quantidade_vendido':20,'fabricante':'Fabricante exemplo'}]
 urlpatterns.append(path('inicio/',lambda request:HttpResponse(''),name='inicio'))
+from django.urls import clear_url_caches
+clear_url_caches()
 archsite=site/'architecture'
 archsite.mkdir(parents=True,exist_ok=True)
 shutil.copytree(arch/'static',archsite/'static',dirs_exist_ok=True)
