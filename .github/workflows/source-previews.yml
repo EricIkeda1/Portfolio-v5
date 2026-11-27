@@ -33,6 +33,9 @@ jobs:
           mkdir -p preview-sources
           git clone --depth 1 https://github.com/EricIkeda1/Ademiconnect.git preview-sources/ademiconnect
           git clone --depth 1 https://github.com/EricIkeda1/X4Glass.git preview-sources/x4
+          git clone --depth 1 https://github.com/EricIkeda1/Projeto_Arquitetura_de_Software.git preview-sources/architecture
+          python scripts/previews/prepare-manager.py
+          cp "$FLUTTER_ROOT/bin/cache/artifacts/material_fonts/MaterialIcons-Regular.otf" preview-sources/ademiconnect/Mobile/test/MaterialIcons-Regular.otf
           cp scripts/previews/ademiconnect_test.dart preview-sources/ademiconnect/Mobile/test/portfolio_preview_test.dart
           cp "$FLUTTER_ROOT/bin/cache/artifacts/material_fonts/Roboto-Regular.ttf" preview-sources/ademiconnect/Mobile/test/Roboto-Regular.ttf
           printf '' > preview-sources/ademiconnect/Mobile/.env

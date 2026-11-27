@@ -36,9 +36,11 @@ for number,function in chart_functions.items():
 (site/'index.html').write_text(render_to_string('dashboard.html',context))
 # Flutter screenshot produced by the real widget, not an invented interface.
 subprocess.run(['ffmpeg','-loglevel','error','-i','preview-sources/ademiconnect/Mobile/test/generated/ademiconnect.png','-frames:v','1','-y',str(out/'ademiconnect.jpg')],check=True)
+exec((root/'scripts/previews/prepare-architecture.py').read_text())
 now=datetime.now(timezone.utc).isoformat()
 manifest={
- 'ericikeda1/ademiconnect':{'image_url':'/project-previews/ademiconnect.jpg','kind':'mobile','label':'Tela de entrada · Flutter original'},
+ 'ericikeda1/projeto_arquitetura_de_software':{'image_url':'/project-previews/architecture.jpg','kind':'desktop','label':'Painel de vendas · Dados de demonstração'},
+ 'ericikeda1/ademiconnect':{'image_url':'/project-previews/ademiconnect.jpg','kind':'mobile','label':'Início do gestor · Dados de demonstração'},
  'ericikeda1/temperlights-mobile':{'image_url':'/project-previews/temperlights.jpg','kind':'mobile','label':'Captura do vídeo original'},
  'ericikeda1/x4glass':{'image_url':'/project-previews/x4glass.jpg','kind':'desktop','label':'Dashboard original · Dados de demonstração'},
 }

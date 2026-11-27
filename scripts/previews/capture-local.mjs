@@ -12,4 +12,8 @@ try {
   await page.getByRole('button',{name:'Opções'}).click()
   await page.locator('#sliderMenu').evaluate(el=>el.getAnimations().map(a=>a.finish()))
   await page.screenshot({path:'public/project-previews/x4glass.jpg',type:'jpeg',quality:90,animations:'disabled'})
+  await page.goto('http://127.0.0.1:8765/architecture/',{waitUntil:'networkidle'})
+  await page.waitForFunction(()=>document.querySelectorAll('.plotly-graph-div.js-plotly-plot').length===5)
+  await page.evaluate(()=>document.fonts.ready)
+  await page.screenshot({path:'public/project-previews/architecture.jpg',type:'jpeg',quality:92,animations:'disabled'})
 } finally {await browser.close()}
