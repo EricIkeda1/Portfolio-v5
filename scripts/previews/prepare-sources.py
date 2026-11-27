@@ -1,4 +1,4 @@
-import json, pathlib, shutil, subprocess, urllib.request, re
+import json, pathlib, shutil, subprocess, urllib.request, re, runpy
 from datetime import datetime, timezone
 import django
 from django.conf import settings
@@ -17,9 +17,9 @@ download('https://files.passeidireto.com/Thumbnail/2900c236-de8d-4cbc-92fc-1d201
 # A real frame from the demonstration already published in the author's README.
 download('https://github.com/user-attachments/assets/ad20dd1c-f689-422a-8f4a-77b2ab65c8cc','/tmp/temperlights.mp4')
 subprocess.run(['ffmpeg','-loglevel','error','-ss','1.6','-i','/tmp/temperlights.mp4','-frames:v','1','-y',str(out/'temperlights.jpg')],check=True)
-# Render the original Django login template against isolated settings: no production DB.
+# Render the original Django dashboard template against isolated settings: no production DB.
 source=root/'preview-sources/x4/Projeto/Frontend/GlassHub/GlassHubApp'
-html=(source/'templates/login.html').read_text()
+html=(source/'templates/dashboard.html').read_text()
 names=set(re.findall(r"{%\s*url\s+['\"]([^'\"]+)",html))
 urlpatterns=[path(name+'/',lambda request:HttpResponse(''),name=name) for name in names]
 settings.configure(DEBUG=False,SECRET_KEY='local-render-only',ROOT_URLCONF=__name__,STATIC_URL='/static/',INSTALLED_APPS=['django.contrib.staticfiles'],TEMPLATES=[{'BACKEND':'django.template.backends.django.DjangoTemplates','DIRS':[str(source/'templates')]}])
@@ -27,14 +27,20 @@ django.setup()
 site=root/'preview-sources/rendered'
 site.mkdir(parents=True,exist_ok=True)
 shutil.copytree(source/'static',site/'static',dirs_exist_ok=True)
-(site/'index.html').write_text(render_to_string('login.html',{'csrf_token':'preview-only'}))
+# Execute only the original standalone chart modules, using their built-in example data.
+chart_functions={2:'criar_grafico',3:'criar_grafico',4:'criar_grafico_bolhas',5:'criar_grafico_barras',6:'criar_treemap',7:'criar_grafico_barras_empilhadas'}
+context={}
+for number,function in chart_functions.items():
+    module=runpy.run_path(str(source/'graficos'/f'graficos{number}.py'))
+    context[f'graph{number}']=module[function]()
+(site/'index.html').write_text(render_to_string('dashboard.html',context))
 # Flutter screenshot produced by the real widget, not an invented interface.
 subprocess.run(['ffmpeg','-loglevel','error','-i','preview-sources/ademiconnect/Mobile/test/generated/ademiconnect.png','-frames:v','1','-y',str(out/'ademiconnect.jpg')],check=True)
 now=datetime.now(timezone.utc).isoformat()
 manifest={
  'ericikeda1/ademiconnect':{'image_url':'/project-previews/ademiconnect.jpg','kind':'mobile','label':'Tela de entrada · Flutter original'},
  'ericikeda1/temperlights-mobile':{'image_url':'/project-previews/temperlights.jpg','kind':'mobile','label':'Captura do vídeo original'},
- 'ericikeda1/x4glass':{'image_url':'/project-previews/x4glass.jpg','kind':'desktop','label':'Tela de entrada · Django original'},
+ 'ericikeda1/x4glass':{'image_url':'/project-previews/x4glass.jpg','kind':'desktop','label':'Dashboard original · Dados de demonstração'},
 }
 content=json.load(urllib.request.urlopen('https://www.ericyikeda.com.br/api/content'))
 for project in content['projects']:

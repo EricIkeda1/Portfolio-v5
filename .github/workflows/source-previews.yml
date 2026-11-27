@@ -45,7 +45,7 @@ jobs:
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y ffmpeg
-          pip install 'Django==5.2.8'
+          pip install 'Django==5.2.8' 'plotly==5.24.1' 'pandas==2.2.3'
           npm install --no-save --package-lock=false playwright@1.56.1
           npx playwright install --with-deps chromium
           python scripts/previews/prepare-sources.py
