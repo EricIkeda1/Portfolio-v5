@@ -12,7 +12,8 @@ import type { PortfolioProject } from './lib/portfolio'
 import './portfolio-home.css'
 import { usePortfolioMotion } from './usePortfolioMotion'
 
-const imageRequests = new Map<string, Promise<string | null>>()
+type PreviewAsset = { image_url: string; kind?: string; label?: string }
+const imageRequests = new Map<string, Promise<PreviewAsset | null>>()
 const stack = [['React','react'],['TypeScript','typescript'],['Flutter','flutter'],['Node.js','nodejs'],['PostgreSQL','postgresql'],['Django','django'],['Python','python'],['HTML','html5'],['CSS','css3'],['WordPress','wordpress']]
 const versions = ['https://ericikedaportfolio.vercel.app/','https://ericyikedaportfolio.vercel.app/','https://ericyikedaportfolio32.vercel.app/','https://ericyikedaportfolio4.vercel.app/', '#inicio']
 function ThemeIcon({ dark }: { dark: boolean }) { return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">{dark ? <><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></> : <path d="M20 15.5A8.5 8.5 0 0 1 8.5 4 8.5 8.5 0 1 0 20 15.5Z"/>}</svg> }
@@ -40,7 +41,7 @@ function WebShopPreview() {
 function ProjectPreview({ project }: { project: PortfolioProject }) {
   const { t } = useTranslation()
   const [broken, setBroken] = useState(false)
-  const [discovered, setDiscovered] = useState<string | null>(null)
+  const [discovered, setDiscovered] = useState<PreviewAsset | null>(null)
   const preview = useRef<HTMLDivElement>(null)
   useEffect(()=>{
     setDiscovered(null)
@@ -48,11 +49,13 @@ function ProjectPreview({ project }: { project: PortfolioProject }) {
     let active=true
     const key=String(project.id)+':'+project.github
     const load=()=>{
-      if(!imageRequests.has(key))imageRequests.set(key,fetch('/project-previews/manifest.json').then(r=>r.ok?r.json():{}).then(async manifest=>{
+      if(!imageRequests.has(key))imageRequests.set(key,Promise.all(['/project-previews/manifest.json','/project-previews/source-manifest.json'].map(url=>fetch(url).then(r=>r.ok?r.json():{}).catch(()=>({})))).then(async manifests=>{
+          const manifest=Object.assign({},...manifests)
           const repo=project.github.replace('https://github.com/','').replace(/\.git$|\/$/g,'').toLowerCase()
-          if(manifest[repo]?.image_url)return manifest[repo].image_url
+          if(manifest[repo]?.image_url)return manifest[repo]
           const response=await fetch(`/api/content?view=project-image&id=${encodeURIComponent(project.id)}`)
-          return response.ok ? (await response.json()).image_url || null : null
+          const image=response.ok ? (await response.json()).image_url : null
+          return image ? {image_url:image} : null
         }).catch(()=>null))
       void imageRequests.get(key)!.then(url=>{if(active)setDiscovered(url)})
     }
@@ -62,7 +65,7 @@ function ProjectPreview({ project }: { project: PortfolioProject }) {
     return()=>{active=false;observer.disconnect()}
   },[project.id,project.github,project.image_url])
   useEffect(()=>setBroken(false),[project.image_url])
-  if ((project.image_url || discovered) && !broken) return <div className={`pf-real-preview ${/mobile|flutter|ademicon/i.test(`${project.type} ${project.name}`) ? 'pf-real-mobile' : ''}`}><div className="pf-preview-chrome" aria-hidden="true"><i/><i/><i/><span>{project.name}</span></div><img src={project.image_url || discovered!} alt={`${project.name} — captura real do projeto`} loading="lazy" decoding="async" onError={()=>setBroken(true)}/></div>
+  if ((project.image_url || discovered) && !broken) return <div className={`pf-real-preview ${discovered?.kind==='document' ? 'pf-real-document' : /mobile|flutter|ademicon|temperlights/i.test(`${project.type} ${project.name}`) ? 'pf-real-mobile' : ''}`}><div className="pf-preview-chrome" aria-hidden="true"><i/><i/><i/><span>{project.name}</span></div><img src={project.image_url || discovered!.image_url} alt={`${project.name} — captura real do projeto`} loading="lazy" decoding="async" onError={()=>setBroken(true)}/>{discovered?.label&&<small className="pf-preview-source">{discovered.label}</small>}</div>
   return <div ref={preview} className="pf-preview-empty"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><rect x="5" y="8" width="38" height="27" rx="3"/><path d="M17 41h14M24 35v6M17 18l-5 4 5 4m14-8 5 4-5 4"/></svg><strong>{project.name}</strong><span>{t('Prévia real ainda não disponível')}</span><small>{t('Clique para conhecer o projeto')}</small></div>
 }
 
