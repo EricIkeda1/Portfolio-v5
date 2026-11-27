@@ -4,7 +4,6 @@ import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
 from django.db.models import Sum
-from django.utils import timezone
 arch=root/'preview-sources/architecture/Login/cadastro_app'
 # Run the project's actual plotting functions with in-memory example records only.
 code=(arch/'graficos.py').read_text()
