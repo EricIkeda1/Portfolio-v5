@@ -46,7 +46,12 @@ try {
       if(!response?.ok())throw Error(`Site response ${response?.status()}`)
       await page.waitForLoadState('networkidle',{timeout:12000}).catch(()=>{})
       await page.evaluate(()=>document.fonts.ready)
-      // Never accept consent, sign in, or dismiss a site's notices automatically.
+      // Only the portfolio owner's non-binding demo notice has an explicit capture action.
+      if(site.hostname==='webshopeyi.vercel.app') {
+        const demo=page.getByRole('button',{name:'Entendi, entrar na loja',exact:true})
+        if(await demo.isVisible()){await demo.click();await page.waitForLoadState('networkidle',{timeout:12000}).catch(()=>{});await page.evaluate(()=>document.fonts.ready)}
+      }
+      // Never sign in, submit forms, or accept third-party agreements.
       const title=await page.title()
       if(await page.locator('input[type=password]').count())throw Error('Login page: no public preview')
       if(/404|deployment.not.found|just a moment|access denied/i.test(title))throw Error('Unavailable page')
