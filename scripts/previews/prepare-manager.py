@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 # Modify only the disposable capture checkout; original UI widgets stay unchanged.
 p=Path('preview-sources/ademiconnect/Mobile/lib/telas/gestor/home_gestor.dart')
@@ -20,4 +21,4 @@ for relative in ['telas/widgets/lead_card.dart','telas/gestor/components/menu_in
     f=Path('preview-sources/ademiconnect/Mobile/lib')/relative
     text=f.read_text()
     assert 'fontFamily:' not in text, 'Review explicit fonts before applying screenshot fallback'
-    f.write_text(text.replace('TextStyle(', "TextStyle(fontFamily: 'Roboto', "))
+    f.write_text(re.sub(r'\bTextStyle\(', "TextStyle(fontFamily: 'Roboto', ", text))
