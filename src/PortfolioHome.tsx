@@ -48,8 +48,12 @@ function ProjectPreview({ project }: { project: PortfolioProject }) {
     let active=true
     const key=String(project.id)+':'+project.github
     const load=()=>{
-      if(!imageRequests.has(key))imageRequests.set(key,fetch(`/api/content?view=project-image&id=${encodeURIComponent(project.id)}`)
-        .then(r=>r.ok?r.json():null).then(data=>data?.image_url || null).catch(()=>null))
+      if(!imageRequests.has(key))imageRequests.set(key,fetch('/project-previews/manifest.json').then(r=>r.ok?r.json():{}).then(async manifest=>{
+          const repo=project.github.replace('https://github.com/','').replace(/\.git$|\/$/g,'').toLowerCase()
+          if(manifest[repo]?.image_url)return manifest[repo].image_url
+          const response=await fetch(`/api/content?view=project-image&id=${encodeURIComponent(project.id)}`)
+          return response.ok ? (await response.json()).image_url || null : null
+        }).catch(()=>null))
       void imageRequests.get(key)!.then(url=>{if(active)setDiscovered(url)})
     }
     if(!('IntersectionObserver' in window)){load();return()=>{active=false}}
@@ -58,15 +62,10 @@ function ProjectPreview({ project }: { project: PortfolioProject }) {
     return()=>{active=false;observer.disconnect()}
   },[project.id,project.github,project.image_url])
   useEffect(()=>setBroken(false),[project.image_url])
-  if ((project.image_url || discovered) && !broken) return <img className="pf-project-image" src={project.image_url || discovered!} alt={project.name} loading="lazy" onError={()=>setBroken(true)}/>
-  const mobile = /mobile|flutter|ademicon/i.test(`${project.type} ${project.name} ${project.tags.join(' ')}`)
-  return <div ref={preview} className={`pf-concept ${mobile ? 'pf-mobile-concept' : ''}`} aria-hidden="true">
-    {[0,...(mobile ? [1] : [])].map(n=><div className={mobile ? 'pf-phone' : 'pf-laptop'} key={n}>
-      <div className="pf-concept-top"><b>{project.name}</b><span>•••</span></div>
-      <div className="pf-concept-body"><span className="pf-concept-kicker">{project.type}</span><strong>{n ? t('Tudo organizado.') : project.name}</strong>{mobile ? <><div className="pf-mobile-summary"><small>{t(n ? 'Próxima visita' : 'Minha agenda')}</small><b>{n ? '14:30' : '03'}</b><span>{t(n ? 'Visita agendada' : 'Atividades do dia')}</span></div><div className="pf-mobile-tabs"><b>{t('Hoje')}</b><span>{t('Clientes')}</span></div>{[t('Visita agendada'),t('Acompanhamento'),t('Novo contato')].map((label,i)=><div className="pf-mobile-row" key={label}><i>{i+1}</i><span>{label}<small>{t('Ver detalhes')}</small></span></div>)}</> : <><div className="pf-web-feature"><div><strong>{/webshop/i.test(project.name) ? t('Tecnologia para o seu dia.') : t('Tudo em um só lugar.')}</strong><span>{t('Conheça o projeto')}</span></div><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="8"><path d="M20 60V45a30 30 0 0 1 60 0v15"/><rect x="12" y="48" width="18" height="35" rx="8" fill="currentColor"/><rect x="70" y="48" width="18" height="35" rx="8" fill="currentColor"/></svg></div><div className="pf-web-products">{project.tags.slice(0,3).map(tag=><span key={tag}>{tag}</span>)}</div></>}</div>
-    </div>)}<span className="pf-concept-caption">{t('Prévia ilustrativa')}</span>
-  </div>
+  if ((project.image_url || discovered) && !broken) return <div className={`pf-real-preview ${/mobile|flutter|ademicon/i.test(`${project.type} ${project.name}`) ? 'pf-real-mobile' : ''}`}><div className="pf-preview-chrome" aria-hidden="true"><i/><i/><i/><span>{project.name}</span></div><img src={project.image_url || discovered!} alt={`${project.name} — captura real do projeto`} loading="lazy" decoding="async" onError={()=>setBroken(true)}/></div>
+  return <div ref={preview} className="pf-preview-empty"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><rect x="5" y="8" width="38" height="27" rx="3"/><path d="M17 41h14M24 35v6M17 18l-5 4 5 4m14-8 5 4-5 4"/></svg><strong>{project.name}</strong><span>{t('Prévia real ainda não disponível')}</span><small>{t('Clique para conhecer o projeto')}</small></div>
 }
+
 function AnimatedNumber({ value }: { value: number | undefined }) {
   const element = useRef<HTMLElement>(null)
   const [display, setDisplay] = useState<number | undefined>(undefined)
