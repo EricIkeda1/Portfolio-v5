@@ -19,13 +19,13 @@ const browser=await chromium.launch({headless:true})
 try {
   for(const project of content.projects.slice(0,30)) {
     const match=/^https:\/\/github\.com\/([\w.-]+\/[\w.-]+)\/?$/.exec(project.github || '')
-    if(!match || project.image_url || /mobile|flutter|android|ios/i.test(`${project.type} ${project.tags?.join(' ')}`))continue
-    const repo=match[1].replace(/\.git$/,'')
+    if((!match && !publicSite(project.github)) || project.image_url || /mobile|flutter|android|ios/i.test(`${project.type} ${project.tags?.join(' ')}`))continue
+    const repo=match ? match[1].replace(/\.git$/,'') : project.github.replace(/\/$/,'')
     let context
     try {
-      const info=await github(repo)
-      let site=publicSite(info.homepage)
-      if(!site) {
+      const info=match ? await github(repo) : null
+      let site=publicSite(project.github) || publicSite(info?.homepage)
+      if(!site && match) {
         const readme=await github(`${repo}/readme`).catch(()=>null)
         const md=readme?.content ? Buffer.from(readme.content,'base64').toString('utf8') : ''
         site=(md.match(/https:\/\/[^\s<>"'\)\]]+/g)||[]).map(publicSite).find(Boolean)
