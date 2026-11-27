@@ -14,3 +14,10 @@ new="""    _loading = false;
     ]);"""
 assert old in s, 'Manager initialization changed; review capture fixture'
 p.write_text(s.replace(old,new))
+
+# Explicit font for standalone RichText and bottom-menu labels in Flutter golden tests.
+for relative in ['telas/widgets/lead_card.dart','telas/gestor/components/menu_inferior.dart']:
+    f=Path('preview-sources/ademiconnect/Mobile/lib')/relative
+    text=f.read_text()
+    assert 'fontFamily:' not in text, 'Review explicit fonts before applying screenshot fallback'
+    f.write_text(text.replace('TextStyle(', "TextStyle(fontFamily: 'Roboto', "))
