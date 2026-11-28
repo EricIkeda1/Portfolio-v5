@@ -259,3 +259,28 @@
 .pf-real-preview:not(.pf-real-mobile):not(.pf-real-document) .pf-preview-chrome{flex-shrink:0}
 .pf-real-preview:not(.pf-real-mobile):not(.pf-real-document) img{display:block;flex:1 1 0;min-height:0;width:100%;height:auto;object-fit:cover;object-position:center top;background:var(--pf-card)}
 .pf-real-preview:not(.pf-real-mobile):not(.pf-real-document) .pf-preview-source{flex-shrink:0}
+
+/* Raised gallery surfaces: clear edges and visible neighboring projects. */
+.pf-projects{--preview-surface:#f5f0e8;--preview-edge:#ffffffc9;--preview-shadow:#40322238}
+.pf-home[data-theme=dark] .pf-projects{--preview-surface:#423e38;--preview-edge:#ffffff26;--preview-shadow:#0009}
+.pf-coverflow-track{--slide-width:min(54vw,720px);gap:18px;padding-top:30px;padding-bottom:24px}
+.pf-coverflow-slide :is(.pf-real-preview,.pf-project-image,.pf-concept,.pf-preview-empty){
+ border:1px solid var(--preview-edge);background:linear-gradient(145deg,#ffffff24,transparent 60%),var(--preview-surface);
+ box-shadow:inset 0 1px 0 #ffffff66,0 3px 5px #30251c12,0 18px 32px -16px var(--preview-shadow);
+}
+.pf-coverflow-slide[data-side=active] :is(.pf-real-preview,.pf-project-image,.pf-concept,.pf-preview-empty){
+ transform:translateY(-8px);opacity:1;
+ box-shadow:inset 0 1px 0 #ffffff88,0 5px 8px #30251c16,0 26px 38px -16px var(--preview-shadow);
+}
+.pf-coverflow-slide[data-side=left] :is(.pf-real-preview,.pf-project-image,.pf-concept,.pf-preview-empty){transform:scale(.94) rotateY(7deg);opacity:.92}
+.pf-coverflow-slide[data-side=right] :is(.pf-real-preview,.pf-project-image,.pf-concept,.pf-preview-empty){transform:scale(.94) rotateY(-7deg);opacity:.92}
+.pf-coverflow .pf-project-info{padding-top:14px}
+.pf-coverflow-controls>button{background:var(--preview-surface);box-shadow:inset 0 1px 0 var(--preview-edge),0 4px 10px #30251c14}
+@media(max-width:760px){
+ .pf-coverflow-track{--slide-width:74vw;gap:10px;padding-top:24px;padding-bottom:18px}
+ .pf-coverflow-slide[data-side=left] :is(.pf-real-preview,.pf-project-image,.pf-concept,.pf-preview-empty){transform:scale(.95) rotateY(4deg)}
+ .pf-coverflow-slide[data-side=right] :is(.pf-real-preview,.pf-project-image,.pf-concept,.pf-preview-empty){transform:scale(.95) rotateY(-4deg)}
+}
+@media(prefers-reduced-motion:reduce){
+ .pf-coverflow-slide :is(.pf-real-preview,.pf-project-image,.pf-concept,.pf-preview-empty){transform:none!important;transition:none!important}
+}
